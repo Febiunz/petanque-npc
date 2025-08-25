@@ -33,7 +33,6 @@ router.post('/', requireAuth, async (req, res) => {
     homeScore: Number(homeScore ?? 0),
     awayScore: Number(awayScore ?? 0),
     status: 'completed',
-  submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
     submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
     submittedByUid: req.user?.uid || null,
   };
