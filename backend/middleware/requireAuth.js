@@ -21,7 +21,7 @@ export async function requireAuth(req, res, next) {
   // Do not check revoked to reduce friction during development
   // Conditionally check revoked tokens based on environment variable
   const checkRevoked = process.env.CHECK_REVOKED === 'true';
-  const decoded = await admin.auth().verifyIdToken(token, checkRevoked ? { checkRevoked: true } : undefined);
+  const decoded = await admin.auth().verifyIdToken(token, checkRevoked);
   const name = decoded.name || decoded.displayName || (decoded.email ? decoded.email.split('@')[0] : null);
   req.user = { uid: decoded.uid, email: decoded.email || null, name };
     next();
