@@ -19,7 +19,9 @@ export async function requireAuth(req, res, next) {
     if (!m) return res.status(401).json({ error: 'Missing bearer token' });
     const token = m[1];
   // Do not check revoked to reduce friction during development
-  const decoded = await admin.auth().verifyIdToken(token);
+  // Conditionally check revoked tokens based on environment variable
+  const checkRevoked = process.env.CHECK_REVOKED === 'true';
+  const decoded = await admin.auth().verifyIdToken(token, checkRevoked ? { checkRevoked: true } : undefined);
   const name = decoded.name || decoded.displayName || (decoded.email ? decoded.email.split('@')[0] : null);
   req.user = { uid: decoded.uid, email: decoded.email || null, name };
     next();
