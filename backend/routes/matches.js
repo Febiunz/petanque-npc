@@ -34,7 +34,8 @@ router.post('/', requireAuth, async (req, res) => {
     awayScore: Number(awayScore ?? 0),
     status: 'completed',
   submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
-  submittedByUid: req.user?.uid || null,
+    submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
+    submittedByUid: req.user?.uid || null,
   };
   const match = await createMatch(payload);
   await markScheduledMatchCompleted(matchId);
