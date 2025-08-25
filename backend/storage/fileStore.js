@@ -111,7 +111,15 @@ export async function createMatch(input) {
     status: input.status || 'scheduled',
   createdAt: new Date().toISOString(),
   submittedBy: input.submittedBy || null,
-  submittedByUid: input.submittedByUid || null,
+    fixtureId: input.fixtureId || null,
+    homeTeamId: input.homeTeamId,
+    awayTeamId: input.awayTeamId,
+    homeScore: Number(input.homeScore ?? 0),
+    awayScore: Number(input.awayScore ?? 0),
+    status: input.status || 'scheduled',
+    createdAt: new Date().toISOString(),
+    submittedBy: input.submittedBy || null,
+    submittedByUid: input.submittedByUid || null,
   };
   return withLock(matchesFile, async () => {
     const matches = await readJson(matchesFile);
