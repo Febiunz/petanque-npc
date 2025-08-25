@@ -144,13 +144,6 @@ async function parseOfficialSchedule(html) {
   return null;
 }
 
-function officialScheduleStatic() {
-  // Reuse logic by importing JSON from existing fixtures file if present
-  return [
-    // Keep empty; we'll fallback to read from fixtures.json if it exists
-  ];
-}
-
 export async function ensureSchedule() {
   await ensureDir();
   let exists = true;
