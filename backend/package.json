@@ -12,7 +12,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.18.2",
     "firebase-admin": "^12.6.0",
-    "petanque-npc": "file:.."
+    "firebase-admin": "^12.6.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
