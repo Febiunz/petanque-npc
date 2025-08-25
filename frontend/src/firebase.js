@@ -4,7 +4,6 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "",
   authDomain: "petanque-npc.firebaseapp.com",
   projectId: "petanque-npc",
   storageBucket: "petanque-npc.firebasestorage.app",
