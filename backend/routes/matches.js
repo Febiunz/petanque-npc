@@ -13,7 +13,9 @@ router.get('/', async (req, res) => {
 router.post('/', requireAuth, async (req, res) => {
   // Debug: trace incoming body for troubleshooting
   // Do not log tokens; headers are ignored.
-  try { console.log('POST /api/matches body:', JSON.stringify(req.body)); } catch {}
+  if (process.env.NODE_ENV !== 'production') {
+    try { console.log('POST /api/matches body:', JSON.stringify(req.body)); } catch {}
+  }
   const { matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date } = req.body || {};
   const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
   if (!matchId) return res.status(400).json({ error: 'matchId is required' });
