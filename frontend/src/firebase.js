@@ -4,10 +4,6 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  authDomain: "petanque-npc.firebaseapp.com",
-  projectId: "petanque-npc",
-  storageBucket: "petanque-npc.firebasestorage.app",
-  messagingSenderId: "455917834537",
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
