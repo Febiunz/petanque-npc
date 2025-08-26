@@ -69,7 +69,7 @@ function cleanHtmlToLines(html) {
   let prev;
   do {
     prev = s;
-    s = s.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
+    s = s.replace(/<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style\b[^>]*>/gi, '');
   } while (s !== prev);
   // Also remove any leftover tag fragments repeatedly to prevent incomplete sanitization
   do {
