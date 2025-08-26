@@ -82,9 +82,14 @@ function cleanHtmlToLines(html) {
   let previous;
   do {
     previous = s;
-    s = s.replace(/<script\b[\s\S]*?<\/script[^>]*>/gi, '')
-         .replace(/<style\b[\s\S]*?<\/style[^>]*>/gi, '');
+    s = s.replace(/<script[\s\S]*?>[\s\S]*?<\/script\s*>/gi, '')
+         .replace(/<style[\s\S]*?>[\s\S]*?<\/style\s*>/gi, '');
   } while (s !== previous);
+  // Remove any orphan <script or <style tags that might still remain
+  s = s.replace(/<script[^>]*>/gi, '')
+       .replace(/<\/script[^>]*>/gi, '')
+       .replace(/<style[^>]*>/gi, '')
+       .replace(/<\/style[^>]*>/gi, '');
   // Normalize table boundaries to new lines
   s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   // Turn tags into separators
