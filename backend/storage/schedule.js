@@ -78,7 +78,7 @@ function cleanHtmlToLines(html) {
   s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
   s = s.replace(/<\/(td|th)>/gi, '|');
   s = s.replace(/<[^>]+>/g, ' ');
-  s = s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+  s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   s = s.replace(/\s+/g, ' ').replace(/\|\s*\|/g, '|');
   return s.split(/\n+/).map(l => l.trim()).filter(Boolean);
 }
