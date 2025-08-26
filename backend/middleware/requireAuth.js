@@ -5,7 +5,7 @@ function ensureAdmin() {
   if (!appInited) {
     try {
       // For verifyIdToken, explicit credentials are not required; we can init with defaults.
-      admin.initializeApp({ projectId: process.env.FIREBASE_PROJECT_ID || 'petanque-npc' });
+      admin.initializeApp({ projectId: process.env.FIREBASE_PROJECT_ID || 'npc-standen' });
     } catch {}
     appInited = true;
   }

@@ -1,5 +1,5 @@
 {
-  "name": "petanque-npc-backend",
+  "name": "npc-standen-backend",
   "version": "0.1.0",
   "main": "index.js",
   "type": "module",

@@ -1,5 +1,5 @@
 {
-  "name": "petanque-npc",
+  "name": "npc-standen",
   "private": true,
   "version": "0.1.0",
   "description": "Dev convenience for running frontend and backend together",

@@ -1,15 +1,14 @@
-// Replace the below config with your Firebase project config
+// Firebase client config is loaded from Vite env vars to keep secrets out of source control
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBJWZMxmcdjAJucefesf8OuXImQD9_hlvo",
-  authDomain: "npc-standen.firebaseapp.com",
-  projectId: "npc-standen",
-  storageBucket: "npc-standen.firebasestorage.app",
-  messagingSenderId: "886687471306",
-  appId: "1:886687471306:web:076966ee3eb333fa468633"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
