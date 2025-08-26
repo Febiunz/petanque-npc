@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+.DS_Store
+backend/data/
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite/React
+frontend/dist/
+frontend/.env.local
+frontend/.env*
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.swp
+*.swo
+
+# Build
+build/
