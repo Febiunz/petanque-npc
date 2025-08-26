@@ -64,21 +64,21 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Repeat removal of script and style tags to ensure full sanitization
+  // Robustly remove all script and style tags repeatedly until no changes
   let s = html;
   let prev;
   do {
     prev = s;
-    s = s.replace(/<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style\b[^>]*>/gi, '');
+    s = s.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, '');
   } while (s !== prev);
-  // Also remove any leftover tag fragments repeatedly to prevent incomplete sanitization
+  // Also remove any leftover tag fragments (e.g. incomplete or broken tags) until no more remain
   do {
     prev = s;
     s = s
       .replace(/<script\b/gi, '')
-      .replace(/<\/script>/gi, '')
+      .replace(/<\/script\s*>/gi, '')
       .replace(/<style\b/gi, '')
-      .replace(/<\/style>/gi, '');
+      .replace(/<\/style\s*>/gi, '');
   } while (s !== prev);
   s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
