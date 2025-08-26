@@ -1,11 +1,11 @@
 {
-  "name": "npc-standen",
+  "name": "npc-standen-new",
   "private": true,
   "version": "0.1.0",
   "description": "Dev convenience for running frontend and backend together",
   "scripts": {
-  "install:all": "npm install --prefix backend && npm install --prefix frontend",
-  "dev": "concurrently -n backend,frontend -c green,cyan \"node scripts/start-backend-if-needed.mjs\" \"npm run dev --prefix frontend\"",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev": "concurrently -n backend,frontend -c green,cyan \"node scripts/start-backend-if-needed.mjs\" \"npm run dev --prefix frontend\"",
     "start": "concurrently -n backend,frontend -c green,cyan \"npm run start --prefix backend\" \"npm run preview --prefix frontend\""
   },
   "devDependencies": {
