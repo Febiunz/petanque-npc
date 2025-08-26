@@ -16,7 +16,9 @@ router.post('/', requireAuth, async (req, res) => {
   // Log only non-sensitive fields for debugging
   const { matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date } = req.body || {};
   try {
-    console.log('POST /api/matches body:', JSON.stringify({ matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date }));
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('POST /api/matches body:', JSON.stringify({ matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date }));
+    }
   } catch {}
   const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
   if (!matchId) return res.status(400).json({ error: 'matchId is required' });
