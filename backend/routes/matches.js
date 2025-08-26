@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 // Rate limit: max 5 POSTs per minute per IP to avoid abuse
 const matchPostLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
- max: 5,
+  max: 5,
  message: { error: 'Too many submissions, please try again later.' }
 });
 
