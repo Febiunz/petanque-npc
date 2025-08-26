@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listTeams } from './fileStore.js';
+import sanitizeHtml from 'sanitize-html';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
@@ -77,10 +78,16 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Remove scripts/styles
-  let s = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
+  // Remove all script and style tags using sanitize-html
+  let s = sanitizeHtml(html, {
+    allowedTags: false, // false keeps all tags except for those removed by allowedTags or disallowedTags
+    allowedAttributes: false, // prevent extra attributes
+    disallowedTagsMode: 'discard',
+    allowedTags: sanitizeHtml.defaults.allowedTags.filter(
+      tag => tag !== 'script' && tag !== 'style'
+    ),
+  });
   // Normalize table boundaries to new lines
-  s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   // Turn tags into separators
   s = s.replace(/<br\s*\/?>/gi, '\n');
   s = s.replace(/<\/(td|th)>/gi, '|');
