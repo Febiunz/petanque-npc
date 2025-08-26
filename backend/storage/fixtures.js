@@ -77,8 +77,14 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Remove scripts/styles
-  let s = html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
+  // Remove scripts/styles (repeat removal to fully sanitize)
+  let s = html;
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(/<script[\s\S]*?<\/script>/gi, '');
+    s = s.replace(/<style[\s\S]*?<\/style>/gi, '');
+  } while (s !== prev);
   // Normalize table boundaries to new lines
   s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   // Turn tags into separators
