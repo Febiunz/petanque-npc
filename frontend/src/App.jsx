@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper } from '@mui/material';
+import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar } from '@mui/material';
 import { api } from './api';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
@@ -100,20 +100,24 @@ function App() {
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
-  <Typography variant="h3" gutterBottom>NPC Standen</Typography>
-        <Stack spacing={2} sx={{ mt: 2, mb: 4 }}>
-          {user ? (
-            <>
-              <Typography variant="body2">{user.displayName} ({user.email})</Typography>
-              <Button variant="outlined" color="secondary" onClick={handleSignOut}>Sign Out</Button>
-            </>
-          ) : (
-            <>
+      <Box sx={{ textAlign: 'left', mt: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+          <Typography variant="h3" sx={{ m: 0 }}>NPC Standen</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {user ? (
+              <>
+                <Avatar
+                  src={user.photoURL || undefined}
+                  alt={(user.displayName || user.email || 'Gebruiker')}
+                  sx={{ width: 32, height: 32 }}
+                />
+                <Button variant="outlined" color="secondary" onClick={handleSignOut}>Sign Out</Button>
+              </>
+            ) : (
               <Button variant="contained" onClick={() => handleSignIn(googleProvider)}>Inloggen met Google</Button>
-            </>
-          )}
-        </Stack>
+            )}
+          </Box>
+        </Box>
 
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
 
@@ -141,8 +145,8 @@ function App() {
                 })}
               </TextField>
             </Box>
-            {/* Second row: score inputs below the match selector */}
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            {/* Second row: score inputs below the match selector with submit button on the same line */}
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField
                 label="Thuis punten"
                 size="small"
@@ -171,9 +175,7 @@ function App() {
                 inputProps={{ min: 0, max: 31, step: 1 }}
                 sx={{ width: 120 }}
               />
-            </Box>
-            <Box>
-              <Button type="submit" variant="contained" disabled={!user || !matchId}>Opslaan</Button>
+              <Button type="submit" variant="contained" disabled={!user || !matchId} sx={{ ml: 'auto' }}>Opslaan</Button>
             </Box>
           </Stack>
         </Paper>
@@ -214,25 +216,25 @@ function App() {
             <Box component="div" sx={{
               display: 'grid',
               // Four columns: number, home, score, away
-              gridTemplateColumns: '72px minmax(0,1fr) 64px minmax(0,1fr)',
-              columnGap: 8,
+              gridTemplateColumns: '44px minmax(0,1fr) 48px minmax(0,1fr)',
+              columnGap: 6,
               rowGap: 0,
               alignItems: 'center'
             }}>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Wedstrijd</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Thuis</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Uitslag</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Uit</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Wedstrijd</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Thuis</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.72rem' }}>Uitslag</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Uit</Typography>
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
                 const number = r.matchNumber || r.fixtureId || r.matchId || r.id;
                 return (
                   <React.Fragment key={r.id}>
-                    <Typography variant="caption">#{number}</Typography>
-                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{homeName}</Typography>
-                    <Typography variant="caption" sx={{ textAlign: 'center' }}>{r.homeScore} - {r.awayScore}</Typography>
-                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{awayName}</Typography>
+                    <Typography variant="caption" sx={{ fontSize: '0.72rem' }}>#{number}</Typography>
+                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.72rem' }}>{homeName}</Typography>
+                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.72rem' }}>{r.homeScore} - {r.awayScore}</Typography>
+                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.72rem' }}>{awayName}</Typography>
                   </React.Fragment>
                 );
               })}
