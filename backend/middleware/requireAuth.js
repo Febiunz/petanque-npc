@@ -1,17 +1,16 @@
-import admin from 'firebase-admin';
+import { getApps, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 
 let appInited = false;
 function ensureAdmin() {
-  if (!appInited) {
-    try {
-      // For verifyIdToken, explicit credentials are not required; we can init with defaults.
-      if (!process.env.FIREBASE_PROJECT_ID) {
-        throw new Error('FIREBASE_PROJECT_ID environment variable must be set');
-      }
-      admin.initializeApp({ projectId: process.env.FIREBASE_PROJECT_ID });
-    } catch {}
-    appInited = true;
+  if (appInited) return;
+  // Determine projectId explicitly to avoid metadata server lookup in local/dev
+  const projectId = process.env.VITE_FIREBASE_PROJECT_ID;
+  if (getApps().length === 0) {
+    if (!projectId) throw new Error('VITE_FIREBASE_PROJECT_ID is not set. Add it to frontend/.env.local');
+    initializeApp({ projectId });
   }
+  appInited = true;
 }
 
 export async function requireAuth(req, res, next) {
@@ -24,7 +23,7 @@ export async function requireAuth(req, res, next) {
   // Token revocation checking is controlled by the CHECK_REVOKED environment variable.
   // Set CHECK_REVOKED='true' to enable revocation checking; otherwise, it is disabled (useful for development).
   const checkRevoked = process.env.CHECK_REVOKED === 'true';
-  const decoded = await admin.auth().verifyIdToken(token, checkRevoked);
+  const decoded = await getAuth().verifyIdToken(token, checkRevoked);
   const name = decoded.name || decoded.displayName || (decoded.email ? decoded.email.split('@')[0] : null);
   req.user = { uid: decoded.uid, email: decoded.email || null, name };
     next();

@@ -101,8 +101,7 @@ function App() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Typography variant="h3" gutterBottom>Petanque NPC</Typography>
-  <Typography variant="body1" gutterBottom>Welcome</Typography>
+  <Typography variant="h3" gutterBottom>NPC Standen</Typography>
         <Stack spacing={2} sx={{ mt: 2, mb: 4 }}>
           {user ? (
             <>
@@ -121,6 +120,7 @@ function App() {
         <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
           <Typography variant="h6" gutterBottom>Uitslag invoeren</Typography>
           <Stack spacing={1} component="form" onSubmit={submitResult}>
+            {/* First row: round + match selectors */}
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
       <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select sx={{ minWidth: 260 }} disabled={!availableRounds.length}>
                 {availableRounds.map((r) => {
@@ -140,6 +140,9 @@ function App() {
                   return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
                 })}
               </TextField>
+            </Box>
+            {/* Second row: score inputs below the match selector */}
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField
                 label="Thuis punten"
                 size="small"
@@ -180,16 +183,18 @@ function App() {
           {standings.length === 0 ? (
             <Typography variant="body2" color="text.secondary">Nog geen stand beschikbaar.</Typography>
           ) : (
-            <Box component="div" sx={{ display: 'grid', gridTemplateColumns: '1fr repeat(5, auto)', gap: 1, alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Team</Typography>
+            <Box component="div" sx={{ display: 'grid', gridTemplateColumns: '36px 1fr repeat(5, auto)', gap: 1, alignItems: 'center' }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Nr</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'left' }}>Team</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>G</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>W</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>V</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>Pnt</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>Saldo</Typography>
-              {standings.map(row => (
+              {standings.map((row, idx) => (
                 <React.Fragment key={row.teamId}>
-                  <Typography variant="body2">{row.name}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{idx + 1}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'left' }}>{row.name}</Typography>
                   <Typography variant="body2">{row.played}</Typography>
                   <Typography variant="body2">{row.won}</Typography>
                   <Typography variant="body2">{row.lost}</Typography>
@@ -206,27 +211,28 @@ function App() {
           {results.length === 0 ? (
             <Typography variant="body2" color="text.secondary">Nog geen uitslagen ingevoerd.</Typography>
           ) : (
-            <Box component="div" sx={{ display: 'grid', gridTemplateColumns: '100px 1fr 90px 1fr 1.2fr 1.4fr', columnGap: 12, rowGap: 6, alignItems: 'center' }}>
+            <Box component="div" sx={{
+              display: 'grid',
+              // Four columns: number, home, score, away
+              gridTemplateColumns: '72px minmax(0,1fr) 64px minmax(0,1fr)',
+              columnGap: 8,
+              rowGap: 0,
+              alignItems: 'center'
+            }}>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>Wedstrijd</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>Thuis</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Uitslag</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600 }}>Uit</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Ingevoerd door</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Invoerdatum</Typography>
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
                 const number = r.matchNumber || r.fixtureId || r.matchId || r.id;
-                const submitter = r.submittedBy || r.submittedByUid || '';
-                const when = (r.createdAt || r.date) ? new Date(r.createdAt || r.date).toLocaleString('nl-NL') : '';
                 return (
                   <React.Fragment key={r.id}>
-                    <Typography variant="body2">#{number}</Typography>
-                    <Typography variant="body2">{homeName}</Typography>
-                    <Typography variant="body2" sx={{ textAlign: 'center' }}>{r.homeScore} - {r.awayScore}</Typography>
-                    <Typography variant="body2">{awayName}</Typography>
-                    <Typography variant="body2">{submitter}</Typography>
-                    <Typography variant="body2">{when}</Typography>
+                    <Typography variant="caption">#{number}</Typography>
+                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{homeName}</Typography>
+                    <Typography variant="caption" sx={{ textAlign: 'center' }}>{r.homeScore} - {r.awayScore}</Typography>
+                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>{awayName}</Typography>
                   </React.Fragment>
                 );
               })}

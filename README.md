@@ -1,4 +1,4 @@
-# Petanque NPC
+# NPC Standen
 
 A simple results and standings website for the Dutch Petanque Topdivisie (2025–2026).
 
@@ -72,7 +72,7 @@ Run each app separately (optional):
 
 - Backend
   - `PORT` (optional): API port, default `5000`.
-  - `FIREBASE_PROJECT_ID` (optional): Firebase project id for token verification; defaults to `npc-standen`.
+  - `FIREBASE_PROJECT_ID` (optional): Firebase project id for token verification; defaults to `npc-standen-new`.
 - Frontend
   - `VITE_API_BASE` (optional): API base URL. In dev, the Vite proxy handles `/api`; leave this unset.
 

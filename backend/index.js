@@ -1,13 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { storageHealth } from './storage/fileStore.js';
 import teamsRouter from './routes/teams.js';
 import matchesRouter from './routes/matches.js';
 import standingsRouter from './routes/standings.js';
 import scheduleRouter from './routes/schedule.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+// Load backend .env first (optional)
 dotenv.config();
+// Always also load shared frontend .env.local so backend can use VITE_* and CHECK_REVOKED
+dotenv.config({ path: resolve(__dirname, '../frontend/.env.local') });
 
 const app = express();
 // Disable etag to prevent 304 on tiny JSON responses during dev
