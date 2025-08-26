@@ -5,9 +5,9 @@ let appInited = false;
 function ensureAdmin() {
   if (appInited) return;
   // Determine projectId explicitly to avoid metadata server lookup in local/dev
-  const projectId = process.env.VITE_FIREBASE_PROJECT_ID;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
   if (getApps().length === 0) {
-    if (!projectId) throw new Error('VITE_FIREBASE_PROJECT_ID is not set. Add it to frontend/.env.local');
+    if (!projectId) throw new Error('FIREBASE_PROJECT_ID is not set. Add it to backend/.env');
     initializeApp({ projectId });
   }
   appInited = true;
