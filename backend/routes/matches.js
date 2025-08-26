@@ -13,8 +13,11 @@ router.get('/', async (req, res) => {
 router.post('/', requireAuth, async (req, res) => {
   // Debug: trace incoming body for troubleshooting
   // Do not log tokens; headers are ignored.
-  if (process.env.NODE_ENV !== 'production') {
-    try { console.log('POST /api/matches body:', JSON.stringify(req.body)); } catch {}
+    // Log only non-sensitive fields for debugging
+    const { matchId, fixtureId, homeScore, awayScore, date } = req.body || {};
+    try {
+      console.log('POST /api/matches body:', JSON.stringify({ matchId, fixtureId, homeScore, awayScore, date }));
+    } catch {}
   }
   const { matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date } = req.body || {};
   const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
