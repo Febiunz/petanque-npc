@@ -4,7 +4,7 @@ const HEALTH_URL = process.env.API_HEALTH_URL || 'http://localhost:5000/api/heal
 
 async function isBackendUp() {
   try {
-    const res = await fetch(HEALTH_URL, { cache: 'no-store' });
+    const res = await fetch(HEALTH_URL);
     if (!res.ok) return false;
     const json = await res.json().catch(() => null);
     return Boolean(json && json.ok === true);
