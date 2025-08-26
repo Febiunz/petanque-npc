@@ -11,9 +11,16 @@ const matchPostLimiter = rateLimit({
  message: 'Too many submissions, please try again later.'
 });
 
+// Rate limit: max 100 GETs per minute per IP to avoid abuse of listing endpoint
+const matchGetLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100,
+  message: 'Too many requests, please try again later.'
+});
+
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', matchGetLimiter, async (req, res) => {
   const matches = await listMatches();
   res.json(matches);
 });
