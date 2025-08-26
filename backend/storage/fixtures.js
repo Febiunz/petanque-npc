@@ -87,7 +87,7 @@ function cleanHtmlToLines(html) {
   // Strip remaining tags
   s = s.replace(/<[^>]+>/g, ' ');
   // Decode HTML entities minimally
-  s = s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+  s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   // Collapse spaces
   s = s.replace(/\s+/g, ' ').replace(/\|\s*\|/g, '|');
   // Split to lines; also keep separators between rows
