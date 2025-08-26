@@ -2,15 +2,30 @@ import express from 'express';
 import { listMatches, createMatch } from '../storage/fileStore.js';
 import { getScheduledMatch, markScheduledMatchCompleted } from '../storage/schedule.js';
 import { requireAuth } from '../middleware/requireAuth.js';
+import rateLimit from 'express-rate-limit';
+
+// Rate limit: max 5 POSTs per minute per IP to avoid abuse
+const matchPostLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5,
+ message: 'Too many submissions, please try again later.'
+});
+
+// Rate limit: max 100 GETs per minute per IP to avoid abuse of listing endpoint
+const matchGetLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100,
+  message: 'Too many requests, please try again later.'
+});
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', matchGetLimiter, async (req, res) => {
   const matches = await listMatches();
   res.json(matches);
 });
 
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
   // Debug: trace incoming body for troubleshooting
   // Do not log tokens; headers are ignored.
   // Log only non-sensitive fields for debugging
