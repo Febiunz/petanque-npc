@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   res.json(matches);
 });
 
-router.post('/', matchPostLimiter, requireAuth, async (req, res) => {
+router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
   // Debug: trace incoming body for troubleshooting
   // Do not log tokens; headers are ignored.
   // Log only non-sensitive fields for debugging
