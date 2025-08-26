@@ -8,7 +8,7 @@ import rateLimit from 'express-rate-limit';
 const matchPostLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 5,
- message: { error: 'Too many submissions, please try again later.' }
+ message: 'Too many submissions, please try again later.'
 });
 
 const router = express.Router();
