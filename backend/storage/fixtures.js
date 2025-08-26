@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listTeams } from './fileStore.js';
+import sanitizeHtml from 'sanitize-html';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
@@ -77,28 +78,23 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Remove scripts/styles (apply repeatedly to cover nested or tricky cases)
-  let s = html;
-  let previous;
-  do {
-    previous = s;
-    s = s.replace(/<script[\s\S]*?>[\s\S]*?<\/script\s*>/gi, '')
-         .replace(/<style[\s\S]*?>[\s\S]*?<\/style\s*>/gi, '');
-  } while (s !== previous);
-  // Remove any orphan <script or <style tags that might still remain
-  s = s.replace(/<script[^>]*>/gi, '')
-       .replace(/<\/script[^>]*>/gi, '')
-       .replace(/<style[^>]*>/gi, '')
-       .replace(/<\/style[^>]*>/gi, '');
+  // Remove all script and style tags using sanitize-html
+  let s = sanitizeHtml(html, {
+    allowedTags: false, // false keeps all tags except for those removed by allowedTags or disallowedTags
+    allowedAttributes: false, // prevent extra attributes
+    disallowedTagsMode: 'discard',
+    allowedTags: sanitizeHtml.defaults.allowedTags.filter(
+      tag => tag !== 'script' && tag !== 'style'
+    ),
+  });
   // Normalize table boundaries to new lines
-  s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   // Turn tags into separators
   s = s.replace(/<br\s*\/?>/gi, '\n');
   s = s.replace(/<\/(td|th)>/gi, '|');
   // Strip remaining tags
   s = s.replace(/<[^>]+>/g, ' ');
   // Decode HTML entities minimally
-  s = s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+  s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   // Collapse spaces
   s = s.replace(/\s+/g, ' ').replace(/\|\s*\|/g, '|');
   // Split to lines; also keep separators between rows
