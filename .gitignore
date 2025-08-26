@@ -9,7 +9,7 @@ yarn-error.log*
 # Vite/React
 frontend/dist/
 frontend/.env.local
-backend/.env.local
+backend/.env
 
 # Logs
 logs/
