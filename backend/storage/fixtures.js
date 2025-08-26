@@ -100,6 +100,7 @@ async function tryFetchOfficialHtml() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.text();
   } catch (e) {
+    console.error("Error fetching official fixtures HTML:", e);
     return null;
   }
 }
