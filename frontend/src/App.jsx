@@ -101,7 +101,7 @@ function App() {
     <Container maxWidth="sm">
       <Box sx={{ textAlign: 'center', mt: 4 }}>
         <Typography variant="h3" gutterBottom>Petanque NPC</Typography>
-  <Typography variant="body1" gutterBottom>{t('Welcome')}</Typography>
+  <Typography variant="body1" gutterBottom>Welcome</Typography>
         <Stack spacing={2} sx={{ mt: 2, mb: 4 }}>
           {user ? (
             <>
