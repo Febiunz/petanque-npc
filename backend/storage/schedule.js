@@ -71,6 +71,15 @@ function cleanHtmlToLines(html) {
     prev = s;
     s = s.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '');
   } while (s !== prev);
+  // Also remove any leftover tag fragments repeatedly to prevent incomplete sanitization
+  do {
+    prev = s;
+    s = s
+      .replace(/<script\b/gi, '')
+      .replace(/<\/script>/gi, '')
+      .replace(/<style\b/gi, '')
+      .replace(/<\/style>/gi, '');
+  } while (s !== prev);
   s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
   s = s.replace(/<\/(td|th)>/gi, '|');
