@@ -74,7 +74,8 @@ function App() {
       setCompletedSet(new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean)));
   setResults(submitted);
     } catch (err) {
-      window.alert(`Kon uitslag niet opslaan: ${err?.message || err}`);
+      setErrorMsg(`Kon uitslag niet opslaan: ${err?.message || err}`);
+      setErrorOpen(true);
     }
   };
 
