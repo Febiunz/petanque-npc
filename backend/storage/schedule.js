@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listTeams } from './fileStore.js';
-
+import sanitizeHtml from 'sanitize-html';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
 const scheduleFile = `${dataDir}/schedule.json`;
@@ -64,22 +64,16 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Robustly remove all script and style tags repeatedly until no changes
-  let s = html;
-  let prev;
-  do {
-    prev = s;
-    s = s.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, '');
-  } while (s !== prev);
-  // Also remove any leftover tag fragments (e.g. incomplete or broken tags) until no more remain
-  do {
-    prev = s;
-    s = s
-      .replace(/<script\b/gi, '')
-      .replace(/<\/script\s*>/gi, '')
-      .replace(/<style\b/gi, '')
-      .replace(/<\/style\s*>/gi, '');
-  } while (s !== prev);
+  // Use sanitize-html to safely remove all script and style tags and their content
+  let s = sanitizeHtml(html, {
+    allowedTags: false, // Remove all tags except those we process below
+    allowedAttributes: false,
+    exclusiveFilter: function(frame) {
+      // Remove script and style nodes and their content
+      return frame.tag === 'script' || frame.tag === 'style';
+    }
+  });
+  // Now continue with line splitting and tag-break logic
   s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
   s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
   s = s.replace(/<\/(td|th)>/gi, '|');
