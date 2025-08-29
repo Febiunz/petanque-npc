@@ -256,11 +256,9 @@ function App() {
         {user && (
                       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Tooltip title="Verwijder" placement="left" arrow>
-                          <span>
-          <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r)} sx={{ p: 0.25 }}>
+                          <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r)} sx={{ p: 0.25 }}>
                               <CloseIcon sx={{ fontSize: 14 }} />
                             </IconButton>
-                          </span>
                         </Tooltip>
                       </Box>
                     )}
