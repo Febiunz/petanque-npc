@@ -35,10 +35,17 @@ function App() {
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: 0, awayScore: 0 });
   const [results, setResults] = React.useState([]);
-  const handleDeleteResult = async (id) => {
-    if (!user || !id) return;
+  const handleDeleteResult = async (match) => {
+    if (!user || !match?.id) return;
+    // Build a small confirmation message
+    const homeName = teams.find(t => t.id === match.homeTeamId)?.name || match.homeTeam?.name || match.homeTeamId || 'Thuis';
+    const awayName = teams.find(t => t.id === match.awayTeamId)?.name || match.awayTeam?.name || match.awayTeamId || 'Uit';
+    const number = match.matchNumber || match.fixtureId || match.matchId || match.id;
+    const msg = `Weet je zeker dat je uitslag #${number} (${homeName} ${match.homeScore}-${match.awayScore} ${awayName}) wilt verwijderen?`;
+    const ok = window.confirm(msg);
+    if (!ok) return;
     try {
-      await api.deleteMatch(id);
+      await api.deleteMatch(match.id);
       // Refresh results and standings
       const submitted = await api.getMatches();
       setResults(submitted);
@@ -246,11 +253,11 @@ function App() {
                     <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{homeName}</Typography>
                     <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.68rem', whiteSpace: 'nowrap' }}>{r.homeScore} - {r.awayScore}</Typography>
                     <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{awayName}</Typography>
-                    {user && (
+        {user && (
                       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Tooltip title="Verwijder" placement="left" arrow>
                           <span>
-                            <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r.id)} sx={{ p: 0.25 }}>
+          <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r)} sx={{ p: 0.25 }}>
                               <CloseIcon sx={{ fontSize: 14 }} />
                             </IconButton>
                           </span>
