@@ -1,0 +1,58 @@
+[
+  {
+    "id": "amicale-boule-d-argent-1",
+    "name": "Amicale Boule d'Argent 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "boul-animo-1",
+    "name": "Boul'Animo 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "cdp-les-cailloux-1",
+    "name": "CdP Les Cailloux 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "jbc-t-dupke-1",
+    "name": "JBC 't Dupke 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "jeu-de-bommel-1",
+    "name": "Jeu de Bommel 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "petangeske-1",
+    "name": "Petangeske 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "puk-haarlem-1",
+    "name": "PUK-Haarlem 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  },
+  {
+    "id": "t-zwijntje-1",
+    "name": "'t Zwijntje 1",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00.000Z"
+  }
+]

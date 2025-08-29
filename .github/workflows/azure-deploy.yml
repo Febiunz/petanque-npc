@@ -1,0 +1,81 @@
+name: Deploy to Azure (Backend + Frontend)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend (App Service)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Optional: quick lint/test hooks could go here
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./backend
+
+      - name: Post-deploy note
+        run: |
+          echo "Ensure these App Service settings are configured in the Azure Portal (Configuration > Application settings):"
+          echo " - VITE_FIREBASE_PROJECT_ID (required)"
+          echo " - CHECK_REVOKED (optional, default false)"
+          echo "App will listen on PORT provided by App Service."
+
+  deploy-frontend:
+    name: Deploy Frontend (Azure Static Web Apps)
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Build and Deploy Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        env:
+          # Frontend build-time environment variables (from repo secrets)
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          # Point frontend to your backend (App Service) base URL
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "frontend"
+          output_location: "dist"
+
+      - name: Post-deploy note
+        run: |
+          echo "If CORS issues occur, set VITE_API_BASE to your backend URL (e.g., https://<app-name>.azurewebsites.net)."
+          echo "Alternatively, configure SWA routes.json to proxy /api to the backend."
