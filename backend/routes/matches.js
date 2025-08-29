@@ -1,6 +1,6 @@
 import express from 'express';
-import { listMatches, createMatch } from '../storage/fileStore.js';
-import { getScheduledMatch, markScheduledMatchCompleted } from '../storage/schedule.js';
+import { listMatches, createMatch, deleteMatch, computeStandings } from '../storage/fileStore.js';
+import { getScheduledMatch } from '../storage/schedule.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import rateLimit from 'express-rate-limit';
 
@@ -52,13 +52,20 @@ router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
     awayTeamId: scheduled.awayTeamId,
     homeScore: Number(homeScore ?? 0),
     awayScore: Number(awayScore ?? 0),
-    status: 'completed',
     submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
     submittedByUid: req.user?.uid || null,
   };
   const match = await createMatch(payload);
-  await markScheduledMatchCompleted(matchId);
   res.status(201).json(match);
 });
 
 export default router;
+
+// Delete a single submitted match by id
+router.delete('/:id', requireAuth, matchPostLimiter, async (req, res) => {
+  const { id } = req.params;
+  const ok = await deleteMatch(id);
+  if (!ok) return res.status(404).json({ error: 'Match not found' });
+  const standings = await computeStandings();
+  res.json({ ok: true, standings });
+});

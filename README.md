@@ -85,11 +85,11 @@ Run each app separately (optional):
 ## Data & storage
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
-- Schedule is parsed from the official page when possible, with fallbacks (fixtures JSON or round-robin generation). Stored at `backend/data/schedule.json`.
+- Schedule is parsed from the official page when possible, with a round-robin fallback. Stored at `backend/data/schedule.json`.
 - Results are persisted in `backend/data/matches.json`. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
-  - `status="completed"`, `date` (ISO date of match), `createdAt` (submission timestamp)
+  - `date` (ISO date of match), `createdAt` (submission timestamp)
   - `submittedBy` (display name or email), `submittedByUid` (Firebase uid)
 
 ## API
@@ -102,7 +102,7 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `GET /api/matches` — Submitted matches (most recent first)
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, homeScore, awayScore }`
-  - Validates against schedule, rejects duplicates, marks schedule item as `completed`.
+  - Validates against schedule, rejects duplicates; completion is inferred from presence in `matches.json`.
 - `GET /api/standings` — Current standings, sorted as described above
 
 ## Frontend behavior

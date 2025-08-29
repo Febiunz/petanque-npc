@@ -142,7 +142,6 @@ async function parseOfficialSchedule(html) {
       date: dateIso || null,
       homeTeamId: homeId,
       awayTeamId: awayId,
-      status: 'scheduled',
     });
   }
 
@@ -164,15 +163,6 @@ export async function ensureSchedule() {
       const schedule = await parseOfficialSchedule(html);
       if (schedule) { await fs.writeFile(scheduleFile, JSON.stringify(schedule, null, 2), 'utf-8'); return; }
     }
-    // Fallback: try old fixtures.json if present
-    try {
-      const fixturesBuf = await fs.readFile(`${dataDir}/fixtures.json`, 'utf-8');
-      const fixtures = JSON.parse(fixturesBuf || '[]');
-      if (Array.isArray(fixtures) && fixtures.length) {
-        await fs.writeFile(scheduleFile, JSON.stringify(fixtures, null, 2), 'utf-8');
-        return;
-      }
-    } catch {}
     // Last resort: algorithmic schedule
     const teamIds = (await listTeams()).map(t => t.id);
     const rounds = roundRobinDouble(teamIds);
@@ -180,7 +170,7 @@ export async function ensureSchedule() {
     for (let r = 0; r < rounds.length; r++) {
       const round = r + 1;
       for (const p of rounds[r]) {
-        out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId, status: 'scheduled' });
+        out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId });
       }
     }
     await fs.writeFile(scheduleFile, JSON.stringify(out, null, 2), 'utf-8');
@@ -190,7 +180,17 @@ export async function ensureSchedule() {
 export async function listSchedule() {
   await ensureSchedule();
   const buf = await fs.readFile(scheduleFile, 'utf-8');
-  return JSON.parse(buf || '[]');
+  const raw = JSON.parse(buf || '[]');
+  // Sanitize: drop any legacy 'status' fields and persist cleaned file
+  let changed = false;
+  const cleaned = Array.isArray(raw) ? raw.map((m) => {
+    if (m && Object.prototype.hasOwnProperty.call(m, 'status')) { const { status, ...rest } = m; changed = true; return rest; }
+    return m;
+  }) : [];
+  if (changed) {
+    await fs.writeFile(scheduleFile, JSON.stringify(cleaned, null, 2), 'utf-8');
+  }
+  return cleaned;
 }
 
 export async function getScheduledMatch(matchId) {
@@ -198,11 +198,3 @@ export async function getScheduledMatch(matchId) {
   return schedule.find(m => m.id === matchId) || null;
 }
 
-export async function markScheduledMatchCompleted(matchId) {
-  const schedule = await listSchedule();
-  const idx = schedule.findIndex(m => m.id === matchId);
-  if (idx >= 0) {
-    schedule[idx].status = 'completed';
-    await fs.writeFile(scheduleFile, JSON.stringify(schedule, null, 2), 'utf-8');
-  }
-}

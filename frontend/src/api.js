@@ -26,5 +26,17 @@ export const api = {
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, homeScore, awayScore }) });
   },
+  deleteMatch: async (id) => {
+    const token = await auth.currentUser?.getIdToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${apiBase}/api/matches/${id}`, { method: 'DELETE', headers });
+    if (!res.ok) {
+      let msg = `HTTP ${res.status}`;
+      try { const j = await res.json(); msg += `: ${j.error || JSON.stringify(j)}`; } catch {}
+      throw new Error(msg);
+    }
+    return res.json();
+  },
   getStandings: () => http('/api/standings'),
 };

@@ -54,9 +54,8 @@ app.use('/api', (req, res, next) => {
 app.use('/api/teams', teamsRouter);
 app.use('/api/matches', matchesRouter);
 app.use('/api/standings', standingsRouter);
-// New: match schedule endpoint; keep old alias for backward compatibility
+// Match schedule endpoint
 app.use('/api/matches/schedule', scheduleRouter);
-app.use('/api/fixtures', scheduleRouter);
 
 async function start() {
   app.listen(PORT, () => {

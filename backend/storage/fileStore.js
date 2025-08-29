@@ -108,7 +108,6 @@ export async function createMatch(input) {
     awayTeamId: input.awayTeamId,
     homeScore: Number(input.homeScore ?? 0),
     awayScore: Number(input.awayScore ?? 0),
-    status: input.status || 'scheduled',
     createdAt: new Date().toISOString(),
     submittedBy: input.submittedBy || null,
     submittedByUid: input.submittedByUid || null,
@@ -124,7 +123,8 @@ export async function createMatch(input) {
 export async function computeStandings() {
   const teams = await listTeams();
   const matches = await readJson(matchesFile);
-  const completed = matches.filter((m) => m.status === 'completed');
+  // All stored matches are considered completed
+  const completed = matches;
   const byId = new Map(teams.map((t) => [t.id, t]));
   const table = new Map();
 
@@ -185,4 +185,17 @@ export async function storageHealth() {
   } catch (e) {
     return { ok: false, error: e.message, type: 'file' };
   }
+}
+
+// Delete a single match result by id; returns true if deleted, false if not found
+export async function deleteMatch(id) {
+  if (!id) return false;
+  return withLock(matchesFile, async () => {
+    const matches = await readJson(matchesFile);
+    const idx = matches.findIndex((m) => m.id === id);
+    if (idx === -1) return false;
+    matches.splice(idx, 1);
+    await writeJson(matchesFile, matches);
+    return true;
+  });
 }
