@@ -66,6 +66,5 @@ router.delete('/:id', requireAuth, matchPostLimiter, async (req, res) => {
   const { id } = req.params;
   const ok = await deleteMatch(id);
   if (!ok) return res.status(404).json({ error: 'Match not found' });
-  const standings = await computeStandings();
-  res.json({ ok: true, standings });
+  res.json({ ok: true });
 });
