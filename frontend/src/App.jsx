@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar } from '@mui/material';
+import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar, IconButton, Tooltip } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { api } from './api';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
@@ -34,25 +35,40 @@ function App() {
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: 0, awayScore: 0 });
   const [results, setResults] = React.useState([]);
+  const handleDeleteResult = async (match) => {
+    if (!user || !match?.id) return;
+    // Build a small confirmation message
+    const homeName = teams.find(t => t.id === match.homeTeamId)?.name || match.homeTeam?.name || match.homeTeamId || 'Thuis';
+    const awayName = teams.find(t => t.id === match.awayTeamId)?.name || match.awayTeam?.name || match.awayTeamId || 'Uit';
+    const number = match.matchNumber || match.fixtureId || match.matchId || match.id;
+    const msg = `Weet je zeker dat je uitslag #${number} (${homeName} ${match.homeScore}-${match.awayScore} ${awayName}) wilt verwijderen?`;
+    const ok = window.confirm(msg);
+    if (!ok) return;
+    try {
+      await api.deleteMatch(match.id);
+      // Refresh results and standings
+      const submitted = await api.getMatches();
+      setResults(submitted);
+      setCompletedSet(new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean)));
+      await loadStandings();
+      // If current round becomes available again, recompute derived schedule state
+      setScheduleAll(await api.getSchedule());
+    } catch (e) {
+      console.error('Delete failed:', e);
+    }
+  };
   // derive round matches from cached full schedule while hiding completed ones
   React.useEffect(() => {
     if (!round) { setSchedule([]); return; }
     const rows = scheduleAll
       .filter(m => String(m.round) === String(round))
-      .filter(m => {
-        // hide if explicitly completed in schedule or found in submitted matches
-        if (m.status && String(m.status).toLowerCase() === 'completed') return false;
-        return !completedSet.has(m.id);
-      });
+  .filter(m => !completedSet.has(m.id));
     setSchedule(rows);
   }, [round, scheduleAll, completedSet]);
 
   // compute available rounds that still have open matches; if current round closes, clear selection
   React.useEffect(() => {
-    const openMatches = scheduleAll.filter(m => {
-      if (m.status && String(m.status).toLowerCase() === 'completed') return false;
-      return !completedSet.has(m.id);
-    });
+  const openMatches = scheduleAll.filter(m => !completedSet.has(m.id));
     const rounds = Array.from(new Set(openMatches.map(m => String(m.round)))).sort((a, b) => Number(a) - Number(b));
     setAvailableRounds(rounds);
     if (round && !rounds.includes(String(round))) {
@@ -215,26 +231,37 @@ function App() {
           ) : (
             <Box component="div" sx={{
               display: 'grid',
-              // Four columns: number, home, score, away
-              gridTemplateColumns: '44px minmax(0,1fr) 48px minmax(0,1fr)',
-              columnGap: 6,
+              // When logged in: number, home, score, away, delete (keep last very small)
+              // When logged out: number, home, score, away
+              gridTemplateColumns: user ? '40px minmax(0,1fr) 44px minmax(0,1fr) 24px' : '40px minmax(0,1fr) 44px minmax(0,1fr)',
+              columnGap: 4,
               rowGap: 0,
               alignItems: 'center'
             }}>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Wedstrijd</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Thuis</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.72rem' }}>Uitslag</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.72rem' }}>Uit</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Wedstrijd</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Uit</Typography>
+              {user && <span />}
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
                 const number = r.matchNumber || r.fixtureId || r.matchId || r.id;
                 return (
                   <React.Fragment key={r.id}>
-                    <Typography variant="caption" sx={{ fontSize: '0.72rem' }}>#{number}</Typography>
-                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.72rem' }}>{homeName}</Typography>
-                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.72rem' }}>{r.homeScore} - {r.awayScore}</Typography>
-                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'normal', wordBreak: 'break-word', fontSize: '0.72rem' }}>{awayName}</Typography>
+                    <Typography variant="caption" sx={{ fontSize: '0.68rem', whiteSpace: 'nowrap' }}>#{number}</Typography>
+                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{homeName}</Typography>
+                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.68rem', whiteSpace: 'nowrap' }}>{r.homeScore} - {r.awayScore}</Typography>
+                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{awayName}</Typography>
+        {user && (
+                      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Tooltip title="Verwijder" placement="left" arrow>
+                          <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r)} sx={{ p: 0.25 }}>
+                              <CloseIcon sx={{ fontSize: 14 }} />
+                            </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
                   </React.Fragment>
                 );
               })}

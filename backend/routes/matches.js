@@ -1,20 +1,28 @@
 import express from 'express';
-import { listMatches, createMatch } from '../storage/fileStore.js';
-import { getScheduledMatch, markScheduledMatchCompleted } from '../storage/schedule.js';
+import { listMatches, createMatch, deleteMatch, computeStandings } from '../storage/fileStore.js';
+import { getScheduledMatch } from '../storage/schedule.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import rateLimit from 'express-rate-limit';
 
-// Rate limit: max 5 POSTs per minute per IP to avoid abuse
+// Use per-user limiting when authenticated, else fall back to IP
+const perUserKey = (req) => req.user?.uid || req.ip;
+
+// Rate limit: max 5 POSTs per minute per user/IP to avoid abuse
 const matchPostLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 5,
- message: 'Too many submissions, please try again later.'
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: perUserKey,
+  message: 'Too many submissions, please try again later.'
 });
 
 // Rate limit: max 100 GETs per minute per IP to avoid abuse of listing endpoint
 const matchGetLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: 'Too many requests, please try again later.'
 });
 
@@ -52,13 +60,29 @@ router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
     awayTeamId: scheduled.awayTeamId,
     homeScore: Number(homeScore ?? 0),
     awayScore: Number(awayScore ?? 0),
-    status: 'completed',
     submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
     submittedByUid: req.user?.uid || null,
   };
   const match = await createMatch(payload);
-  await markScheduledMatchCompleted(matchId);
   res.status(201).json(match);
 });
 
 export default router;
+
+// Delete a single submitted match by id
+// Stricter limit for deletions: max 3 per minute per user/IP
+const matchDeleteLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: perUserKey,
+  message: 'Too many deletions, please try again later.'
+});
+
+router.delete('/:id', requireAuth, matchDeleteLimiter, async (req, res) => {
+  const { id } = req.params;
+  const ok = await deleteMatch(id);
+  if (!ok) return res.status(404).json({ error: 'Match not found' });
+  res.json({ ok: true });
+});
