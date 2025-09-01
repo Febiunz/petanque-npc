@@ -35,8 +35,10 @@ function App() {
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
   const disallowedScores = new Set([1, 3, 28, 30]);
-  const homeInvalid = disallowedScores.has(Number(scores.homeScore));
-  const awayInvalid = disallowedScores.has(Number(scores.awayScore));
+  const homeScoreNum = parseInt(scores.homeScore, 10);
+  const awayScoreNum = parseInt(scores.awayScore, 10);
+  const homeInvalid = scores.homeScore === '' || isNaN(homeScoreNum) || disallowedScores.has(homeScoreNum);
+  const awayInvalid = scores.awayScore === '' || isNaN(awayScoreNum) || disallowedScores.has(awayScoreNum);
   const invalidScore = homeInvalid || awayInvalid;
   const [results, setResults] = React.useState([]);
   const handleDeleteResult = async (match) => {
