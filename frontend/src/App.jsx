@@ -197,12 +197,12 @@ function App() {
                 onChange={(e) => {
                   const text = e.target.value;
                   if (text === '') {
-                    setScores({ homeScore: '', awayScore: '' });
+                    setScores(prev => ({ ...prev, awayScore: '' }));
                     return;
                   }
                   const raw = parseInt(text, 10);
                   if (!Number.isFinite(raw)) {
-                    setScores({ homeScore: '', awayScore: '' });
+                    setScores(prev => ({ ...prev, awayScore: '' }));
                     return;
                   }
                   const away = Math.max(0, Math.min(31, raw));
