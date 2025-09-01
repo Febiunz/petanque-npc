@@ -28,6 +28,15 @@ const matchGetLimiter = rateLimit({
 
 const router = express.Router();
 
+// Basic IP-based pre-auth rate limiter to protect requireAuth from abuse
+const authPreLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20, // limit each IP to 20 requests per minute (adjust as necessary)
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests, please try again later.'
+});
+
 router.get('/', matchGetLimiter, async (req, res) => {
   const matches = await listMatches();
   res.json(matches);
@@ -75,6 +84,7 @@ const perMatchGlobalLimiter = rateLimit({
 
 router.post(
   '/',
+  authPreLimiter,
   requireAuth,
   perUserDailyPostLimiter,
   perUserPerMatchLimiter,
