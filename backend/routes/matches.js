@@ -75,6 +75,7 @@ const perMatchGlobalLimiter = rateLimit({
 
 router.post(
   '/',
+  express.json(), // ensure req.body is available for rate limit keyGenerators
   requireAuth,
   perUserDailyPostLimiter,
   perUserPerMatchLimiter,
