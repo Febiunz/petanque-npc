@@ -45,6 +45,12 @@ router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
   } catch {}
   const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
   if (!matchId) return res.status(400).json({ error: 'matchId is required' });
+  // Validate scores: disallow 1 or 3 for either team
+  const h = Number(homeScore);
+  const a = Number(awayScore);
+  if ([h, a].some((v) => v === 1 || v === 3)) {
+    return res.status(400).json({ error: 'Score 1 of 3 is niet toegestaan' });
+  }
   const scheduled = await getScheduledMatch(matchId);
   if (!scheduled) return res.status(400).json({ error: 'Unknown match' });
   // prevent duplicate submission (check both fields for older records)
