@@ -34,7 +34,7 @@ function App() {
   const [availableRounds, setAvailableRounds] = React.useState([]);
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
-  const invalidScore = scores.homeScore === 1 || scores.homeScore === 3 || scores.awayScore === 1 || scores.awayScore === 3;
+  const invalidScore = scores.homeScore === '1' || scores.homeScore === '3' || scores.awayScore === '1' || scores.awayScore === '3';
   const [results, setResults] = React.useState([]);
   const handleDeleteResult = async (match) => {
     if (!user || !match?.id) return;
