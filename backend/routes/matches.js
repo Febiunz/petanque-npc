@@ -105,11 +105,11 @@ router.post(
     } catch {}
     const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
     if (!matchId) return res.status(400).json({ error: 'matchId is required' });
-    // Validate scores: disallow 1 or 3 for either team
+    // Validate scores: disallow 1, 3, 28, or 30 for either team
     const h = Number(homeScore);
     const a = Number(awayScore);
-    if ([h, a].some((v) => v === 1 || v === 3)) {
-      return res.status(400).json({ error: 'Score 1 of 3 is niet toegestaan' });
+    if ([h, a].some((v) => v === 1 || v === 3 || v === 28 || v === 30)) {
+      return res.status(400).json({ error: 'Ongeldig: 1, 3, 28, 30' });
     }
     const scheduled = await getScheduledMatch(matchId);
     if (!scheduled) return res.status(400).json({ error: 'Unknown match' });
