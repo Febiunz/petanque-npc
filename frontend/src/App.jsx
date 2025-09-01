@@ -33,7 +33,8 @@ function App() {
   const [completedSet, setCompletedSet] = React.useState(new Set());
   const [availableRounds, setAvailableRounds] = React.useState([]);
   const [matchId, setMatchId] = React.useState('');
-  const [scores, setScores] = React.useState({ homeScore: 0, awayScore: 0 });
+  const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
+  const invalidScore = scores.homeScore === '1' || scores.homeScore === '3' || scores.awayScore === '1' || scores.awayScore === '3';
   const [results, setResults] = React.useState([]);
   const handleDeleteResult = async (match) => {
     if (!user || !match?.id) return;
@@ -83,7 +84,7 @@ function App() {
     try {
       await api.submitResult({ matchId, homeScore: scores.homeScore, awayScore: scores.awayScore });
       setMatchId('');
-      setScores({ homeScore: 0, awayScore: 0 });
+  setScores({ homeScore: '', awayScore: '' });
       await loadStandings();
       // refresh submitted set so the just-saved match disappears
       const submitted = await api.getMatches();
@@ -138,7 +139,7 @@ function App() {
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
 
         <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
-          <Typography variant="h6" gutterBottom>Uitslag invoeren</Typography>
+          <Typography variant="h6" gutterBottom>Uitslag invoeren Topdivisie</Typography>
           <Stack spacing={1} component="form" onSubmit={submitResult}>
             {/* First row: round + match selectors */}
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -169,12 +170,23 @@ function App() {
                 type="number"
                 value={scores.homeScore}
                 onChange={(e) => {
-                  const raw = parseInt(e.target.value, 10);
-                  const home = Number.isFinite(raw) ? Math.max(0, Math.min(31, raw)) : 0;
+                  const text = e.target.value;
+                  if (text === '') {
+                    setScores({ homeScore: '', awayScore: '' });
+                    return;
+                  }
+                  const raw = parseInt(text, 10);
+                  if (!Number.isFinite(raw)) {
+                    setScores({ homeScore: '', awayScore: '' });
+                    return;
+                  }
+                  const home = Math.max(0, Math.min(31, raw));
                   const away = 31 - home;
                   setScores({ homeScore: home, awayScore: away });
                 }}
                 inputProps={{ min: 0, max: 31, step: 1 }}
+                error={Boolean(invalidScore)}
+                helperText={invalidScore ? 'Score 1 of 3 is niet toegestaan' : ''}
                 sx={{ width: 140 }}
               />
               <TextField
@@ -183,15 +195,26 @@ function App() {
                 type="number"
                 value={scores.awayScore}
                 onChange={(e) => {
-                  const raw = parseInt(e.target.value, 10);
-                  const away = Number.isFinite(raw) ? Math.max(0, Math.min(31, raw)) : 0;
+                  const text = e.target.value;
+                  if (text === '') {
+                    setScores(prev => ({ ...prev, awayScore: '' }));
+                    return;
+                  }
+                  const raw = parseInt(text, 10);
+                  if (!Number.isFinite(raw)) {
+                    setScores(prev => ({ ...prev, awayScore: '' }));
+                    return;
+                  }
+                  const away = Math.max(0, Math.min(31, raw));
                   const home = 31 - away;
                   setScores({ homeScore: home, awayScore: away });
                 }}
                 inputProps={{ min: 0, max: 31, step: 1 }}
+                error={Boolean(invalidScore)}
+                helperText={invalidScore ? 'Score 1 of 3 is niet toegestaan' : ''}
                 sx={{ width: 120 }}
               />
-              <Button type="submit" variant="contained" disabled={!user || !matchId} sx={{ ml: 'auto' }}>Opslaan</Button>
+              <Button type="submit" variant="contained" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
             </Box>
           </Stack>
         </Paper>
