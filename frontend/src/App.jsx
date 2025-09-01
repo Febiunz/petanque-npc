@@ -39,6 +39,9 @@ function App() {
   const awayScoreNum = parseInt(scores.awayScore, 10);
   const homeInvalid = scores.homeScore === '' || isNaN(homeScoreNum) || disallowedScores.has(homeScoreNum);
   const awayInvalid = scores.awayScore === '' || isNaN(awayScoreNum) || disallowedScores.has(awayScoreNum);
+  // Only show error message for disallowed scores when a score has been entered
+  const homeShowError = scores.homeScore !== '' && !isNaN(homeScoreNum) && disallowedScores.has(homeScoreNum);
+  const awayShowError = scores.awayScore !== '' && !isNaN(awayScoreNum) && disallowedScores.has(awayScoreNum);
   const invalidScore = homeInvalid || awayInvalid;
   const [results, setResults] = React.useState([]);
   const handleDeleteResult = async (match) => {
@@ -190,8 +193,8 @@ function App() {
                   setScores({ homeScore: home, awayScore: away });
                 }}
                 inputProps={{ min: 0, max: 31, step: 1 }}
-                error={homeInvalid}
-                helperText={homeInvalid ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
+                error={homeShowError}
+                helperText={homeShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
                 sx={{ width: 140 }}
               />
               <TextField
@@ -202,8 +205,8 @@ function App() {
                 // Disabled: users can only input the home score; away is auto-calculated
                 disabled
                 inputProps={{ min: 0, max: 31, step: 1 }}
-                error={awayInvalid}
-                helperText={awayInvalid ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
+                error={awayShowError}
+                helperText={awayShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
                 sx={{ width: 120 }}
               />
               <Button type="submit" variant="contained" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
