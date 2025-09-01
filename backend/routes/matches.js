@@ -31,7 +31,7 @@ const router = express.Router();
 // Basic IP-based pre-auth rate limiter to protect requireAuth from abuse
 const authPreLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 100, // limit each IP to 20 requests per minute (adjust as necessary)
+  max: 100, // limit each IP to 100 requests per minute (adjust as necessary)
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later.'
