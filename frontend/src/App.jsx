@@ -34,7 +34,12 @@ function App() {
   const [availableRounds, setAvailableRounds] = React.useState([]);
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
-  const invalidScore = scores.homeScore === '1' || scores.homeScore === '3' || scores.awayScore === '1' || scores.awayScore === '3';
+  const disallowedScores = new Set([1, 3, 28, 30]);
+  const homeScoreNum = parseInt(scores.homeScore, 10);
+  const awayScoreNum = parseInt(scores.awayScore, 10);
+  const homeInvalid = scores.homeScore === '' || isNaN(homeScoreNum) || disallowedScores.has(homeScoreNum);
+  const awayInvalid = scores.awayScore === '' || isNaN(awayScoreNum) || disallowedScores.has(awayScoreNum);
+  const invalidScore = homeInvalid || awayInvalid;
   const [results, setResults] = React.useState([]);
   const handleDeleteResult = async (match) => {
     if (!user || !match?.id) return;
@@ -185,8 +190,8 @@ function App() {
                   setScores({ homeScore: home, awayScore: away });
                 }}
                 inputProps={{ min: 0, max: 31, step: 1 }}
-                error={Boolean(invalidScore)}
-                helperText={invalidScore ? 'Score 1 of 3 is niet toegestaan' : ''}
+                error={homeInvalid}
+                helperText={homeInvalid ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
                 sx={{ width: 140 }}
               />
               <TextField
@@ -194,24 +199,11 @@ function App() {
                 size="small"
                 type="number"
                 value={scores.awayScore}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  if (text === '') {
-                    setScores(prev => ({ ...prev, awayScore: '' }));
-                    return;
-                  }
-                  const raw = parseInt(text, 10);
-                  if (!Number.isFinite(raw)) {
-                    setScores(prev => ({ ...prev, awayScore: '' }));
-                    return;
-                  }
-                  const away = Math.max(0, Math.min(31, raw));
-                  const home = 31 - away;
-                  setScores({ homeScore: home, awayScore: away });
-                }}
+                // Disabled: users can only input the home score; away is auto-calculated
+                disabled
                 inputProps={{ min: 0, max: 31, step: 1 }}
-                error={Boolean(invalidScore)}
-                helperText={invalidScore ? 'Score 1 of 3 is niet toegestaan' : ''}
+                error={awayInvalid}
+                helperText={awayInvalid ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
                 sx={{ width: 120 }}
               />
               <Button type="submit" variant="contained" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
