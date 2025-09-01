@@ -10,7 +10,7 @@ const perUserKey = (req) => req.user?.uid || req.ip;
 // Rate limit: max 5 POSTs per minute per user/IP to avoid abuse
 const matchPostLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 5,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: perUserKey,
@@ -31,7 +31,7 @@ const router = express.Router();
 // Basic IP-based pre-auth rate limiter to protect requireAuth from abuse
 const authPreLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 20, // limit each IP to 20 requests per minute (adjust as necessary)
+  max: 100, // limit each IP to 20 requests per minute (adjust as necessary)
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later.'
@@ -45,7 +45,7 @@ router.get('/', matchGetLimiter, async (req, res) => {
 // Per-user per-match limiter: prevent spamming the same match result
 const perUserPerMatchLimiter = rateLimit({
   windowMs: 2 * 60 * 1000, // 2 minutes
-  max: 1,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -58,7 +58,7 @@ const perUserPerMatchLimiter = rateLimit({
 // Per-user daily cap to prevent excessive submissions across all matches
 const perUserDailyPostLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
-  max: 20,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -71,7 +71,7 @@ const perUserDailyPostLimiter = rateLimit({
 // Global per-match limiter: throttle submissions for the same match across all users/IPs
 const perMatchGlobalLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 3,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -140,7 +140,7 @@ export default router;
 // Stricter limit for deletions: max 3 per minute per user/IP
 const matchDeleteLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 3,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: perUserKey,

@@ -9,18 +9,20 @@ This project provides:
 
 ## Features
 
-- Speelronde selector with round date, showing only rounds that still have open matches.
-- Result entry form with auto-balanced scores: home + away = 31 (clamped 0–31).
+- Speelronde selector with round date; only rounds with open matches are shown.
+- Result entry form with scores that always sum to 31 (clamped 0–31) and start blank.
+- Score validation: 1 and 3 are not allowed for either team (client and server enforced).
 - Hides matches already submitted; hides a round entirely when all its matches are completed.
+- Delete a submitted result (auth required) with a small confirm prompt; standings refresh automatically.
 - Standings calculation:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
-- Submitted results table showing match no./id, teams, score, submitter, and timestamp.
+- Compact results list: single-line rows with a minimal delete icon shown only when logged in.
 
 ## Tech stack
 
 - Frontend: React 18, Vite, Material UI
-- Backend: Node.js (ESM), Express, CORS
+- Backend: Node.js (ESM), Express, CORS, express-rate-limit
 - Auth: Firebase Auth (client) + firebase-admin (server) for ID token verification
 - Storage: JSON files under `backend/data` with atomic writes
 
@@ -51,9 +53,9 @@ Start both frontend and backend concurrently:
 npm run dev
 ```
 
-Open the app: http://localhost:5173/
+Open the app: http://localhost:5173/ (Vite will use the next port if 5173 is busy)
 
-- The Vite dev server proxies `/api` to the backend at http://localhost:5000
+- The Vite dev server proxies `/api` to the backend at http://localhost:5000.
 
 Run each app separately (optional):
 
@@ -71,21 +73,24 @@ Run each app separately (optional):
 ## Environment variables
 
 - Backend
-  - `PORT` (optional): API port, default `5000`.
-  - `FIREBASE_PROJECT_ID` (optional): Firebase project id for token verification; defaults to `npc-standen-new`.
+  - `PORT` (optional): API port, default `5000` in dev (App Service injects one in prod).
+  - `FIREBASE_PROJECT_ID` (required): Firebase project id for token verification.
+  - `CHECK_REVOKED` (optional): `'true'` to enable token revocation checks; default is disabled.
+  - Note: The backend also loads `frontend/.env.local` for convenience in dev if present.
 - Frontend
-  - `VITE_API_BASE` (optional): API base URL. In dev, the Vite proxy handles `/api`; leave this unset.
+  - `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`.
+  - `VITE_API_BASE` (optional): API base URL for production (e.g., `https://<app-name>.azurewebsites.net`). In dev, the Vite proxy handles `/api` so this can be omitted.
 
 ## Authentication
 
-- Users must sign in with Google (Firebase) to submit results.
-- The frontend attaches a Firebase ID token (Authorization: Bearer) to `POST /api/matches`.
+- Users must sign in with Google (Firebase) to submit or delete results.
+- The frontend attaches a Firebase ID token (Authorization: Bearer) to protected API calls.
 - The backend verifies tokens with `firebase-admin`.
 
 ## Data & storage
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
-- Schedule is parsed from the official page when possible, with a round-robin fallback. Stored at `backend/data/schedule.json`.
+- Schedule is scraped from the official page when available, with a round-robin fallback. Stored at `backend/data/schedule.json`.
 - Results are persisted in `backend/data/matches.json`. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
@@ -102,39 +107,52 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `GET /api/matches` — Submitted matches (most recent first)
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, homeScore, awayScore }`
-  - Validates against schedule, rejects duplicates; completion is inferred from presence in `matches.json`.
+  - Validation: requires a scheduled match; rejects duplicates; disallows scores 1 or 3 for either team.
+- `DELETE /api/matches/:id` — Delete a submitted result by its id (requires Firebase ID token)
 - `GET /api/standings` — Current standings, sorted as described above
+
+Rate limiting (subject to tuning; current values from code):
+- Pre-auth guard: 100 req/min per IP before auth processing.
+- `GET /api/matches`: 100 req/min per IP.
+- `POST /api/matches`: 100 req/min per user/IP, plus up to 100 submissions per 2 minutes for the same specific match per user, and a daily cap of 100 per user.
+- Global per-match throttle (POST): 100 submissions/min across all users for the same match.
+- `DELETE /api/matches/:id`: 100 deletions/min per user/IP.
 
 ## Frontend behavior
 
 - Speelronde selector shows only rounds with at least one open (not completed) match and includes a date hint.
 - Match dropdown shows only matches not yet completed/submitted for the selected round.
-- Score inputs auto-complement to 31 and clamp to 0–31.
+- Score inputs auto-complement to 31, clamp to 0–31, and start empty; scores 1 and 3 are blocked.
 - After submit, standings and results refresh; the saved match disappears from the selection. If a round fully completes, it’s removed from the selector.
-- Results table shows who submitted the result and when.
+- Results list is compact (single-line). A tiny delete icon is shown as the last column only when logged in. Clicking prompts a confirmation and then refreshes data.
 
-## Production notes
+## Production notes (Azure)
 
-Build frontend:
+GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
+- Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
+- Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+
+Secrets to configure (repository or environment secrets):
+- Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
+- Backend runtime (App Service Application settings): `FIREBASE_PROJECT_ID` (required), `CHECK_REVOKED` (optional).
+
+Firebase configuration:
+- Add your SWA production domain to Firebase Authorized domains.
+- If sign-in popups are blocked, enable redirects in your Firebase Auth settings (and allow the domain).
+
+Manual build/run (optional):
 
 ```powershell
 npm --prefix frontend run build
-```
-
-Start backend (no nodemon):
-
-```powershell
 npm --prefix backend run start
 ```
 
-A simple Docker Compose file is included as a starting point (adjust as needed).
-
 ## Troubleshooting
 
-- 401 on submit: Log in again; token may be expired. Ensure the backend recognizes the Firebase project id.
-- Unknown match: Ensure you selected a match from the current schedule; verify `backend/data/schedule.json` IDs match.
+- 401 on submit/delete: Log in again; token may be expired. Ensure `FIREBASE_PROJECT_ID` matches your Firebase project.
+- Unknown match: Ensure you selected a match from the current schedule; verify `backend/data/schedule.json` IDs.
 - Round missing from selector: All matches in that round are completed (hidden by design).
-- CORS in dev: Handled by Vite proxy. If you run FE/BE separately across hosts, set `VITE_API_BASE` accordingly.
+- CORS in dev: Handled by Vite proxy. If running FE/BE on different hosts, set `VITE_API_BASE` in the frontend env.
 
 ## Contributing
 
