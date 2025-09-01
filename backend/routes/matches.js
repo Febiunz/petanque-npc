@@ -33,7 +33,20 @@ router.get('/', matchGetLimiter, async (req, res) => {
   res.json(matches);
 });
 
-router.post('/', requireAuth, matchPostLimiter, async (req, res) => {
+// Per-user per-match limiter: prevent spamming the same match result
+const perUserPerMatchLimiter = rateLimit({
+  windowMs: 2 * 60 * 1000, // 2 minutes
+  max: 1,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const matchIdRaw = req.body?.matchId || req.body?.fixtureId || 'unknown';
+    return `${perUserKey(req)}:${matchIdRaw}`;
+  },
+  message: 'Too many submissions for this match, please wait a couple of minutes and try again.'
+});
+
+router.post('/', requireAuth, perUserPerMatchLimiter, matchPostLimiter, async (req, res) => {
   // Debug: trace incoming body for troubleshooting
   // Do not log tokens; headers are ignored.
   // Log only non-sensitive fields for debugging

@@ -17,7 +17,12 @@ export async function requireAuth(req, res, next) {
   try {
     ensureAdmin();
     const auth = req.headers.authorization || '';
-    const m = auth.match(/^Bearer\s+(.+)$/i);
+    const MAX_AUTH_LENGTH = 10_000; // guard against regex on abnormally long input
+    const trimmedAuth = typeof auth === 'string' ? auth.trim() : '';
+    let m = null;
+    if (trimmedAuth.length > 0 && trimmedAuth.length <= MAX_AUTH_LENGTH) {
+      m = trimmedAuth.match(/^Bearer\s+([A-Za-z0-9._-]+)$/i);
+    }
     if (!m) return res.status(401).json({ error: 'Missing bearer token' });
     const token = m[1];
   // Token revocation checking is controlled by the CHECK_REVOKED environment variable.
