@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       # Optional: quick lint/test hooks could go here
-
+      # NOTE: working-directory is already 'backend'. Using '.' prevents an incorrect nested path (./backend) that can cause OneDeploy conflicts.
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
