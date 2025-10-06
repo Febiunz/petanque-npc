@@ -1,5 +1,9 @@
 name: Deploy to Azure (Backend + Frontend)
 
+concurrency:
+  group: backend-frontend-deploy
+  cancel-in-progress: true
+
 on:
   workflow_dispatch: {}
   push:
@@ -30,11 +34,12 @@ jobs:
 
       # Optional: quick lint/test hooks could go here
 
+      # NOTE: working-directory is already 'backend'. Using '.' prevents an incorrect nested path (./backend) that can cause OneDeploy conflicts.
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./backend
+          package: .
 
       - name: Post-deploy note
         run: |
