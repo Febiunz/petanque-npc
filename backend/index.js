@@ -18,7 +18,10 @@ dotenv.config({ path: resolve(__dirname, '../frontend/.env.local') });
 const app = express();
 // Disable etag to prevent 304 on tiny JSON responses during dev
 app.set('etag', false);
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
