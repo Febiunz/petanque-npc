@@ -18,10 +18,23 @@ dotenv.config({ path: resolve(__dirname, '../frontend/.env.local') });
 const app = express();
 // Disable etag to prevent 304 on tiny JSON responses during dev
 app.set('etag', false);
-app.use(cors({
-  origin: true,
+// CORS configuration with explicit origin reflection and allowed methods/headers
+const corsOptions = {
+  origin: (origin, cb) => {
+    // Allow all origins; could restrict with a whitelist array if needed.
+    cb(null, true);
+  },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+
+// Explicit preflight handler to avoid other middleware returning 400
+app.options('*', cors(corsOptions), (req, res) => {
+  res.sendStatus(204);
+});
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
