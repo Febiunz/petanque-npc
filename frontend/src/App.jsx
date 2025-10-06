@@ -124,52 +124,51 @@ function App() {
   }, []);
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ textAlign: 'left', mt: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h3" sx={{ m: 0 }}>NPC Standen</Typography>
+    <Container maxWidth="xs">
+      <Box sx={{ textAlign: 'left', mt: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h5" sx={{ m: 0 }}>NPC Standen Topdivisie</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {user ? (
               <>
                 <Avatar
                   src={user.photoURL || undefined}
                   alt={(user.displayName || user.email || 'Gebruiker')}
-                  sx={{ width: 32, height: 32 }}
+                  sx={{ width: 28, height: 28 }}
                 />
-                <Button variant="outlined" color="secondary" onClick={handleSignOut}>Sign Out</Button>
+                <Button variant="outlined" color="secondary" size="small" onClick={handleSignOut}>Sign Out</Button>
               </>
             ) : (
-              <Button variant="contained" onClick={() => handleSignIn(googleProvider)}>Inloggen met Google</Button>
+              <Button variant="contained" size="small" onClick={() => handleSignIn(googleProvider)}>Inloggen met Google</Button>
             )}
           </Box>
         </Box>
 
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
 
-        <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
-          <Typography variant="h6" gutterBottom>Uitslag invoeren Topdivisie</Typography>
+        <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Uitslag invoeren</Typography>
           <Stack spacing={1} component="form" onSubmit={submitResult}>
-            {/* First row: round + match selectors */}
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-      <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select sx={{ minWidth: 260 }} disabled={!availableRounds.length}>
-                {availableRounds.map((r) => {
-                  const dateForRound = (() => {
-                    const rows = scheduleAll.filter(m => String(m.round) === String(r));
-                    const withDate = rows.find(m => m.date);
-                    return withDate ? new Date(withDate.date).toLocaleDateString('nl-NL') : '—';
-                  })();
-                  return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
-                })}
-              </TextField>
-        <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select sx={{ minWidth: 360 }} disabled={!schedule.length}>
-                {schedule.map(m => {
-                  const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
-                  const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
-                  const label = `${m.matchNumber ? `#${m.matchNumber} ` : ''}${home} vs ${away}`;
-                  return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
-                })}
-              </TextField>
-            </Box>
+            {/* Speelronde selector - full width */}
+            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={!availableRounds.length}>
+              {availableRounds.map((r) => {
+                const dateForRound = (() => {
+                  const rows = scheduleAll.filter(m => String(m.round) === String(r));
+                  const withDate = rows.find(m => m.date);
+                  return withDate ? new Date(withDate.date).toLocaleDateString('nl-NL') : '—';
+                })();
+                return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
+              })}
+            </TextField>
+            {/* Wedstrijd selector - full width */}
+            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={!schedule.length}>
+              {schedule.map(m => {
+                const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
+                const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
+                const label = `${m.matchNumber ? `${m.matchNumber} ` : ''}${home} - ${away}`;
+                return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
+              })}
+            </TextField>
             {/* Second row: score inputs below the match selector with submit button on the same line */}
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField
@@ -195,7 +194,7 @@ function App() {
                 inputProps={{ min: 0, max: 31, step: 1 }}
                 error={homeShowError}
                 helperText={homeShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
-                sx={{ width: 140 }}
+                sx={{ width: 120 }}
               />
               <TextField
                 label="Uit punten"
@@ -209,68 +208,76 @@ function App() {
                 helperText={awayShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
                 sx={{ width: 120 }}
               />
-              <Button type="submit" variant="contained" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
+              <Button type="submit" variant="contained" size="small" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
             </Box>
           </Stack>
         </Paper>
 
-        <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
-          <Typography variant="h6" gutterBottom>Stand</Typography>
+        <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Stand</Typography>
           {standings.length === 0 ? (
             <Typography variant="body2" color="text.secondary">Nog geen stand beschikbaar.</Typography>
           ) : (
-            <Box component="div" sx={{ display: 'grid', gridTemplateColumns: '36px 1fr repeat(5, auto)', gap: 1, alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Nr</Typography>
+            <Box component="div" sx={{ display: 'grid', gridTemplateColumns: '30px 1fr repeat(5, auto)', gap: 0.75, alignItems: 'center' }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'left' }}>Nr</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'left' }}>Team</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>G</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>W</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>V</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Pnt</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>Saldo</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>G</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>W</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>V</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Pnt</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'right' }}>Saldo</Typography>
               {standings.map((row, idx) => (
                 <React.Fragment key={row.teamId}>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{idx + 1}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'left' }}>{idx + 1}</Typography>
                   <Typography variant="body2" sx={{ textAlign: 'left' }}>{row.name}</Typography>
-                  <Typography variant="body2">{row.played}</Typography>
-                  <Typography variant="body2">{row.won}</Typography>
-                  <Typography variant="body2">{row.lost}</Typography>
-                  <Typography variant="body2">{row.points}</Typography>
-                  <Typography variant="body2">{row.goalDiff}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.played}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.won}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.lost}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.points}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'right' }}>{row.goalDiff}</Typography>
                 </React.Fragment>
               ))}
             </Box>
           )}
         </Paper>
 
-        <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
-          <Typography variant="h6" gutterBottom>Ingevoerde uitslagen</Typography>
+        <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Uitslagen</Typography>
           {results.length === 0 ? (
             <Typography variant="body2" color="text.secondary">Nog geen uitslagen ingevoerd.</Typography>
           ) : (
             <Box component="div" sx={{
               display: 'grid',
-              // When logged in: number, home, score, away, delete (keep last very small)
-              // When logged out: number, home, score, away
-              gridTemplateColumns: user ? '40px minmax(0,1fr) 44px minmax(0,1fr) 24px' : '40px minmax(0,1fr) 44px minmax(0,1fr)',
-              columnGap: 4,
+              // When logged in: round, home, score, away, delete (keep last very small)
+              // When logged out: round, home, score, away
+              gridTemplateColumns: user ? '28px minmax(0,1fr) 42px minmax(0,1fr) 20px' : '28px minmax(0,1fr) 42px minmax(0,1fr)',
+              columnGap: 1,
               rowGap: 0,
               alignItems: 'center'
             }}>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Wedstrijd</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>Uit</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Ronde</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uit</Typography>
               {user && <span />}
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
-                const number = r.matchNumber || r.fixtureId || r.matchId || r.id;
+                const rawRound = r.round || scheduleAll.find(m => m.id === (r.matchId || r.fixtureId))?.round;
+                const roundNumber = (() => {
+                  if (rawRound === undefined || rawRound === null) return '?';
+                  const n = Number(rawRound);
+                  if (Number.isNaN(n)) return String(rawRound);
+                  return String(n).padStart(2, '0');
+                })();
+                const homeScore = String(r.homeScore).padStart(2, '0');
+                const awayScore = String(r.awayScore).padStart(2, '0');
                 return (
                   <React.Fragment key={r.id}>
-                    <Typography variant="caption" sx={{ fontSize: '0.68rem', whiteSpace: 'nowrap' }}>#{number}</Typography>
-                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{homeName}</Typography>
-                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.68rem', whiteSpace: 'nowrap' }}>{r.homeScore} - {r.awayScore}</Typography>
-                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.68rem' }}>{awayName}</Typography>
+                    <Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{roundNumber}</Typography>
+                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{homeName}</Typography>
+                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{homeScore} - {awayScore}</Typography>
+                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{awayName}</Typography>
         {user && (
                       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Tooltip title="Verwijder" placement="left" arrow>
