@@ -50,7 +50,7 @@ function App() {
     const homeName = teams.find(t => t.id === match.homeTeamId)?.name || match.homeTeam?.name || match.homeTeamId || 'Thuis';
     const awayName = teams.find(t => t.id === match.awayTeamId)?.name || match.awayTeam?.name || match.awayTeamId || 'Uit';
     const number = match.matchNumber || match.fixtureId || match.matchId || match.id;
-    const msg = `Weet je zeker dat je uitslag #${number} (${homeName} ${match.homeScore}-${match.awayScore} ${awayName}) wilt verwijderen?`;
+    const msg = `Weet je zeker dat je uitslag ${number} (${homeName} ${match.homeScore}-${match.awayScore} ${awayName}) wilt verwijderen?`;
     const ok = window.confirm(msg);
     if (!ok) return;
     try {
