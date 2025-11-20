@@ -17,6 +17,7 @@ This project provides:
 - Standings calculation:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
+  - Visual indicators: 1st place (champion) has a light green background; last 2 places (relegation) have a light red background.
 - Compact results list: single-line rows with a minimal delete icon shown only when logged in.
 
 ## Tech stack
