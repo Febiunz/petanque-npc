@@ -226,17 +226,30 @@ function App() {
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>V</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center' }}>Pnt</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'right' }}>Saldo</Typography>
-              {standings.map((row, idx) => (
-                <React.Fragment key={row.teamId}>
-                  <Typography variant="body2" sx={{ textAlign: 'left' }}>{idx + 1}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'left' }}>{row.name}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.played}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.won}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.lost}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }}>{row.points}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'right' }}>{row.goalDiff}</Typography>
-                </React.Fragment>
-              ))}
+              {standings.map((row, idx) => {
+                // Determine background color based on position
+                let bgColor = 'transparent';
+                if (idx === 0) {
+                  // 1st place - champion (light green)
+                  bgColor = '#d4edda';
+                } else if (idx >= standings.length - 2) {
+                  // Last 2 places - relegation (light red)
+                  bgColor = '#f8d7da';
+                }
+                const rowSx = { backgroundColor: bgColor, gridColumn: '1 / -1', display: 'contents' };
+                
+                return (
+                  <React.Fragment key={row.teamId}>
+                    <Typography variant="body2" sx={{ textAlign: 'left', backgroundColor: bgColor }}>{idx + 1}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'left', backgroundColor: bgColor }}>{row.name}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center', backgroundColor: bgColor }}>{row.played}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center', backgroundColor: bgColor }}>{row.won}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center', backgroundColor: bgColor }}>{row.lost}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center', backgroundColor: bgColor }}>{row.points}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'right', backgroundColor: bgColor }}>{row.goalDiff}</Typography>
+                  </React.Fragment>
+                );
+              })}
             </Box>
           )}
         </Paper>
