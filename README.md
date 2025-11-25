@@ -1,6 +1,6 @@
 # NPC Standen
 
-A simple results and standings website for the Dutch Petanque Topdivisie (2025–2026).
+A simple results and standings website for the Dutch Petanque Topdivisie.
 
 This project provides:
 - A React (Vite + MUI) frontend to enter match results and view standings.
