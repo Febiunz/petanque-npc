@@ -321,7 +321,7 @@ function App() {
             return (
               <Box component="div" sx={{
                 display: 'grid',
-                gridTemplateColumns: '28px 52px minmax(0,1fr) minmax(0,1fr)',
+                gridTemplateColumns: '28px 72px minmax(0,1fr) minmax(0,1fr)',
                 columnGap: 1,
                 rowGap: 0,
                 alignItems: 'center'
@@ -340,7 +340,7 @@ function App() {
                     return String(n).padStart(2, '0');
                   })();
                   const dateStr = m.date
-                    ? new Date(m.date).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit' })
+                    ? new Date(m.date).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })
                     : '—';
                   return (
                     <React.Fragment key={m.id}>
