@@ -312,7 +312,11 @@ function App() {
             // Filter upcoming matches (not in completedSet), sort by date (older to newer)
             const upcomingMatches = scheduleAll
               .filter(m => !completedSet.has(m.id))
-              .sort((a, b) => new Date(a.date) - new Date(b.date));
+              .sort((a, b) => {
+                const dateA = a.date ? new Date(a.date) : new Date(0);
+                const dateB = b.date ? new Date(b.date) : new Date(0);
+                return dateA - dateB;
+              });
             
             if (upcomingMatches.length === 0) {
               return <Typography variant="body2" color="text.secondary">Alle wedstrijden zijn gespeeld.</Typography>;
