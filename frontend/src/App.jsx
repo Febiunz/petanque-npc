@@ -331,11 +331,14 @@ function App() {
                 <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uit</Typography>
                 {upcomingMatches.map(m => {
-                  const homeName = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
-                  const awayName = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
-                  const roundNumber = m.round !== undefined && m.round !== null
-                    ? String(m.round).padStart(2, '0')
-                    : '?';
+                  const homeName = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeam?.name || m.homeTeamId;
+                  const awayName = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeam?.name || m.awayTeamId;
+                  const roundNumber = (() => {
+                    if (m.round === undefined || m.round === null) return '?';
+                    const n = Number(m.round);
+                    if (Number.isNaN(n)) return String(m.round);
+                    return String(n).padStart(2, '0');
+                  })();
                   const dateStr = m.date
                     ? new Date(m.date).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit' })
                     : '—';
