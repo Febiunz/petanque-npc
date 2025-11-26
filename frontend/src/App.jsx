@@ -305,6 +305,53 @@ function App() {
             </Box>
           )}
         </Paper>
+
+        <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Aankomende Wedstrijden</Typography>
+          {(() => {
+            // Filter upcoming matches (not in completedSet), sort by date (older to newer)
+            const upcomingMatches = scheduleAll
+              .filter(m => !completedSet.has(m.id))
+              .sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            if (upcomingMatches.length === 0) {
+              return <Typography variant="body2" color="text.secondary">Alle wedstrijden zijn gespeeld.</Typography>;
+            }
+            
+            return (
+              <Box component="div" sx={{
+                display: 'grid',
+                gridTemplateColumns: '28px 52px minmax(0,1fr) minmax(0,1fr)',
+                columnGap: 1,
+                rowGap: 0,
+                alignItems: 'center'
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Ronde</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Datum</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uit</Typography>
+                {upcomingMatches.map(m => {
+                  const homeName = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
+                  const awayName = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
+                  const roundNumber = m.round !== undefined && m.round !== null
+                    ? String(m.round).padStart(2, '0')
+                    : '?';
+                  const dateStr = m.date
+                    ? new Date(m.date).toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit' })
+                    : '—';
+                  return (
+                    <React.Fragment key={m.id}>
+                      <Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{roundNumber}</Typography>
+                      <Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{dateStr}</Typography>
+                      <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{homeName}</Typography>
+                      <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{awayName}</Typography>
+                    </React.Fragment>
+                  );
+                })}
+              </Box>
+            );
+          })()}
+        </Paper>
       </Box>
     </Container>
   );
