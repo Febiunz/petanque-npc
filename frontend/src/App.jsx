@@ -285,16 +285,17 @@ function App() {
                 const homeScore = String(r.homeScore).padStart(2, '0');
                 const awayScore = String(r.awayScore).padStart(2, '0');
                 const submitterTooltip = r.submittedBy ? `Ingevoerd door: ${r.submittedBy}` : '';
+                const hoverCursor = submitterTooltip ? 'default' : undefined;
                 const wrapWithTooltip = (content) =>
                   submitterTooltip ? (
                     <Tooltip title={submitterTooltip} placement="top" arrow enterDelay={300}>{content}</Tooltip>
                   ) : content;
                 return (
                   <React.Fragment key={r.id}>
-                    {wrapWithTooltip(<Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: submitterTooltip ? 'default' : undefined }}>{roundNumber}</Typography>)}
-                    {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: submitterTooltip ? 'default' : undefined }}>{homeName}</Typography>)}
-                    {wrapWithTooltip(<Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: submitterTooltip ? 'default' : undefined }}>{homeScore} - {awayScore}</Typography>)}
-                    {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: submitterTooltip ? 'default' : undefined }}>{awayName}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{roundNumber}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{homeName}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{homeScore} - {awayScore}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{awayName}</Typography>)}
         {user && (
                       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Tooltip title="Verwijder" placement="left" arrow>
