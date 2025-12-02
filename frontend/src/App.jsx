@@ -284,12 +284,21 @@ function App() {
                 })();
                 const homeScore = String(r.homeScore).padStart(2, '0');
                 const awayScore = String(r.awayScore).padStart(2, '0');
+                const submitterTooltip = r.submittedBy ? `Ingevoerd door: ${r.submittedBy}` : '';
                 return (
                   <React.Fragment key={r.id}>
-                    <Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{roundNumber}</Typography>
-                    <Typography variant="caption" title={homeName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{homeName}</Typography>
-                    <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>{homeScore} - {awayScore}</Typography>
-                    <Typography variant="caption" title={awayName} sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0 }}>{awayName}</Typography>
+                    <Tooltip title={submitterTooltip} placement="top" arrow enterDelay={300}>
+                      <Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: 'default' }}>{roundNumber}</Typography>
+                    </Tooltip>
+                    <Tooltip title={submitterTooltip} placement="top" arrow enterDelay={300}>
+                      <Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: 'default' }}>{homeName}</Typography>
+                    </Tooltip>
+                    <Tooltip title={submitterTooltip} placement="top" arrow enterDelay={300}>
+                      <Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: 'default' }}>{homeScore} - {awayScore}</Typography>
+                    </Tooltip>
+                    <Tooltip title={submitterTooltip} placement="top" arrow enterDelay={300}>
+                      <Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: 'default' }}>{awayName}</Typography>
+                    </Tooltip>
         {user && (
                       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Tooltip title="Verwijder" placement="left" arrow>
