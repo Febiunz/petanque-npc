@@ -140,22 +140,25 @@ export function parseChangedDates(html) {
     let changedDateIso = null;
     if (aangepasteDatumColumnIndex >= 0 && aangepasteDatumColumnIndex < cells.length) {
       const changedDateCell = cells[aangepasteDatumColumnIndex];
-      // Match dd-mm-yyyy format and validate
-      const dateMatch = changedDateCell.match(/\b(\d{2})-(\d{2})-(\d{4})\b/);
+      // Match d-m-yyyy or dd-mm-yyyy format (supports single or double digit day/month)
+      const dateMatch = changedDateCell.match(/\b(\d{1,2})-(\d{1,2})-(\d{4})\b/);
       if (dateMatch) {
         const [, d, m, y] = dateMatch;
         // Basic validation: day 01-31, month 01-12
         const dayNum = parseInt(d, 10);
         const monthNum = parseInt(m, 10);
         if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12) {
-          changedDateIso = `${y}-${m}-${d}`;
+          // Pad day and month to 2 digits for ISO format
+          const dayPadded = String(dayNum).padStart(2, '0');
+          const monthPadded = String(monthNum).padStart(2, '0');
+          changedDateIso = `${y}-${monthPadded}-${dayPadded}`;
         }
       }
     }
 
     // If no specific column index, search all cells after match number for a date
     if (!changedDateIso) {
-      const dateCell = cells.slice(numIdx + 1).find(c => /\b\d{2}-\d{2}-\d{4}\b/.test(c));
+      const dateCell = cells.slice(numIdx + 1).find(c => /\b\d{1,2}-\d{1,2}-\d{4}\b/.test(c));
       if (dateCell) {
         const parts = dateCell.split('-');
         if (parts.length === 3) {
@@ -164,7 +167,10 @@ export function parseChangedDates(html) {
           const dayNum = parseInt(d, 10);
           const monthNum = parseInt(m, 10);
           if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12) {
-            const parsedDate = `${y}-${m}-${d}`;
+            // Pad day and month to 2 digits for ISO format
+            const dayPadded = String(dayNum).padStart(2, '0');
+            const monthPadded = String(monthNum).padStart(2, '0');
+            const parsedDate = `${y}-${monthPadded}-${dayPadded}`;
             // Only consider it a changed date if it differs from the round default
             if (parsedDate !== roundDefaultDate) {
               changedDateIso = parsedDate;
