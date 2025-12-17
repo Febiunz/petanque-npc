@@ -27,21 +27,37 @@ function toIsoDate(day, monthName) {
 }
 
 function cleanHtmlToLines(html) {
-  // Use sanitize-html to safely remove all script and style tags and their content
-  let s = sanitizeHtml(html, {
-    allowedTags: false,
-    allowedAttributes: false,
-    exclusiveFilter: function(frame) {
-      return frame.tag === 'script' || frame.tag === 'style';
-    }
+  // First, we need to ensure each table row becomes a single line
+  // Replace newlines within rows with spaces
+  let s = html;
+  
+  // Process each <tr>...</tr> block
+  s = s.replace(/<tr[^>]*>(.*?)<\/tr>/gis, (match, content) => {
+    // Within this row, replace </td> and </th> with pipes
+    let row = content.replace(/<\/(td|th)>/gi, '|');
+    // Remove all remaining tags
+    row = row.replace(/<[^>]+>/g, '');
+    // Collapse whitespace
+    row = row.replace(/\s+/g, ' ').trim();
+    return `\n${row}\n`;
   });
-  s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
+  
+  // Replace other block element closings with newlines
+  s = s.replace(/<\/(table|h\d)>/gi, '\n');
   s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
-  s = s.replace(/<\/(td|th)>/gi, '|');
-  s = s.replace(/<[^>]+>/g, ' ');
+  
+  // Remove any remaining tags (like opening tags, html, body, etc.)
+  s = s.replace(/<[^>]+>/g, '');
+  
+  // Clean up entities
   s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-  s = s.replace(/\s+/g, ' ').replace(/\|\s*\|/g, '|');
-  return s.split(/\n+/).map(l => l.trim()).filter(Boolean);
+  
+  // Split into lines and clean up
+  const lines = s.split(/\n/).map(l => {
+    return l.trim().replace(/\s*\|\s*/g, '|').replace(/\|+/g, '|');
+  }).filter(l => l.length > 0);
+  
+  return lines;
 }
 
 export async function fetchOfficialHtml() {
