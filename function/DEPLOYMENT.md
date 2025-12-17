@@ -21,7 +21,7 @@ The workflow at `.github/workflows/azure-deploy.yml` includes the function deplo
    az functionapp create \
      --resource-group <your-resource-group> \
      --name npc-standen-function \
-     --storage-account <your-storage-account> \
+     --storage-account npcstandenstorageaccount \
      --consumption-plan-location westeurope \
      --runtime node \
      --runtime-version 22 \
@@ -64,7 +64,7 @@ This approach allows both the backend and function to access the same `schedule.
    ```bash
    az storage share create \
      --name npc-data \
-     --account-name <your-storage-account>
+     --account-name npcstandenstorageaccount
    ```
 
 2. **Upload Initial Schedule:**
@@ -79,7 +79,7 @@ This approach allows both the backend and function to access the same `schedule.
      --custom-id data \
      --storage-type AzureFiles \
      --share-name npc-data \
-     --account-name <your-storage-account> \
+     --account-name npcstandenstorageaccount \
      --access-key "<storage-key>" \
      --mount-path /mnt/data
    ```
@@ -100,7 +100,7 @@ This approach allows both the backend and function to access the same `schedule.
      --custom-id data \
      --storage-type AzureFiles \
      --share-name npc-data \
-     --account-name <your-storage-account> \
+     --account-name npcstandenstorageaccount \
      --access-key "<storage-key>" \
      --mount-path /mnt/data
    ```
