@@ -1,16 +1,17 @@
 import { app } from '@azure/functions';
 import { fetchOfficialHtml, parseChangedDates } from '../lib/scheduleParser.js';
-import { readSchedule, updateSchedule } from '../lib/storageSimple.js';
+import { readSchedule, updateSchedule } from '../lib/storage.js';
 
 /**
  * Azure Function that runs weekly on Monday evenings to check for changed match dates
  * on the official website and updates the schedule accordingly.
  * 
- * Timer trigger: Every Monday at 20:00 CET (0 0 20 * * MON)
+ * Timer trigger: Every Monday at 20:00 UTC (0 0 20 * * MON)
  * 
- * Storage options:
- * 1. Shared File Mount: Set SCHEDULE_FILE_PATH to the path where backend/data/schedule.json is mounted
- * 2. For simpler setup, consider having this function make an HTTP call to update the backend
+ * Storage: Uses Azure Blob Storage (npcstandenstorageaccount)
+ * - Container: data
+ * - File: schedule.json
+ * - Requires: AZURE_STORAGE_CONNECTION_STRING environment variable
  */
 app.timer('schedule-updater', {
   schedule: '0 0 20 * * MON',

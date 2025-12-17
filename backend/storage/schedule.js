@@ -2,8 +2,12 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listTeams } from './fileStore.js';
+import { readScheduleFromBlob, writeScheduleToBlob } from './blobStorage.js';
 import sanitizeHtml from 'sanitize-html';
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set, otherwise use local file
+const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
 const dataDir = process.env.SCHEDULE_DATA_DIR || `${__dirname}/../data`;
 const scheduleFile = `${dataDir}/schedule.json`;
 
@@ -153,16 +157,26 @@ async function parseOfficialSchedule(html) {
 }
 
 export async function ensureSchedule() {
-  await ensureDir();
-  let exists = true;
-  try { await fs.access(scheduleFile); } catch { exists = false; }
-
-  if (!exists) {
+  if (useBlob) {
+    // Using Azure Blob Storage
+    try {
+      await readScheduleFromBlob();
+      return; // Schedule exists in blob storage
+    } catch (err) {
+      // Schedule doesn't exist, create it
+      console.log('Schedule not found in blob storage, creating...');
+    }
+    
+    // Try to fetch from official website first
     const html = await tryFetchOfficialHtml();
     if (html) {
       const schedule = await parseOfficialSchedule(html);
-      if (schedule) { await fs.writeFile(scheduleFile, JSON.stringify(schedule, null, 2), 'utf-8'); return; }
+      if (schedule) {
+        await writeScheduleToBlob(schedule);
+        return;
+      }
     }
+    
     // Last resort: algorithmic schedule
     const teamIds = (await listTeams()).map(t => t.id);
     const rounds = roundRobinDouble(teamIds);
@@ -173,22 +187,58 @@ export async function ensureSchedule() {
         out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId });
       }
     }
-    await fs.writeFile(scheduleFile, JSON.stringify(out, null, 2), 'utf-8');
+    await writeScheduleToBlob(out);
+  } else {
+    // Using local file storage
+    await ensureDir();
+    let exists = true;
+    try { await fs.access(scheduleFile); } catch { exists = false; }
+
+    if (!exists) {
+      const html = await tryFetchOfficialHtml();
+      if (html) {
+        const schedule = await parseOfficialSchedule(html);
+        if (schedule) { await fs.writeFile(scheduleFile, JSON.stringify(schedule, null, 2), 'utf-8'); return; }
+      }
+      // Last resort: algorithmic schedule
+      const teamIds = (await listTeams()).map(t => t.id);
+      const rounds = roundRobinDouble(teamIds);
+      const out = [];
+      for (let r = 0; r < rounds.length; r++) {
+        const round = r + 1;
+        for (const p of rounds[r]) {
+          out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId });
+        }
+      }
+      await fs.writeFile(scheduleFile, JSON.stringify(out, null, 2), 'utf-8');
+    }
   }
 }
 
 export async function listSchedule() {
   await ensureSchedule();
-  const buf = await fs.readFile(scheduleFile, 'utf-8');
-  const raw = JSON.parse(buf || '[]');
+  
+  let raw;
+  if (useBlob) {
+    raw = await readScheduleFromBlob();
+  } else {
+    const buf = await fs.readFile(scheduleFile, 'utf-8');
+    raw = JSON.parse(buf || '[]');
+  }
+  
   // Sanitize: drop any legacy 'status' fields and persist cleaned file
   let changed = false;
   const cleaned = Array.isArray(raw) ? raw.map((m) => {
     if (m && Object.prototype.hasOwnProperty.call(m, 'status')) { const { status, ...rest } = m; changed = true; return rest; }
     return m;
   }) : [];
+  
   if (changed) {
-    await fs.writeFile(scheduleFile, JSON.stringify(cleaned, null, 2), 'utf-8');
+    if (useBlob) {
+      await writeScheduleToBlob(cleaned);
+    } else {
+      await fs.writeFile(scheduleFile, JSON.stringify(cleaned, null, 2), 'utf-8');
+    }
   }
   return cleaned;
 }

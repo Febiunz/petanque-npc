@@ -56,89 +56,69 @@ The workflow at `.github/workflows/azure-deploy.yml` includes the function deplo
 
 ## Storage Configuration
 
-### Shared File Mount (Recommended)
+### Azure Blob Storage (Configured)
 
-This approach allows both the backend and function to access the same `schedule.json` file.
+Both the backend and function now use Azure Blob Storage (`npcstandenstorageaccount`) for the schedule.json file. This provides:
+- ✅ Shared storage between backend and function
+- ✅ No file mounts needed
+- ✅ Better for serverless architecture
+- ✅ Automatic scalability
 
-1. **Create File Share:**
+**Setup Steps:**
+
+1. **Get Storage Connection String:**
    ```bash
-   az storage share create \
-     --name npc-data \
-     --account-name npcstandenstorageaccount
-   ```
-
-2. **Upload Initial Schedule:**
-   - Upload your existing `backend/data/schedule.json` to the file share
-   - You can do this via Azure Portal or Azure CLI
-
-3. **Mount to Backend App Service:**
-   ```bash
-   az webapp config storage-account add \
+   az storage account show-connection-string \
+     --name npcstandenstorageaccount \
      --resource-group <your-resource-group> \
-     --name npc-standen-backend \
-     --custom-id data \
-     --storage-type AzureFiles \
-     --share-name npc-data \
-     --account-name npcstandenstorageaccount \
-     --access-key "<storage-key>" \
-     --mount-path /mnt/data
+     --output tsv
    ```
 
-   Then configure the backend to use the mounted path:
+2. **Create Blob Container:**
+   ```bash
+   az storage container create \
+     --name data \
+     --account-name npcstandenstorageaccount \
+     --connection-string "<connection-string>"
+   ```
+
+3. **Configure Backend App Service:**
    ```bash
    az webapp config appsettings set \
      --name npc-standen-backend \
      --resource-group <your-resource-group> \
-     --settings SCHEDULE_DATA_DIR="/mnt/data"
+     --settings AZURE_STORAGE_CONNECTION_STRING="<connection-string>" \
+                STORAGE_CONTAINER_NAME="data"
    ```
 
-4. **Mount to Function App:**
+4. **Configure Function App:**
    ```bash
-   az functionapp config storage-account add \
-     --resource-group <your-resource-group> \
+   az functionapp config appsettings set \
      --name npc-standen-function \
-     --custom-id data \
-     --storage-type AzureFiles \
-     --share-name npc-data \
+     --resource-group <your-resource-group> \
+     --settings AZURE_STORAGE_CONNECTION_STRING="<connection-string>" \
+                STORAGE_CONTAINER_NAME="data"
+   ```
+
+5. **Initial Schedule Upload (Optional):**
+   If you have an existing schedule.json, upload it:
+   ```bash
+   az storage blob upload \
      --account-name npcstandenstorageaccount \
-     --access-key "<storage-key>" \
-     --mount-path /mnt/data
+     --container-name data \
+     --name schedule.json \
+     --file backend/data/schedule.json \
+     --connection-string "<connection-string>"
    ```
 
-5. **Configure Function App Settings:**
-   ```bash
-   az functionapp config appsettings set \
-     --name npc-standen-function \
-     --resource-group <your-resource-group> \
-     --settings SCHEDULE_FILE_PATH="/mnt/data/schedule.json"
-   ```
+   Otherwise, the backend will automatically create it on first run.
 
-6. **Update Backend** (if needed):
-   - Modify `backend/storage/schedule.js` to use `/mnt/data/schedule.json` instead of relative path
-   - Or set an environment variable in the App Service
+### Alternative: File-Based Storage (Local Development)
 
-### Alternative: Azure Blob Storage
-
-If you prefer blob storage (requires backend migration):
-
-1. **Update Function Code:**
-   - Edit `function/schedule-updater/index.js`
-   - Change `import { readSchedule, updateSchedule } from '../lib/storageSimple.js';`
-   - To `import { readSchedule, updateSchedule } from '../lib/storage.js';`
-
-2. **Configure Function App:**
-   ```bash
-   az functionapp config appsettings set \
-     --name npc-standen-function \
-     --resource-group <your-resource-group> \
-     --settings \
-       AZURE_STORAGE_CONNECTION_STRING="<connection-string>" \
-       STORAGE_CONTAINER_NAME="data"
-   ```
-
-3. **Migrate Backend:**
-   - Update backend to use Azure Blob Storage instead of file system
-   - Upload existing data files to blob storage
+For local development without Azure Storage:
+- Backend uses `backend/data/schedule.json` (default)
+- Function needs to be configured to use `storageSimple.js` instead of `storage.js`
+- No AZURE_STORAGE_CONNECTION_STRING needed
 
 ## Verification
 

@@ -4,9 +4,10 @@ This Azure Function automatically checks the official petanque website weekly fo
 
 ## Overview
 
-- **Trigger**: Timer-based, runs every Monday at 20:00 CET
+- **Trigger**: Timer-based, runs every Monday at 20:00 UTC
 - **Purpose**: Detect matches with changed playing dates (via "Aangepaste datum" column) and update `schedule.json`
 - **Source**: https://nlpetanque.nl/topdivisie-2025-2026-1001/
+- **Storage**: Azure Blob Storage (`npcstandenstorageaccount`)
 
 ## How It Works
 
@@ -14,35 +15,26 @@ This Azure Function automatically checks the official petanque website weekly fo
 2. It fetches the official schedule HTML from the website
 3. It parses the HTML looking for the "Aangepaste datum" (changed date) column
 4. For any matches with changed dates, it updates the corresponding entries in `schedule.json`
-5. The updated schedule is saved back to storage
+5. The updated schedule is saved to Azure Blob Storage
 
-## Storage Options
+## Storage Configuration
 
-This function supports two storage approaches:
+The function uses **Azure Blob Storage** for shared access with the backend:
 
-### Option 1: Shared File Mount (Recommended for current architecture)
-- Mount the same file share used by the backend to the Function App
-- Set `SCHEDULE_FILE_PATH` environment variable to the mounted path (e.g., `/mnt/data/schedule.json`)
-- The function will read and write directly to the shared `schedule.json` file
-- No migration of backend storage needed
-
-### Option 2: Azure Blob Storage (Requires backend migration)
-- Migrate backend from file-based storage to Azure Blob Storage
-- Use `storage.js` instead of `storageSimple.js` in the function
-- Requires `AZURE_STORAGE_CONNECTION_STRING` and `STORAGE_CONTAINER_NAME` environment variables
+- **Storage Account**: `npcstandenstorageaccount`
+- **Container**: `data`
+- **File**: `schedule.json`
 
 ### Environment Variables
 
-**For Shared File Mount (Option 1):**
-- `SCHEDULE_FILE_PATH`: Path to schedule.json in the mounted file share
-- `FUNCTIONS_WORKER_RUNTIME`: Set to "node"
-- `AzureWebJobsStorage`: Storage connection for Azure Functions runtime
-
-**For Azure Blob Storage (Option 2):**
+Required for production:
 - `AZURE_STORAGE_CONNECTION_STRING`: Connection string for Azure Storage account
 - `STORAGE_CONTAINER_NAME`: Name of the blob container (default: "data")
 - `FUNCTIONS_WORKER_RUNTIME`: Set to "node"
 - `AzureWebJobsStorage`: Storage connection for Azure Functions runtime
+
+For local development (no Azure Storage):
+- Function will use local file path fallback
 
 ## Local Development
 
