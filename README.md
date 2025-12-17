@@ -32,6 +32,7 @@ This project provides:
 - `frontend/` — React app
 - `backend/` — Express API
 - `backend/data/` — JSON data files (teams, schedule, matches)
+- `function/` — Azure Function for weekly schedule updates
 - `LICENSE` — Code license (MIT)
 - `CONTENT_LICENSE` — Website content license (CC BY 4.0)
 - `NOTICE` — Licensing summary
@@ -77,6 +78,8 @@ Run each app separately (optional):
   - `PORT` (optional): API port, default `5000` in dev (App Service injects one in prod).
   - `FIREBASE_PROJECT_ID` (required): Firebase project id for token verification.
   - `CHECK_REVOKED` (optional): `'true'` to enable token revocation checks; default is disabled.
+  - `AZURE_STORAGE_CONNECTION_STRING` (production): Connection string for Azure Blob Storage. When set, schedule.json is stored in blob storage instead of local files.
+  - `STORAGE_CONTAINER_NAME` (optional): Blob container name, defaults to `data`.
   - Note: The backend also loads `frontend/.env.local` for convenience in dev if present.
 - Frontend
   - `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`.
@@ -91,8 +94,9 @@ Run each app separately (optional):
 ## Data & storage
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
-- Schedule is scraped from the official page when available, with a round-robin fallback. Stored at `backend/data/schedule.json`.
-- Results are persisted in `backend/data/matches.json`. Writes are serialized via a simple in-process mutex to avoid corruption.
+- Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) for shared access between backend and function. Falls back to local file in development.
+- **Schedule Updates**: An Azure Function (`function/schedule-updater`) runs every Monday at 20:00 UTC to check the official website for changed match dates ("Aangepaste datum" column) and automatically updates the schedule in blob storage.
+- Results are persisted in `backend/data/matches.json` (local file storage). Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
   - `date` (ISO date of match), `createdAt` (submission timestamp)
@@ -132,14 +136,28 @@ Rate limiting (subject to tuning; current values from code):
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 - Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
 - Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+- Schedule Updater Function → Azure Functions via `Azure/functions-action` using `AZURE_FUNCTION_PUBLISH_PROFILE`.
 
 Secrets to configure (repository or environment secrets):
 - Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
-- Backend runtime (App Service Application settings): `FIREBASE_PROJECT_ID` (required), `CHECK_REVOKED` (optional).
+- Backend runtime (App Service Application settings): 
+  - `FIREBASE_PROJECT_ID` (required)
+  - `CHECK_REVOKED` (optional)
+  - `AZURE_STORAGE_CONNECTION_STRING` (required for production)
+  - `STORAGE_CONTAINER_NAME` (optional, defaults to "data")
+- Function runtime (Function App Application settings): 
+  - `AZURE_STORAGE_CONNECTION_STRING` (required)
+  - `STORAGE_CONTAINER_NAME` (optional, defaults to "data")
 
 Firebase configuration:
 - Add your SWA production domain to Firebase Authorized domains.
 - If sign-in popups are blocked, enable redirects in your Firebase Auth settings (and allow the domain).
+
+Azure Function notes:
+- The schedule updater function runs automatically every Monday at 20:00 UTC (21:00/22:00 CET).
+- It checks for changed match dates ("Aangepaste datum") on the official website and updates the schedule in Azure Blob Storage.
+- Both the backend and function use `npcstandenstorageaccount` blob storage for shared schedule access.
+- See `function/DEPLOYMENT.md` for detailed setup and configuration instructions.
 
 Manual build/run (optional):
 

@@ -2,11 +2,18 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
+import { readBlobFile, writeBlobFile, blobExists } from './blobStorage.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
 const teamsFile = `${dataDir}/teams.json`;
 const matchesFile = `${dataDir}/matches.json`;
+
+// Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set
+const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+// Track if migration has been attempted
+let migrationAttempted = false;
 
 // Simple in-process mutex per file to serialize writes
 const locks = new Map();
@@ -38,7 +45,104 @@ function buildInitialTeams() {
   return OFFICIAL_TEAMS;
 }
 
+async function migrateLocalFilesToBlob() {
+  if (!useBlob || migrationAttempted) {
+    return;
+  }
+  
+  migrationAttempted = true;
+  console.log('Checking for local data files to migrate to blob storage...');
+  
+  const filesToMigrate = [
+    { local: teamsFile, blob: 'teams.json' },
+    { local: matchesFile, blob: 'matches.json' },
+  ];
+  
+  let migratedCount = 0;
+  const deletedFiles = [];
+  
+  for (const { local, blob } of filesToMigrate) {
+    try {
+      // Check if blob already exists
+      const exists = await blobExists(blob);
+      if (exists) {
+        console.log(`  ${blob} already exists in blob storage, skipping migration`);
+        continue;
+      }
+      
+      // Check if local file exists
+      try {
+        await fs.access(local);
+      } catch {
+        console.log(`  ${blob} - no local file to migrate`);
+        continue;
+      }
+      
+      // Read local file and upload to blob
+      console.log(`  Migrating ${blob} to blob storage...`);
+      const content = await fs.readFile(local, 'utf-8');
+      const data = JSON.parse(content);
+      await writeBlobFile(blob, data);
+      console.log(`  ✅ Successfully migrated ${blob}`);
+      
+      // Delete local file after successful migration
+      await fs.unlink(local);
+      console.log(`  🗑️  Deleted local ${blob}`);
+      deletedFiles.push(local);
+      migratedCount++;
+      
+    } catch (err) {
+      console.error(`  ❌ Error migrating ${blob}:`, err.message);
+    }
+  }
+  
+  // If all files were migrated and deleted, try to remove the data directory
+  if (migratedCount > 0 && deletedFiles.length === filesToMigrate.length) {
+    try {
+      // Check if directory is empty (only .gitkeep or similar might remain)
+      const remaining = await fs.readdir(dataDir);
+      const nonHiddenFiles = remaining.filter(f => !f.startsWith('.'));
+      if (nonHiddenFiles.length === 0) {
+        // Directory is empty or only contains hidden files, safe to remove
+        console.log('  All data files migrated. Note: backend/data directory kept for compatibility.');
+      }
+    } catch (err) {
+      // Directory operations are not critical
+    }
+  }
+  
+  if (migratedCount > 0) {
+    console.log(`✅ Migration complete: ${migratedCount} file(s) moved to blob storage`);
+  } else {
+    console.log('ℹ️  No files needed migration');
+  }
+}
+
 async function ensureFiles() {
+  if (useBlob) {
+    // In blob mode, ensure files exist in blob storage
+    await migrateLocalFilesToBlob();
+    
+    // Ensure teams.json exists in blob
+    try {
+      await readBlobFile('teams.json');
+    } catch {
+      console.log('Creating teams.json in blob storage...');
+      await writeBlobFile('teams.json', buildInitialTeams());
+    }
+    
+    // Ensure matches.json exists in blob
+    try {
+      await readBlobFile('matches.json');
+    } catch {
+      console.log('Creating matches.json in blob storage...');
+      await writeBlobFile('matches.json', []);
+    }
+    
+    return;
+  }
+  
+  // Local file mode (development)
   await fs.mkdir(dataDir, { recursive: true });
   // Ensure teams file exists; and keep it synced to the official list for visibility
   try {
@@ -66,12 +170,29 @@ async function ensureFiles() {
 
 async function readJson(file) {
   await ensureFiles();
+  
+  if (useBlob) {
+    // Determine blob name from file path
+    const fileName = file.includes('teams') ? 'teams.json' : 'matches.json';
+    return await readBlobFile(fileName);
+  }
+  
+  // Local file mode
   const buf = await fs.readFile(file, 'utf-8');
   return JSON.parse(buf || '[]');
 }
 
 async function writeJson(file, data) {
   await ensureFiles();
+  
+  if (useBlob) {
+    // Determine blob name from file path
+    const fileName = file.includes('teams') ? 'teams.json' : 'matches.json';
+    await writeBlobFile(fileName, data);
+    return;
+  }
+  
+  // Local file mode
   const tmp = `${file}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(data, null, 2), 'utf-8');
   await fs.rename(tmp, file);

@@ -11,6 +11,9 @@ frontend/dist/
 frontend/.env.local
 backend/.env
 
+# Azure Functions
+function/local.settings.json
+
 # Logs
 logs/
 *.log

@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "SCHEDULE_FILE_PATH": "../backend/data/schedule.json"
+  },
+  "Comment": "For Azure Blob Storage instead of file mount, replace SCHEDULE_FILE_PATH with: AZURE_STORAGE_CONNECTION_STRING and STORAGE_CONTAINER_NAME"
+}
