@@ -78,6 +78,7 @@ Run each app separately (optional):
   - `PORT` (optional): API port, default `5000` in dev (App Service injects one in prod).
   - `FIREBASE_PROJECT_ID` (required): Firebase project id for token verification.
   - `CHECK_REVOKED` (optional): `'true'` to enable token revocation checks; default is disabled.
+  - `SCHEDULE_DATA_DIR` (optional): Directory containing schedule.json. Defaults to `backend/data`. Set to `/mnt/data` when using Azure File Share mount.
   - Note: The backend also loads `frontend/.env.local` for convenience in dev if present.
 - Frontend
   - `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`.

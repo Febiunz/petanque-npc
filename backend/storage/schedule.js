@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { listTeams } from './fileStore.js';
 import sanitizeHtml from 'sanitize-html';
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = `${__dirname}/../data`;
+const dataDir = process.env.SCHEDULE_DATA_DIR || `${__dirname}/../data`;
 const scheduleFile = `${dataDir}/schedule.json`;
 
 async function ensureDir() {
