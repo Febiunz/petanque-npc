@@ -114,6 +114,7 @@ jobs:
       - name: Post-deploy note
         run: |
           echo "Ensure these Function App settings are configured in the Azure Portal (Configuration > Application settings):"
-          echo " - AZURE_STORAGE_CONNECTION_STRING (required)"
-          echo " - STORAGE_CONTAINER_NAME (default: data)"
+          echo " - SCHEDULE_FILE_PATH (recommended): Path to mounted schedule.json (e.g., /mnt/data/schedule.json)"
+          echo " - OR AZURE_STORAGE_CONNECTION_STRING + STORAGE_CONTAINER_NAME for blob storage"
           echo "The function will run every Monday at 20:00 UTC (21:00/22:00 CET depending on DST)."
+          echo "Mount an Azure File Share to share schedule.json between backend and function."

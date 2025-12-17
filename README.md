@@ -139,15 +139,18 @@ GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 Secrets to configure (repository or environment secrets):
 - Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
 - Backend runtime (App Service Application settings): `FIREBASE_PROJECT_ID` (required), `CHECK_REVOKED` (optional).
-- Function runtime (Function App Application settings): `AZURE_STORAGE_CONNECTION_STRING` (required), `STORAGE_CONTAINER_NAME` (default: "data").
+- Function runtime (Function App Application settings): 
+  - Recommended: `SCHEDULE_FILE_PATH` (path to mounted schedule.json, e.g., `/mnt/data/schedule.json`)
+  - Alternative: `AZURE_STORAGE_CONNECTION_STRING` and `STORAGE_CONTAINER_NAME` for blob storage
 
 Firebase configuration:
 - Add your SWA production domain to Firebase Authorized domains.
 - If sign-in popups are blocked, enable redirects in your Firebase Auth settings (and allow the domain).
 
 Azure Function notes:
-- The schedule updater function runs automatically every Monday at 20:00 UTC.
-- It checks for changed match dates on the official website and updates the schedule.
+- The schedule updater function runs automatically every Monday at 20:00 UTC (21:00/22:00 CET).
+- It checks for changed match dates ("Aangepaste datum") on the official website and updates the schedule.
+- Recommended: Mount an Azure File Share to both the backend App Service and Function App for shared access to `schedule.json`.
 - See `function/README.md` for detailed setup and configuration instructions.
 
 Manual build/run (optional):

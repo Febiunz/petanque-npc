@@ -10,18 +10,35 @@ This Azure Function automatically checks the official petanque website weekly fo
 
 ## How It Works
 
-1. Every Monday evening at 20:00, the function is triggered
+1. Every Monday evening at 20:00 UTC, the function is triggered
 2. It fetches the official schedule HTML from the website
 3. It parses the HTML looking for the "Aangepaste datum" (changed date) column
 4. For any matches with changed dates, it updates the corresponding entries in `schedule.json`
-5. The updated schedule is saved back to Azure Storage
+5. The updated schedule is saved back to storage
 
-## Storage Requirements
+## Storage Options
 
-The function requires access to Azure Blob Storage where `schedule.json` is stored. Both the backend API and this function should use the same storage account/container.
+This function supports two storage approaches:
+
+### Option 1: Shared File Mount (Recommended for current architecture)
+- Mount the same file share used by the backend to the Function App
+- Set `SCHEDULE_FILE_PATH` environment variable to the mounted path (e.g., `/mnt/data/schedule.json`)
+- The function will read and write directly to the shared `schedule.json` file
+- No migration of backend storage needed
+
+### Option 2: Azure Blob Storage (Requires backend migration)
+- Migrate backend from file-based storage to Azure Blob Storage
+- Use `storage.js` instead of `storageSimple.js` in the function
+- Requires `AZURE_STORAGE_CONNECTION_STRING` and `STORAGE_CONTAINER_NAME` environment variables
 
 ### Environment Variables
 
+**For Shared File Mount (Option 1):**
+- `SCHEDULE_FILE_PATH`: Path to schedule.json in the mounted file share
+- `FUNCTIONS_WORKER_RUNTIME`: Set to "node"
+- `AzureWebJobsStorage`: Storage connection for Azure Functions runtime
+
+**For Azure Blob Storage (Option 2):**
 - `AZURE_STORAGE_CONNECTION_STRING`: Connection string for Azure Storage account
 - `STORAGE_CONTAINER_NAME`: Name of the blob container (default: "data")
 - `FUNCTIONS_WORKER_RUNTIME`: Set to "node"
@@ -31,6 +48,7 @@ The function requires access to Azure Blob Storage where `schedule.json` is stor
 
 1. Install dependencies:
    ```bash
+   cd function
    npm install
    ```
 
@@ -39,7 +57,9 @@ The function requires access to Azure Blob Storage where `schedule.json` is stor
    cp local.settings.json.template local.settings.json
    ```
 
-3. Edit `local.settings.json` and add your Azure Storage connection string
+3. Edit `local.settings.json` and configure:
+   - For local development with file mount: Set `SCHEDULE_FILE_PATH` to point to `../backend/data/schedule.json`
+   - For Azure Blob Storage testing: Add your connection string
 
 4. Run the function locally:
    ```bash
@@ -52,36 +72,41 @@ The function requires access to Azure Blob Storage where `schedule.json` is stor
 
 ## Deployment
 
-The function should be deployed to Azure Functions using the GitHub Actions workflow. The workflow should:
-
-1. Build the function app
-2. Deploy to Azure Functions
-3. Configure application settings with the required environment variables
+The function is deployed to Azure Functions using the GitHub Actions workflow at `.github/workflows/azure-deploy.yml`.
 
 ### Required Azure Resources
 
-- **Azure Functions App**: Linux-based, Node.js runtime
-- **Azure Storage Account**: For both function runtime and schedule.json storage
+- **Azure Functions App**: Linux-based, Node.js 22 runtime
+- **Azure Storage Account**: For function runtime (required for all Azure Functions)
+- **File Share or Blob Storage**: Depending on your chosen storage option
 - **Application Insights** (optional): For monitoring and logging
 
 ### Configuration in Azure Portal
 
-After deployment, configure these Application Settings:
+After deployment, configure these Application Settings in the Function App:
 
+**For Shared File Mount approach:**
+- `SCHEDULE_FILE_PATH`: Path to the mounted schedule.json file (e.g., `/mnt/data/schedule.json`)
+- Mount a file share that the backend also uses
+
+**For Azure Blob Storage approach:**
 - `AZURE_STORAGE_CONNECTION_STRING`: Your storage account connection string
 - `STORAGE_CONTAINER_NAME`: "data" (or your chosen container name)
+- Update `index.js` to import from `storage.js` instead of `storageSimple.js`
 
-## Migration Notes
+## Using Shared File Mount (Recommended)
 
-### Transitioning from File-Based to Azure Storage
+The simplest way to set this up with the current architecture:
 
-The current backend stores `schedule.json` locally in `backend/data/`. To use this function:
+1. **Create an Azure File Share** in your storage account
+2. **Upload** the existing `backend/data/schedule.json` to the file share
+3. **Mount the file share** to both:
+   - Your Azure App Service (backend): Configure via Portal → Configuration → Path mappings
+   - Your Azure Function App: Configure via Portal → Configuration → Path mappings
+4. **Update both apps** to use the mounted path (e.g., `/mnt/data/schedule.json`)
+5. Set `SCHEDULE_FILE_PATH=/mnt/data/schedule.json` in Function App settings
 
-1. Upload the existing `schedule.json` to Azure Blob Storage
-2. Update the backend to read from Azure Storage instead of local filesystem
-3. Ensure both the backend and function use the same storage account/container
-
-Alternatively, for a simpler initial implementation, you could modify the function to use a shared file mount or have it call the backend API to update the schedule.
+This approach requires no code changes to the backend and maintains the existing file-based architecture.
 
 ## Monitoring
 
@@ -100,15 +125,16 @@ To test the function:
 
 1. **Manual Trigger**: Use the Azure Portal or Azure Functions Core Tools to trigger manually
 2. **View Logs**: Check execution logs for parsed changes
-3. **Verify Storage**: Confirm `schedule.json` was updated in blob storage
+3. **Verify Storage**: Confirm `schedule.json` was updated (check file share or blob storage)
 4. **Check Backend**: Verify the backend API returns updated dates
 
 ## Troubleshooting
 
 - **No updates found**: Check if the official website structure has changed
-- **Storage errors**: Verify connection string and container name
-- **Parse errors**: Website HTML structure may have changed; update parser logic
-- **Timezone issues**: Timer uses UTC; adjust CRON expression if needed for CET/CEST
+- **Storage errors**: Verify file path or connection string configuration
+- **Parse errors**: Website HTML structure may have changed; update parser logic in `scheduleParser.js`
+- **Timezone issues**: Timer uses UTC; current setting is 20:00 UTC which is 21:00/22:00 CET depending on DST
+- **File access errors**: Ensure the file share is properly mounted with read/write permissions
 
 ## Future Improvements
 
