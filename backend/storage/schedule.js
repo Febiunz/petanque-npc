@@ -163,11 +163,36 @@ export async function ensureSchedule() {
       await readScheduleFromBlob();
       return; // Schedule exists in blob storage
     } catch (err) {
-      // Schedule doesn't exist, create it
-      console.log('Schedule not found in blob storage, creating...');
+      // Schedule doesn't exist in blob storage
+      console.log('Schedule not found in blob storage, checking for local file to migrate...');
     }
     
-    // Try to fetch from official website first
+    // Check if local schedule.json exists to migrate
+    await ensureDir();
+    let localExists = false;
+    try {
+      await fs.access(scheduleFile);
+      localExists = true;
+    } catch {
+      localExists = false;
+    }
+    
+    if (localExists) {
+      // Migrate local file to blob storage
+      console.log('Found local schedule.json, migrating to blob storage...');
+      try {
+        const localContent = await fs.readFile(scheduleFile, 'utf-8');
+        const schedule = JSON.parse(localContent);
+        await writeScheduleToBlob(schedule);
+        console.log('Successfully migrated schedule.json to blob storage');
+        return;
+      } catch (migrateErr) {
+        console.error('Error migrating local schedule to blob storage:', migrateErr.message);
+        // Continue to create new schedule if migration fails
+      }
+    }
+    
+    // Try to fetch from official website
     const html = await tryFetchOfficialHtml();
     if (html) {
       const schedule = await parseOfficialSchedule(html);
