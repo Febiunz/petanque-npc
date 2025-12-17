@@ -20,7 +20,10 @@ const MONTHS_NL = {
 function toIsoDate(day, monthName) {
   const m = MONTHS_NL[monthName?.toUpperCase()?.trim()] || null;
   if (!m) return null;
-  const year = m >= 9 ? 2025 : 2026;
+  // Use current year for September-December, next year for January-August
+  // This handles the season spanning two calendar years
+  const currentYear = new Date().getFullYear();
+  const year = m >= 9 ? currentYear : currentYear + 1;
   const dd = String(Number(day)).padStart(2, '0');
   const mm = String(m).padStart(2, '0');
   return `${year}-${mm}-${dd}`;
@@ -113,11 +116,16 @@ export function parseChangedDates(html) {
     let changedDateIso = null;
     if (aangepasteDatumColumnIndex >= 0 && aangepasteDatumColumnIndex < cells.length) {
       const changedDateCell = cells[aangepasteDatumColumnIndex];
-      // Match dd-mm-yyyy format
+      // Match dd-mm-yyyy format and validate
       const dateMatch = changedDateCell.match(/\b(\d{2})-(\d{2})-(\d{4})\b/);
       if (dateMatch) {
         const [, d, m, y] = dateMatch;
-        changedDateIso = `${y}-${m}-${d}`;
+        // Basic validation: day 01-31, month 01-12
+        const dayNum = parseInt(d, 10);
+        const monthNum = parseInt(m, 10);
+        if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12) {
+          changedDateIso = `${y}-${m}-${d}`;
+        }
       }
     }
 
@@ -125,11 +133,19 @@ export function parseChangedDates(html) {
     if (!changedDateIso) {
       const dateCell = cells.slice(numIdx + 1).find(c => /\b\d{2}-\d{2}-\d{4}\b/.test(c));
       if (dateCell) {
-        const [d, m, y] = dateCell.split('-');
-        const parsedDate = `${y}-${m}-${d}`;
-        // Only consider it a changed date if it differs from the round default
-        if (parsedDate !== roundDefaultDate) {
-          changedDateIso = parsedDate;
+        const parts = dateCell.split('-');
+        if (parts.length === 3) {
+          const [d, m, y] = parts;
+          // Basic validation: day 01-31, month 01-12
+          const dayNum = parseInt(d, 10);
+          const monthNum = parseInt(m, 10);
+          if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12) {
+            const parsedDate = `${y}-${m}-${d}`;
+            // Only consider it a changed date if it differs from the round default
+            if (parsedDate !== roundDefaultDate) {
+              changedDateIso = parsedDate;
+            }
+          }
         }
       }
     }

@@ -40,7 +40,7 @@ app.timer('schedule-updater', {
       // Update matches with changed dates
       let updatedCount = 0;
       for (const [matchNumber, newDate] of changedDates) {
-        const match = schedule.find(m => m.matchNumber === matchNumber || m.id === matchNumber);
+        const match = schedule.find(m => m.matchNumber === matchNumber);
         if (match) {
           const oldDate = match.date;
           match.date = newDate;
