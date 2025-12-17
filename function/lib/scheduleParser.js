@@ -49,7 +49,12 @@ function cleanHtmlToLines(html) {
     // 1. sanitize-html has already removed script/style tags
     // 2. Only allowedTags remain (table, tr, td, th, h1-h6, br)
     // 3. Output is used only for data extraction, never rendered as HTML
-    row = row.replace(/<[^>]+>/g, '');  // nosemgrep: javascript.lang.security.detect-non-literal-regexp
+    // Apply repeated replacement to ensure all tag-like patterns are removed (defense-in-depth)
+    let prevRow;
+    do {
+      prevRow = row;
+      row = row.replace(/<[^>]+>/g, '');
+    } while (row !== prevRow);
     // Collapse whitespace
     row = row.replace(/\s+/g, ' ').trim();
     return `\n${row}\n`;
@@ -64,7 +69,12 @@ function cleanHtmlToLines(html) {
   // 1. sanitize-html has already removed script/style tags  
   // 2. Only harmless structural tags remain
   // 3. Output is parsed for match numbers/dates, never rendered as HTML
-  s = s.replace(/<[^>]+>/g, '');  // nosemgrep: javascript.lang.security.detect-non-literal-regexp
+  // Apply repeated replacement to ensure all tag-like patterns are removed (defense-in-depth)
+  let prevS;
+  do {
+    prevS = s;
+    s = s.replace(/<[^>]+>/g, '');
+  } while (s !== prevS);
   
   // Clean up entities
   s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
