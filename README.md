@@ -32,6 +32,7 @@ This project provides:
 - `frontend/` — React app
 - `backend/` — Express API
 - `backend/data/` — JSON data files (teams, schedule, matches)
+- `function/` — Azure Function for weekly schedule updates
 - `LICENSE` — Code license (MIT)
 - `CONTENT_LICENSE` — Website content license (CC BY 4.0)
 - `NOTICE` — Licensing summary
@@ -92,6 +93,7 @@ Run each app separately (optional):
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
 - Schedule is scraped from the official page when available, with a round-robin fallback. Stored at `backend/data/schedule.json`.
+- **Schedule Updates**: An Azure Function (`function/schedule-updater`) runs every Monday at 20:00 UTC to check the official website for changed match dates ("Aangepaste datum" column) and automatically updates the schedule.
 - Results are persisted in `backend/data/matches.json`. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
@@ -132,14 +134,21 @@ Rate limiting (subject to tuning; current values from code):
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 - Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
 - Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+- Schedule Updater Function → Azure Functions via `Azure/functions-action` using `AZURE_FUNCTION_PUBLISH_PROFILE`.
 
 Secrets to configure (repository or environment secrets):
 - Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
 - Backend runtime (App Service Application settings): `FIREBASE_PROJECT_ID` (required), `CHECK_REVOKED` (optional).
+- Function runtime (Function App Application settings): `AZURE_STORAGE_CONNECTION_STRING` (required), `STORAGE_CONTAINER_NAME` (default: "data").
 
 Firebase configuration:
 - Add your SWA production domain to Firebase Authorized domains.
 - If sign-in popups are blocked, enable redirects in your Firebase Auth settings (and allow the domain).
+
+Azure Function notes:
+- The schedule updater function runs automatically every Monday at 20:00 UTC.
+- It checks for changed match dates on the official website and updates the schedule.
+- See `function/README.md` for detailed setup and configuration instructions.
 
 Manual build/run (optional):
 

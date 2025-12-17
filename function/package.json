@@ -1,0 +1,18 @@
+{
+  "name": "npc-standen-schedule-updater",
+  "version": "1.0.0",
+  "description": "Azure Function to update match schedule dates weekly",
+  "type": "module",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "@azure/storage-blob": "^12.24.0",
+    "sanitize-html": "^2.17.0"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.0.0"
+  }
+}
