@@ -1,6 +1,6 @@
 import { app } from '@azure/functions';
-import { fetchOfficialHtml, parseChangedDates } from '../../lib/scheduleParser.js';
-import { readSchedule, updateSchedule } from '../../lib/storage.js';
+import { fetchOfficialHtml, parseChangedDates } from '../lib/scheduleParser.js';
+import { readSchedule, updateSchedule } from '../lib/storage.js';
 
 /**
  * Azure Function that runs weekly on Monday evenings to check for changed match dates
