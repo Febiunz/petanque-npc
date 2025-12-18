@@ -67,4 +67,3 @@ app.timer('schedule-updater', {
     }
   }
 });
-

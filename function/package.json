@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Azure Function to update match schedule dates weekly",
   "type": "module",
+
   "scripts": {
     "start": "func start",
     "test": "node test-parser.mjs"
