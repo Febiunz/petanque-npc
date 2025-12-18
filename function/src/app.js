@@ -4,8 +4,11 @@
  * to ensure they are discovered by the Azure Functions runtime.
  */
 
+import { app } from '@azure/functions';
+
 // Import function registrations (this registers them with the app object)
 import './functions/scheduleUpdater.js';
 
 // The functions are registered via app.timer() calls in their respective files
-// No need to export anything - the @azure/functions app object handles registration
+// Export app so the Azure Functions runtime can discover registered functions
+export { app };
