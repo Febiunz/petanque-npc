@@ -5,6 +5,9 @@ const OFFICIAL_URL = 'https://nlpetanque.nl/topdivisie-2025-2026-1001/';
 // Valid petanque match score total
 const PETANQUE_MATCH_TOTAL_SCORE = 31;
 
+// Forbidden scores (same as backend validation in routes/matches.js)
+const FORBIDDEN_SCORES = [1, 3, 28, 30];
+
 const MONTHS_NL = {
   'JANUARI': 1,
   'FEBRUARI': 2,
@@ -261,6 +264,11 @@ export function parseMatchResults(html) {
     // Only include if both scores are valid numbers and team names are present
     if (!isNaN(homeScore) && !isNaN(awayScore) && homeScore >= 0 && awayScore >= 0 &&
         homeTeam && awayTeam) {
+      // Validate scores: disallow forbidden scores (1, 3, 28, 30)
+      if (FORBIDDEN_SCORES.includes(homeScore) || FORBIDDEN_SCORES.includes(awayScore)) {
+        continue; // Skip this result as it has forbidden scores
+      }
+      
       // Basic validation: scores should sum to PETANQUE_MATCH_TOTAL_SCORE for a completed match
       if (homeScore + awayScore === PETANQUE_MATCH_TOTAL_SCORE) {
         results.set(matchNumber, {

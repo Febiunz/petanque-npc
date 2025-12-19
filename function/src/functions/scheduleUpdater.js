@@ -30,6 +30,7 @@ app.timer('schedule-updater', {
       const changedDates = parseChangedDates(html);
       
       let scheduleUpdated = false;
+      let schedule = null; // Will be loaded if needed
       if (changedDates.size === 0) {
         context.log('No changed dates found.');
       } else {
@@ -37,7 +38,7 @@ app.timer('schedule-updater', {
 
         // Read current schedule from storage
         context.log('Reading current schedule from storage...');
-        const schedule = await readSchedule();
+        schedule = await readSchedule();
 
         // Update matches with changed dates
         let updatedCount = 0;
@@ -75,10 +76,12 @@ app.timer('schedule-updater', {
       
       // Read current matches from storage
       context.log('Reading current matches from storage...');
-      const matches = await readMatches();
+      const { matches, etag } = await readMatches();
       
-      // Read schedule to get match metadata
-      const schedule = await readSchedule();
+      // Read schedule to get match metadata (reuse if already loaded)
+      if (!scheduleUpdated) {
+        schedule = await readSchedule();
+      }
       
       // Create a map of existing matches by matchNumber for quick lookup
       const existingMatchesMap = new Map();
@@ -110,6 +113,17 @@ app.timer('schedule-updater', {
         if (!scheduledMatch) {
           context.warn(`Match ${matchNumber} not found in schedule`);
           continue;
+        }
+        
+        // Validate that the team IDs from the schedule match the derived team IDs
+        if (scheduledMatch.homeTeamId !== homeTeamId || scheduledMatch.awayTeamId !== awayTeamId) {
+          context.warn(
+            `Team ID mismatch for match ${matchNumber}: ` +
+            `schedule has ${scheduledMatch.homeTeamId} vs ${scheduledMatch.awayTeamId}, ` +
+            `derived from official results are ${homeTeamId} vs ${awayTeamId} ` +
+            `(${officialResult.homeTeam} vs ${officialResult.awayTeam})`
+          );
+          continue; // Skip this result due to team mismatch
         }
         
         // Check if we already have this result
@@ -159,10 +173,11 @@ app.timer('schedule-updater', {
         // Add new matches
         matches.push(...matchesToAdd);
         
-        // Save updated matches back to storage
+        // Save updated matches back to storage with ETag for concurrency control
         context.log(`Saving ${addedCount} new and ${correctedCount} corrected match result(s) to storage...`);
-        await updateMatches(matches);
+        await updateMatches(matches, etag);
         context.log('Match results updated successfully!');
+        context.log('Standings will be recalculated dynamically on the next /api/standings request.');
       } else {
         context.log('All match results are up to date.');
       }
