@@ -17,6 +17,26 @@ const MONTHS_NL = {
   'DECEMBER': 12,
 };
 
+// Map team names from the website to team IDs used in our database
+const TEAM_NAME_TO_ID = {
+  "Amicale Boule d'Argent 1": 'amicale-boule-d-argent-1',
+  "Boul'Animo 1": 'boul-animo-1',
+  'CdP Les Cailloux 1': 'cdp-les-cailloux-1',
+  "JBC 't Dupke 1": 'jbc-t-dupke-1',
+  'Jeu de Bommel 1': 'jeu-de-bommel-1',
+  'Petangeske 1': 'petangeske-1',
+  'PUK-Haarlem 1': 'puk-haarlem-1',
+  "'t Zwijntje 1": 't-zwijntje-1',
+};
+
+/**
+ * Convert a team name from the website to a team ID.
+ * Returns null if the team name is not recognized.
+ */
+export function teamNameToId(teamName) {
+  return TEAM_NAME_TO_ID[teamName] || null;
+}
+
 function toIsoDate(day, monthName) {
   const m = MONTHS_NL[monthName?.toUpperCase()?.trim()] || null;
   if (!m) return null;
@@ -186,4 +206,69 @@ export function parseChangedDates(html) {
   }
 
   return changedDates;
+}
+
+/**
+ * Parse the official schedule HTML and extract match results.
+ * Returns a map of matchNumber -> { homeTeam, awayTeam, homeScore, awayScore }
+ * Only includes matches that have results filled in.
+ */
+export function parseMatchResults(html) {
+  const lines = cleanHtmlToLines(html);
+  const results = new Map();
+
+  for (const raw of lines) {
+    // Skip lines without match numbers
+    if (!/1001\d{2}/.test(raw)) continue;
+
+    // Split by pipe - empty cells between pipes will be empty strings
+    const allCells = raw.split('|').map(c => c.trim());
+    const numIdx = allCells.findIndex(c => /^1001\d{2}$/.test(c));
+    if (numIdx === -1) continue;
+
+    const matchNumber = allCells[numIdx];
+    
+    // After cleanHtmlToLines, empty <td></td> elements are removed entirely from the output
+    // So we need to look at the actual cells present, not assume fixed positions
+    // The structure is: matchNumber | [aangepaste datum if present] | homeTeam | awayTeam | homeScore | awayScore | [match points...]
+    
+    // We'll use a heuristic: find the first two cells after match number that look like team names,
+    // then the next two cells that look like scores
+    
+    // For now, let's use a simpler approach: check if there's a date-like cell after match number
+    // If cell after match number looks like a date (d-m-yyyy), skip it
+    let offset = 1; // Start looking after match number
+    const cellAfterMatch = allCells[numIdx + offset] || '';
+    
+    // Check if it's a date in dd-mm-yyyy format
+    if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(cellAfterMatch)) {
+      offset++; // Skip the aangepaste datum column
+    }
+    
+    // Now get teams and scores
+    const homeTeam = allCells[numIdx + offset] || '';
+    const awayTeam = allCells[numIdx + offset + 1] || '';
+    const homeScoreStr = allCells[numIdx + offset + 2] || '';
+    const awayScoreStr = allCells[numIdx + offset + 3] || '';
+    
+    // Check if scores are numeric and valid
+    const homeScore = parseInt(homeScoreStr, 10);
+    const awayScore = parseInt(awayScoreStr, 10);
+    
+    // Only include if both scores are valid numbers and team names are present
+    if (!isNaN(homeScore) && !isNaN(awayScore) && homeScore >= 0 && awayScore >= 0 &&
+        homeTeam && awayTeam) {
+      // Basic validation: scores should sum to 31 for a completed match
+      if (homeScore + awayScore === 31) {
+        results.set(matchNumber, {
+          homeTeam: homeTeam.trim(),
+          awayTeam: awayTeam.trim(),
+          homeScore,
+          awayScore
+        });
+      }
+    }
+  }
+
+  return results;
 }

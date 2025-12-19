@@ -1,14 +1,15 @@
 import { BlobServiceClient } from '@azure/storage-blob';
 
 /**
- * Azure Storage helper for reading and updating schedule.json
- * The schedule.json file should be stored in Azure Blob Storage
- * so that both the backend API and the Azure Function can access it.
+ * Azure Storage helper for reading and updating schedule.json and matches.json
+ * These files should be stored in Azure Blob Storage
+ * so that both the backend API and the Azure Function can access them.
  */
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const containerName = process.env.STORAGE_CONTAINER_NAME || 'data';
 const scheduleFileName = 'schedule.json';
+const matchesFileName = 'matches.json';
 
 export async function readSchedule() {
   if (!connectionString) {
@@ -56,5 +57,48 @@ async function streamToBuffer(readableStream) {
       resolve(Buffer.concat(chunks));
     });
     readableStream.on('error', reject);
+  });
+}
+
+/**
+ * Read matches from Azure Blob Storage
+ */
+export async function readMatches() {
+  if (!connectionString) {
+    throw new Error('AZURE_STORAGE_CONNECTION_STRING environment variable not set');
+  }
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blobClient = containerClient.getBlobClient(matchesFileName);
+
+  try {
+    const downloadResponse = await blobClient.download();
+    const downloaded = await streamToBuffer(downloadResponse.readableStreamBody);
+    return JSON.parse(downloaded.toString());
+  } catch (err) {
+    if (err.statusCode === 404) {
+      // matches.json doesn't exist yet, return empty array
+      return [];
+    }
+    throw err;
+  }
+}
+
+/**
+ * Update matches in Azure Blob Storage
+ */
+export async function updateMatches(matches) {
+  if (!connectionString) {
+    throw new Error('AZURE_STORAGE_CONNECTION_STRING environment variable not set');
+  }
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blobClient = containerClient.getBlockBlobClient(matchesFileName);
+
+  const content = JSON.stringify(matches, null, 2);
+  await blobClient.upload(content, Buffer.byteLength(content), {
+    blobHTTPHeaders: { blobContentType: 'application/json' }
   });
 }
