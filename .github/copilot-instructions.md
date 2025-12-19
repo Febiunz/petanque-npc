@@ -6,8 +6,9 @@ This repository contains a petanque match management system with a React fronten
 ## Technology Stack
 - **Frontend**: React 18 + Vite + Material UI (MUI)
 - **Backend**: Node.js (ESM) + Express + Firebase Authentication
-- **Storage**: JSON files (file-based storage)
-- **Deployment**: Azure App Service (backend) + Azure Static Web Apps (frontend)
+- **Storage**: Azure Blob Storage (production) / Local JSON files (development)
+- **Automation**: Azure Functions for weekly schedule and results synchronization
+- **Deployment**: Azure App Service (backend) + Azure Static Web Apps (frontend) + Azure Functions
 - **CI/CD**: GitHub Actions
 
 ## Architecture
@@ -18,9 +19,18 @@ frontend/          # React 18 + Vite + MUI
 └── vite.config.js
 
 backend/           # Node.js ESM + Express
-├── data/          # JSON storage files
+├── data/          # JSON storage files (development only)
 ├── routes/        # Express routes
+├── storage/       # Storage abstraction (blob/file)
 ├── index.js       # Main server file
+└── package.json
+
+function/          # Azure Functions
+├── src/
+│   └── functions/ # scheduleUpdater timer function
+├── lib/
+│   ├── scheduleParser.js  # HTML parser for official website
+│   └── storage.js         # Azure Blob Storage helpers
 └── package.json
 
 scripts/           # Helper scripts
@@ -97,6 +107,10 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - All file writes are serialized with in-process mutex
 - Deleting results triggers automatic standings refresh
 - No duplicate submissions for same match allowed
+- **Automated Synchronization**: Azure Function runs weekly (Mondays 20:00 UTC) to:
+  - Update match dates from official website
+  - Add missing results found on official website
+  - Correct incorrect results that differ from official website
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
@@ -120,6 +134,14 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - `FIREBASE_PROJECT_ID` (required)
 - `CHECK_REVOKED` (optional, default: false)
 - `PORT` (optional, default: 5000)
+- `AZURE_STORAGE_CONNECTION_STRING` (production, for blob storage)
+- `STORAGE_CONTAINER_NAME` (optional, default: "data")
+
+### Azure Function Runtime
+- `AZURE_STORAGE_CONNECTION_STRING` (required, for blob storage access)
+- `STORAGE_CONTAINER_NAME` (optional, default: "data")
+- `FUNCTIONS_WORKER_RUNTIME` (set to "node")
+- `AzureWebJobsStorage` (required for Azure Functions runtime)
 
 ### Frontend Build-time
 - `VITE_FIREBASE_API_KEY`
@@ -162,6 +184,16 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 9. Delete result (requires confirmation)
 10. Verify standings update
 
+### Function Testing
+```bash
+# Test result parser (Timeout: 30 seconds)
+cd function && npm install
+node test-results-parser.mjs
+node test-parser.mjs
+
+# Should output: ✅ All tests passed!
+```
+
 ### Build Validation
 ```bash
 # Frontend build test (Timeout: 180 seconds)
@@ -183,16 +215,82 @@ cd frontend && npm run preview
 - Update documentation when behavior changes
 
 ### File Structure Rules
-- Keep schedule scraping logic in backend (no fixtures layer)
-- JSON storage files in `backend/data/`
+- Keep schedule/results scraping logic in `function/lib/scheduleParser.js`
+- Storage abstraction in both `backend/storage/` and `function/lib/storage.js`
+- Azure Function code in `function/src/functions/`
+- JSON storage files in `backend/data/` (development) or Azure Blob Storage (production)
 - Express routes in `backend/routes/`
 - React components in `frontend/src/`
 
 ### Deployment
 - Backend deploys to Azure App Service
 - Frontend deploys to Azure Static Web Apps
+- Azure Function deploys to Azure Functions (Flex Consumption)
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
+
+## Azure Function - Schedule and Results Updater
+
+### Overview
+- **Function Name**: `schedule-updater`
+- **Trigger**: Timer (cron: `0 0 20 * * MON`) - Every Monday at 20:00 UTC
+- **Purpose**: 
+  1. Check official website for changed match dates and update schedule
+  2. Check official website for missing or incorrect results and fix them
+- **Source**: https://nlpetanque.nl/topdivisie-2025-2026-1001/
+
+### Key Components
+- `function/lib/scheduleParser.js` - Parses HTML from official website
+  - `parseChangedDates()` - Extracts matches with changed dates
+  - `parseMatchResults()` - Extracts match results (scores)
+  - `teamNameToId()` - Maps team names to database IDs
+- `function/lib/storage.js` - Azure Blob Storage interface
+  - `readSchedule()` / `updateSchedule()` - Schedule operations
+  - `readMatches()` / `updateMatches()` - Match results operations
+- `function/src/functions/scheduleUpdater.js` - Main function logic
+
+### Result Synchronization Logic
+1. Fetch HTML from official website
+2. Parse match results (team names and scores)
+3. Read existing matches from blob storage
+4. Compare official results with stored results:
+   - **Missing**: Add results found on website but not in database
+   - **Incorrect**: Correct results that differ from official source
+5. Save updated matches to blob storage
+
+### Team Name Mapping
+Team names on the website must be mapped to database IDs:
+```javascript
+"Amicale Boule d'Argent 1" → 'amicale-boule-d-argent-1'
+"Boul'Animo 1" → 'boul-animo-1'
+"CdP Les Cailloux 1" → 'cdp-les-cailloux-1'
+"JBC 't Dupke 1" → 'jbc-t-dupke-1'
+"Jeu de Bommel 1" → 'jeu-de-bommel-1'
+"Petangeske 1" → 'petangeske-1'
+"PUK-Haarlem 1" → 'puk-haarlem-1'
+"'t Zwijntje 1" → 't-zwijntje-1'
+```
+
+**⚠️ If team names change on the website, update `TEAM_NAME_TO_ID` in `scheduleParser.js`!**
+
+### Function Logs
+The function logs comprehensive information:
+- Number of changed dates found
+- Each match date update (old → new)
+- Number of results found on website
+- Missing results added
+- Incorrect results corrected
+- Summary with counts of all changes
+
+### Testing the Function Locally
+```bash
+cd function
+npm install
+
+# Test the parser logic
+node test-results-parser.mjs  # Should output: ✅ All tests passed!
+node test-parser.mjs           # Should output: ✅ All tests passed!
+```
 
 ## Common Tasks and Commands
 

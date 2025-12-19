@@ -95,8 +95,11 @@ Run each app separately (optional):
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
 - Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) for shared access between backend and function. Falls back to local file in development.
-- **Schedule Updates**: An Azure Function (`function/schedule-updater`) runs every Monday at 20:00 UTC to check the official website for changed match dates ("Aangepaste datum" column) and automatically updates the schedule in blob storage.
-- Results are persisted in `backend/data/matches.json` (local file storage). Writes are serialized via a simple in-process mutex to avoid corruption.
+- **Schedule and Results Updates**: An Azure Function (`function/schedule-updater`) runs every Monday at 20:00 UTC to:
+  - Check the official website for changed match dates ("Aangepaste datum" column) and automatically update the schedule
+  - Check for missing or incorrect match results and automatically add/correct them
+  - All updates are logged and stored in Azure Blob Storage
+- Results are persisted in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches.json`) when in production, or local `backend/data/matches.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
   - `date` (ISO date of match), `createdAt` (submission timestamp)
@@ -156,7 +159,8 @@ Firebase configuration:
 Azure Function notes:
 - The schedule updater function runs automatically every Monday at 20:00 UTC (21:00/22:00 CET).
 - It checks for changed match dates ("Aangepaste datum") on the official website and updates the schedule in Azure Blob Storage.
-- Both the backend and function use `npcstandenstorageaccount` blob storage for shared schedule access.
+- It also checks for missing or incorrect match results and automatically adds/corrects them in Azure Blob Storage.
+- Both the backend and function use `npcstandenstorageaccount` blob storage for shared schedule and matches access.
 - See `function/DEPLOYMENT.md` for detailed setup and configuration instructions.
 
 Manual build/run (optional):
