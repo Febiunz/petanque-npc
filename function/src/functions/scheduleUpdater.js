@@ -78,7 +78,7 @@ app.timer('schedule-updater', {
       const matches = await readMatches();
       
       // Read schedule to get match metadata
-      const schedule = scheduleUpdated ? await readSchedule() : await readSchedule();
+      const schedule = await readSchedule();
       
       // Create a map of existing matches by matchNumber for quick lookup
       const existingMatchesMap = new Map();
