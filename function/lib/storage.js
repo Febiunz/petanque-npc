@@ -1,14 +1,15 @@
 import { BlobServiceClient } from '@azure/storage-blob';
 
 /**
- * Azure Storage helper for reading and updating schedule.json
- * The schedule.json file should be stored in Azure Blob Storage
- * so that both the backend API and the Azure Function can access it.
+ * Azure Storage helper for reading and updating schedule.json and matches.json
+ * These files should be stored in Azure Blob Storage
+ * so that both the backend API and the Azure Function can access them.
  */
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const containerName = process.env.STORAGE_CONTAINER_NAME || 'data';
 const scheduleFileName = 'schedule.json';
+const matchesFileName = 'matches.json';
 
 export async function readSchedule() {
   if (!connectionString) {
@@ -57,4 +58,66 @@ async function streamToBuffer(readableStream) {
     });
     readableStream.on('error', reject);
   });
+}
+
+/**
+ * Read matches from Azure Blob Storage
+ * Returns both the matches array and the ETag for optimistic concurrency control
+ */
+export async function readMatches() {
+  if (!connectionString) {
+    throw new Error('AZURE_STORAGE_CONNECTION_STRING environment variable not set');
+  }
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blobClient = containerClient.getBlobClient(matchesFileName);
+
+  try {
+    const downloadResponse = await blobClient.download();
+    const downloaded = await streamToBuffer(downloadResponse.readableStreamBody);
+    const matches = JSON.parse(downloaded.toString());
+    // Return both matches and ETag for optimistic concurrency
+    return { matches, etag: downloadResponse.etag };
+  } catch (err) {
+    if (err.statusCode === 404) {
+      // matches.json doesn't exist yet, return empty array with no etag
+      return { matches: [], etag: null };
+    }
+    throw err;
+  }
+}
+
+/**
+ * Update matches in Azure Blob Storage with optimistic concurrency control
+ * Uses ETag to ensure no concurrent modifications occurred since the read
+ */
+export async function updateMatches(matches, etag = null) {
+  if (!connectionString) {
+    throw new Error('AZURE_STORAGE_CONNECTION_STRING environment variable not set');
+  }
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  const containerClient = blobServiceClient.getContainerClient(containerName);
+  const blobClient = containerClient.getBlockBlobClient(matchesFileName);
+
+  const content = JSON.stringify(matches, null, 2);
+  const uploadOptions = {
+    blobHTTPHeaders: { blobContentType: 'application/json' }
+  };
+  
+  // Use ETag for optimistic concurrency control if provided
+  if (etag) {
+    uploadOptions.conditions = { ifMatch: etag };
+  }
+  
+  try {
+    await blobClient.upload(content, Buffer.byteLength(content), uploadOptions);
+  } catch (err) {
+    // If ETag mismatch, throw a more specific error
+    if (err.statusCode === 412) {
+      throw new Error('Concurrent modification detected: matches.json was modified by another process');
+    }
+    throw err;
+  }
 }
