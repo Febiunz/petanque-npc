@@ -9,7 +9,7 @@
     "test": "node test-parser.mjs"
   },
   "dependencies": {
-    "@azure/functions": "^4.0.0",
+    "@azure/functions": "^4.11.0",
     "@azure/storage-blob": "12.29.1",
     "sanitize-html": "^2.17.0"
   }
