@@ -7,8 +7,7 @@ This repository contains a petanque match management system with a React fronten
 - **Frontend**: React 18 + Vite + Material UI (MUI)
 - **Backend**: Node.js (ESM) + Express + Firebase Authentication
 - **Storage**: Azure Blob Storage (production) / Local JSON files (development)
-- **Automation**: Azure Functions for weekly schedule and results synchronization
-- **Deployment**: Azure App Service (backend) + Azure Static Web Apps (frontend) + Azure Functions
+- **Deployment**: Azure App Service (backend) + Azure Static Web Apps (frontend)
 - **CI/CD**: GitHub Actions
 
 ## Architecture
@@ -23,14 +22,6 @@ backend/           # Node.js ESM + Express
 ├── routes/        # Express routes
 ├── storage/       # Storage abstraction (blob/file)
 ├── index.js       # Main server file
-└── package.json
-
-function/          # Azure Functions
-├── src/
-│   └── functions/ # scheduleUpdater timer function
-├── lib/
-│   ├── scheduleParser.js  # HTML parser for official website
-│   └── storage.js         # Azure Blob Storage helpers
 └── package.json
 
 scripts/           # Helper scripts
@@ -91,7 +82,6 @@ cd frontend && npm run preview  # Preview built app (port 4173)
   - Body: `{ matchId, homeScore, awayScore }`
   - Scores: integers [0, 31], must sum to 31
   - **FORBIDDEN**: scores of 1 or 3 for either team
-- `DELETE /api/matches/:id` - Delete submitted result
 
 ## Key Business Rules
 
@@ -105,12 +95,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 ### Data Integrity
 - Match completion derived from `matches.json` - NEVER use `schedule.status`
 - All file writes are serialized with in-process mutex
-- Deleting results triggers automatic standings refresh
 - No duplicate submissions for same match allowed
-- **Automated Synchronization**: Azure Function runs weekly (Mondays 20:00 UTC) to:
-  - Update match dates from official website
-  - Add missing results found on official website
-  - Correct incorrect results that differ from official website
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
@@ -124,7 +109,6 @@ cd frontend && npm run preview  # Preview built app (port 4173)
   - Per user+match: 100 submissions per 2 minutes
   - Per user daily cap: 100/day
   - Global per match: 100/min across all users
-- DELETE /api/matches: 100 deletions/min per user/IP
 
 **⚠️ If rate limits change in `backend/routes/matches.js`, update README.md and COPILOT.md together!**
 
@@ -136,12 +120,6 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - `PORT` (optional, default: 5000)
 - `AZURE_STORAGE_CONNECTION_STRING` (production, for blob storage)
 - `STORAGE_CONTAINER_NAME` (optional, default: "data")
-
-### Azure Function Runtime
-- `AZURE_STORAGE_CONNECTION_STRING` (required, for blob storage access)
-- `STORAGE_CONTAINER_NAME` (optional, default: "data")
-- `FUNCTIONS_WORKER_RUNTIME` (set to "node")
-- `AzureWebJobsStorage` (required for Azure Functions runtime)
 
 ### Frontend Build-time
 - `VITE_FIREBASE_API_KEY`
@@ -163,9 +141,6 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 
 ### Results Display
 - Single-line rows only
-- Tiny delete icon in last column (logged-in users only)
-- Confirmation dialog before deletion
-- Refresh standings after deletion
 
 ### Development Proxy
 - Vite proxies `/api` requests to `http://localhost:5000`
@@ -181,18 +156,6 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 6. Test Firebase authentication flow
 7. Submit valid score (e.g., 13-18)
 8. Attempt invalid score (e.g., 1-30) - should be rejected
-9. Delete result (requires confirmation)
-10. Verify standings update
-
-### Function Testing
-```bash
-# Test result parser (Timeout: 30 seconds)
-cd function && npm install
-node test-results-parser.mjs
-node test-parser.mjs
-
-# Should output: ✅ All tests passed!
-```
 
 ### Build Validation
 ```bash
@@ -213,11 +176,10 @@ cd frontend && npm run preview
 - Mirror client-side validation on server for all user input
 - Never commit secrets - use environment variables
 - Update documentation when behavior changes
+- **README sync**: After updating any README file (`README.md`, `backend/README.md`, `frontend/README.md`), review this file and update any sections that reflect the same information. Conversely, when updating this file, propagate relevant changes to the appropriate README files.
 
 ### File Structure Rules
-- Keep schedule/results scraping logic in `function/lib/scheduleParser.js`
-- Storage abstraction in both `backend/storage/` and `function/lib/storage.js`
-- Azure Function code in `function/src/functions/`
+- Storage abstraction in `backend/storage/`
 - JSON storage files in `backend/data/` (development) or Azure Blob Storage (production)
 - Express routes in `backend/routes/`
 - React components in `frontend/src/`
@@ -225,72 +187,8 @@ cd frontend && npm run preview
 ### Deployment
 - Backend deploys to Azure App Service
 - Frontend deploys to Azure Static Web Apps
-- Azure Function deploys to Azure Functions (Flex Consumption)
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
-
-## Azure Function - Schedule and Results Updater
-
-### Overview
-- **Function Name**: `schedule-updater`
-- **Trigger**: Timer (cron: `0 0 20 * * MON`) - Every Monday at 20:00 UTC
-- **Purpose**: 
-  1. Check official website for changed match dates and update schedule
-  2. Check official website for missing or incorrect results and fix them
-- **Source**: https://nlpetanque.nl/topdivisie-2025-2026-1001/
-
-### Key Components
-- `function/lib/scheduleParser.js` - Parses HTML from official website
-  - `parseChangedDates()` - Extracts matches with changed dates
-  - `parseMatchResults()` - Extracts match results (scores)
-  - `teamNameToId()` - Maps team names to database IDs
-- `function/lib/storage.js` - Azure Blob Storage interface
-  - `readSchedule()` / `updateSchedule()` - Schedule operations
-  - `readMatches()` / `updateMatches()` - Match results operations
-- `function/src/functions/scheduleUpdater.js` - Main function logic
-
-### Result Synchronization Logic
-1. Fetch HTML from official website
-2. Parse match results (team names and scores)
-3. Read existing matches from blob storage
-4. Compare official results with stored results:
-   - **Missing**: Add results found on website but not in database
-   - **Incorrect**: Correct results that differ from official source
-5. Save updated matches to blob storage
-
-### Team Name Mapping
-Team names on the website must be mapped to database IDs:
-```javascript
-"Amicale Boule d'Argent 1" → 'amicale-boule-d-argent-1'
-"Boul'Animo 1" → 'boul-animo-1'
-"CdP Les Cailloux 1" → 'cdp-les-cailloux-1'
-"JBC 't Dupke 1" → 'jbc-t-dupke-1'
-"Jeu de Bommel 1" → 'jeu-de-bommel-1'
-"Petangeske 1" → 'petangeske-1'
-"PUK-Haarlem 1" → 'puk-haarlem-1'
-"'t Zwijntje 1" → 't-zwijntje-1'
-```
-
-**⚠️ If team names change on the website, update `TEAM_NAME_TO_ID` in `scheduleParser.js`!**
-
-### Function Logs
-The function logs comprehensive information:
-- Number of changed dates found
-- Each match date update (old → new)
-- Number of results found on website
-- Missing results added
-- Incorrect results corrected
-- Summary with counts of all changes
-
-### Testing the Function Locally
-```bash
-cd function
-npm install
-
-# Test the parser logic
-node test-results-parser.mjs  # Should output: ✅ All tests passed!
-node test-parser.mjs           # Should output: ✅ All tests passed!
-```
 
 ## Common Tasks and Commands
 
@@ -330,7 +228,6 @@ export PORT="5000"
 3. Test score validation (reject 1 and 3)
 4. Test authentication flow if modified
 5. Update README.md if behavior changed
-6. Update COPILOT.md if rate limits changed
 
 ### Performance Notes
 - Frontend build warnings about chunk size (>500KB) are expected
@@ -373,7 +270,13 @@ npm run install:all
 
 ### Documentation Updates
 When changing:
-- Rate limits → Update README.md + COPILOT.md
-- API endpoints → Update this file + COPILOT.md
+- Rate limits → Update README.md + this file
+- API endpoints → Update README.md + this file
 - Environment variables → Update README.md + this file
-- UI behavior → Update this file
+- UI behavior → Update README.md + this file
+- Auth flow → Update README.md + this file
+- Storage/data model → Update README.md + this file
+- Azure Function behavior → Update this file
+- Deployment steps → Update README.md + this file
+
+**⚠️ Any time a README is edited, scan this file for stale sections and keep them in sync. Any time this file is edited, propagate the relevant changes back to the appropriate README files.**

@@ -1,5 +1,5 @@
 import express from 'express';
-import { listMatches, createMatch, deleteMatch, computeStandings } from '../storage/fileStore.js';
+import { listMatches, createMatch, computeStandings } from '../storage/fileStore.js';
 import { getScheduledMatch } from '../storage/schedule.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import rateLimit from 'express-rate-limit';
@@ -135,21 +135,3 @@ router.post(
 );
 
 export default router;
-
-// Delete a single submitted match by id
-// Stricter limit for deletions: max 3 per minute per user/IP
-const matchDeleteLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: perUserKey,
-  message: 'Too many deletions, please try again later.'
-});
-
-router.delete('/:id', requireAuth, matchDeleteLimiter, async (req, res) => {
-  const { id } = req.params;
-  const ok = await deleteMatch(id);
-  if (!ok) return res.status(404).json({ error: 'Match not found' });
-  res.json({ ok: true });
-});
