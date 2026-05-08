@@ -13,12 +13,11 @@ This project provides:
 - Result entry form with scores that always sum to 31 (clamped 0–31) and start blank.
 - Score validation: 1 and 3 are not allowed for either team (client and server enforced).
 - Hides matches already submitted; hides a round entirely when all its matches are completed.
-- Delete a submitted result (auth required) with a small confirm prompt; standings refresh automatically.
 - Standings calculation:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
   - Visual indicators: 1st place (champion) has a light green background; last 2 places (relegation) have a light red background.
-- Compact results list: single-line rows with a minimal delete icon shown only when logged in.
+- Compact results list: single-line rows.
 
 ## Tech stack
 
@@ -32,7 +31,6 @@ This project provides:
 - `frontend/` — React app
 - `backend/` — Express API
 - `backend/data/` — JSON data files (teams, schedule, matches)
-- `function/` — Azure Function for weekly schedule updates
 - `LICENSE` — Code license (MIT)
 - `CONTENT_LICENSE` — Website content license (CC BY 4.0)
 - `NOTICE` — Licensing summary
@@ -87,18 +85,14 @@ Run each app separately (optional):
 
 ## Authentication
 
-- Users must sign in with Google (Firebase) to submit or delete results.
+- Users must sign in with Google (Firebase) to submit results.
 - The frontend attaches a Firebase ID token (Authorization: Bearer) to protected API calls.
 - The backend verifies tokens with `firebase-admin`.
 
 ## Data & storage
 
 - Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
-- Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) for shared access between backend and function. Falls back to local file in development.
-- **Schedule and Results Updates**: An Azure Function (`function/schedule-updater`) runs every Monday at 20:00 UTC to:
-  - Check the official website for changed match dates ("Aangepaste datum" column) and automatically update the schedule
-  - Check for missing or incorrect match results and automatically add/correct them
-  - All updates are logged and stored in Azure Blob Storage
+- Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) in production. Falls back to local file in development.
 - Results are persisted in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches.json`) when in production, or local `backend/data/matches.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
@@ -116,7 +110,6 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, homeScore, awayScore }`
   - Validation: requires a scheduled match; rejects duplicates; disallows scores 1 or 3 for either team.
-- `DELETE /api/matches/:id` — Delete a submitted result by its id (requires Firebase ID token)
 - `GET /api/standings` — Current standings, sorted as described above
 
 Rate limiting (subject to tuning; current values from code):
@@ -124,7 +117,6 @@ Rate limiting (subject to tuning; current values from code):
 - `GET /api/matches`: 100 req/min per IP.
 - `POST /api/matches`: 100 req/min per user/IP, plus up to 100 submissions per 2 minutes for the same specific match per user, and a daily cap of 100 per user.
 - Global per-match throttle (POST): 100 submissions/min across all users for the same match.
-- `DELETE /api/matches/:id`: 100 deletions/min per user/IP.
 
 ## Frontend behavior
 
@@ -132,14 +124,13 @@ Rate limiting (subject to tuning; current values from code):
 - Match dropdown shows only matches not yet completed/submitted for the selected round.
 - Score inputs auto-complement to 31, clamp to 0–31, and start empty; scores 1 and 3 are blocked.
 - After submit, standings and results refresh; the saved match disappears from the selection. If a round fully completes, it’s removed from the selector.
-- Results list is compact (single-line). A tiny delete icon is shown as the last column only when logged in. Clicking prompts a confirmation and then refreshes data.
+- Results list is compact (single-line).
 
 ## Production notes (Azure)
 
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 - Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
 - Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
-- Schedule Updater Function → Azure Functions via `Azure/functions-action` using `AZURE_FUNCTION_PUBLISH_PROFILE`.
 
 Secrets to configure (repository or environment secrets):
 - Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
@@ -148,20 +139,10 @@ Secrets to configure (repository or environment secrets):
   - `CHECK_REVOKED` (optional)
   - `AZURE_STORAGE_CONNECTION_STRING` (required for production)
   - `STORAGE_CONTAINER_NAME` (optional, defaults to "data")
-- Function runtime (Function App Application settings): 
-  - `AZURE_STORAGE_CONNECTION_STRING` (required)
-  - `STORAGE_CONTAINER_NAME` (optional, defaults to "data")
 
 Firebase configuration:
 - Add your SWA production domain to Firebase Authorized domains.
 - If sign-in popups are blocked, enable redirects in your Firebase Auth settings (and allow the domain).
-
-Azure Function notes:
-- The schedule updater function runs automatically every Monday at 20:00 UTC (21:00/22:00 CET).
-- It checks for changed match dates ("Aangepaste datum") on the official website and updates the schedule in Azure Blob Storage.
-- It also checks for missing or incorrect match results and automatically adds/corrects them in Azure Blob Storage.
-- Both the backend and function use `npcstandenstorageaccount` blob storage for shared schedule and matches access.
-- See `function/DEPLOYMENT.md` for detailed setup and configuration instructions.
 
 Manual build/run (optional):
 
@@ -172,7 +153,7 @@ npm --prefix backend run start
 
 ## Troubleshooting
 
-- 401 on submit/delete: Log in again; token may be expired. Ensure `FIREBASE_PROJECT_ID` matches your Firebase project.
+- 401 on submit: Log in again; token may be expired. Ensure `FIREBASE_PROJECT_ID` matches your Firebase project.
 - Unknown match: Ensure you selected a match from the current schedule; verify `backend/data/schedule.json` IDs.
 - Round missing from selector: All matches in that round are completed (hidden by design).
 - CORS in dev: Handled by Vite proxy. If running FE/BE on different hosts, set `VITE_API_BASE` in the frontend env.

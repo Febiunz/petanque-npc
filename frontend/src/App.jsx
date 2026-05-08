@@ -1,6 +1,5 @@
 import React from 'react';
-import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar, IconButton, Tooltip } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar, Tooltip } from '@mui/material';
 import { api } from './api';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
@@ -44,28 +43,7 @@ function App() {
   const awayShowError = scores.awayScore !== '' && !isNaN(awayScoreNum) && disallowedScores.has(awayScoreNum);
   const invalidScore = homeInvalid || awayInvalid;
   const [results, setResults] = React.useState([]);
-  const handleDeleteResult = async (match) => {
-    if (!user || !match?.id) return;
-    // Build a small confirmation message
-    const homeName = teams.find(t => t.id === match.homeTeamId)?.name || match.homeTeam?.name || match.homeTeamId || 'Thuis';
-    const awayName = teams.find(t => t.id === match.awayTeamId)?.name || match.awayTeam?.name || match.awayTeamId || 'Uit';
-    const number = match.matchNumber || match.fixtureId || match.matchId || match.id;
-    const msg = `Weet je zeker dat je uitslag ${number} (${homeName} ${match.homeScore}-${match.awayScore} ${awayName}) wilt verwijderen?`;
-    const ok = window.confirm(msg);
-    if (!ok) return;
-    try {
-      await api.deleteMatch(match.id);
-      // Refresh results and standings
-      const submitted = await api.getMatches();
-      setResults(submitted);
-      setCompletedSet(new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean)));
-      await loadStandings();
-      // If current round becomes available again, recompute derived schedule state
-      setScheduleAll(await api.getSchedule());
-    } catch (e) {
-      console.error('Delete failed:', e);
-    }
-  };
+
   // derive round matches from cached full schedule while hiding completed ones
   React.useEffect(() => {
     if (!round) { setSchedule([]); return; }
@@ -260,9 +238,7 @@ function App() {
           ) : (
             <Box component="div" sx={{
               display: 'grid',
-              // When logged in: round, home, score, away, delete (keep last very small)
-              // When logged out: round, home, score, away
-              gridTemplateColumns: user ? '28px minmax(0,1fr) 42px minmax(0,1fr) 20px' : '28px minmax(0,1fr) 42px minmax(0,1fr)',
+              gridTemplateColumns: '28px minmax(0,1fr) 42px minmax(0,1fr)',
               columnGap: 1,
               rowGap: 0,
               alignItems: 'center'
@@ -271,7 +247,6 @@ function App() {
               <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uit</Typography>
-              {user && <span />}
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
@@ -296,15 +271,6 @@ function App() {
                     {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{homeName}</Typography>)}
                     {wrapWithTooltip(<Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{homeScore} - {awayScore}</Typography>)}
                     {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{awayName}</Typography>)}
-        {user && (
-                      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <Tooltip title="Verwijder" placement="left" arrow>
-                          <IconButton size="small" aria-label="verwijder" onClick={() => handleDeleteResult(r)} sx={{ p: 0.25 }}>
-                              <CloseIcon sx={{ fontSize: 14 }} />
-                            </IconButton>
-                        </Tooltip>
-                      </Box>
-                    )}
                   </React.Fragment>
                 );
               })}
