@@ -276,7 +276,6 @@ When changing:
 - UI behavior → Update README.md + this file
 - Auth flow → Update README.md + this file
 - Storage/data model → Update README.md + this file
-- Azure Function behavior → Update this file
 - Deployment steps → Update README.md + this file
 
 **⚠️ Any time a README is edited, scan this file for stale sections and keep them in sync. Any time this file is edited, propagate the relevant changes back to the appropriate README files.**
