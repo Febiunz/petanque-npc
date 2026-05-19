@@ -17,8 +17,6 @@ jobs:
   deploy-backend:
     name: Deploy Backend (App Service)
     runs-on: ubuntu-latest
-    env:
-      NODE_NO_WARNINGS: 1
     defaults:
       run:
         working-directory: backend
