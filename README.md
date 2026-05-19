@@ -1,6 +1,6 @@
 # NPC Standen
 
-A simple results and standings website for the Dutch Petanque Topdivisie.
+A results and standings website for Dutch Petanque competition NPC.
 
 This project provides:
 - A React (Vite + MUI) frontend to enter match results and view standings.
@@ -9,6 +9,8 @@ This project provides:
 
 ## Features
 
+- Required division selection before entering results.
+- Supported division identifiers: `1001` (Topdivisie), `2001` and `2002` (2e divisie).
 - Speelronde selector with round date; only rounds with open matches are shown.
 - Result entry form with scores that always sum to 31 (clamped 0–31) and start blank.
 - Score validation: 1 and 3 are not allowed for either team (client and server enforced).
@@ -91,7 +93,8 @@ Run each app separately (optional):
 
 ## Data & storage
 
-- Teams are fixed to the official Topdivisie lineup and returned from the backend (not user-editable).
+- Teams are fixed to official divisions and returned from the backend (not user-editable).
+- Schedule is generated locally (round-robin) from division teams; no external official schedule fetch/parsing is used.
 - Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) in production. Falls back to local file in development.
 - Results are persisted in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches.json`) when in production, or local `backend/data/matches.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
 - Each saved result stores:
@@ -104,13 +107,13 @@ Run each app separately (optional):
 Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 
 - `GET /api/health` — Service status
-- `GET /api/teams` — Official teams
-- `GET /api/matches/schedule` — Full schedule; `?round=NUMBER` to filter by round
-- `GET /api/matches` — Submitted matches (most recent first)
+- `GET /api/teams` — Official teams; supports `?divisieId=1001|2001|2002` and optional `?divisie=topdivisie|2e-divisie`
+- `GET /api/matches/schedule` — Full schedule; supports `?divisieId=1001|2001|2002`, optional `?divisie=...`, and `?round=NUMBER`
+- `GET /api/matches` — Submitted matches (most recent first); supports `?divisieId=1001|2001|2002`
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
-  - Body: `{ matchId, homeScore, awayScore }`
+  - Body: `{ matchId, divisieId, homeScore, awayScore }`
   - Validation: requires a scheduled match; rejects duplicates; disallows scores 1 or 3 for either team.
-- `GET /api/standings` — Current standings, sorted as described above
+- `GET /api/standings` — Current standings; supports `?divisieId=1001|2001|2002` and optional `?divisie=...`
 
 Rate limiting (subject to tuning; current values from code):
 - Pre-auth guard: 100 req/min per IP before auth processing.
@@ -120,8 +123,9 @@ Rate limiting (subject to tuning; current values from code):
 
 ## Frontend behavior
 
+- User must select divisie and pool before rounds/matches become selectable.
 - Speelronde selector shows only rounds with at least one open (not completed) match and includes a date hint.
-- Match dropdown shows only matches not yet completed/submitted for the selected round.
+- Match dropdown shows only matches not yet completed/submitted for the selected round and selected division.
 - Score inputs auto-complement to 31, clamp to 0–31, and start empty; scores 1 and 3 are blocked.
 - After submit, standings and results refresh; the saved match disappears from the selection. If a round fully completes, it’s removed from the selector.
 - Results list is compact (single-line).

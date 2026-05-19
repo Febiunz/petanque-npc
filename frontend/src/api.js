@@ -14,17 +14,28 @@ async function http(url, options = {}) {
   return res.json();
 }
 
+function withQuery(path, params = {}) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      query.set(key, String(value));
+    }
+  });
+  const serialized = query.toString();
+  return serialized ? `${path}?${serialized}` : path;
+}
+
 export const api = {
   getHealth: () => http('/api/health'),
-  getTeams: () => http('/api/teams'),
-  getMatches: () => http('/api/matches'),
+  getTeams: ({ divisieId, divisie } = {}) => http(withQuery('/api/teams', { divisieId, divisie })),
+  getMatches: ({ divisieId } = {}) => http(withQuery('/api/matches', { divisieId })),
   // schedule of matches (previously /api/fixtures)
-  getSchedule: (round) => http(`/api/matches/schedule${round ? `?round=${round}` : ''}`),
-  submitResult: async ({ matchId, homeScore, awayScore }) => {
+  getSchedule: ({ round, divisieId, divisie } = {}) => http(withQuery('/api/matches/schedule', { round, divisieId, divisie })),
+  submitResult: async ({ matchId, homeScore, awayScore, divisieId }) => {
     const token = await auth.currentUser?.getIdToken();
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, homeScore, awayScore }) });
+    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, homeScore, awayScore, divisieId }) });
   },
-  getStandings: () => http('/api/standings'),
+  getStandings: ({ divisieId, divisie } = {}) => http(withQuery('/api/standings', { divisieId, divisie })),
 };

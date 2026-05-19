@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { readBlobFile, writeBlobFile, blobExists } from './blobStorage.js';
@@ -7,10 +7,23 @@ import { readBlobFile, writeBlobFile, blobExists } from './blobStorage.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
 const teamsFile = `${dataDir}/teams.json`;
-const matchesFile = `${dataDir}/matches.json`;
 
 // Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+export const DIVISIES = {
+  TOPDIVISIE: 'topdivisie',
+  SECOND_DIVISION: '2e-divisie',
+};
+
+export const POOLS = {
+  TOPDIVISIE: '1001',
+  SECOND_DIVISION_A: '2001',
+  SECOND_DIVISION_B: '2002',
+};
+
+const ALL_DIVISIE_IDS = ['1001', '2001', '2002'];
+const matchesFileFor = (divisieId) => `${dataDir}/matches-${divisieId}.json`;
 
 // Track if migration has been attempted
 let migrationAttempted = false;
@@ -30,7 +43,7 @@ async function withLock(filePath, fn) {
   }
 }
 
-const OFFICIAL_TEAMS = [
+const TOPDIVISIE_TEAMS = [
   { id: 'amicale-boule-d-argent-1', name: "Amicale Boule d'Argent 1" },
   { id: 'boul-animo-1', name: "Boul'Animo 1" },
   { id: 'cdp-les-cailloux-1', name: 'CdP Les Cailloux 1' },
@@ -39,7 +52,49 @@ const OFFICIAL_TEAMS = [
   { id: 'petangeske-1', name: 'Petangeske 1' },
   { id: 'puk-haarlem-1', name: 'PUK-Haarlem 1' },
   { id: 't-zwijntje-1', name: "'t Zwijntje 1" },
-].map(t => ({ ...t, club: '', locale: 'nl', createdAt: '2025-08-01T00:00:00.000Z' }));
+].map((team) => ({ ...team, divisie: DIVISIES.TOPDIVISIE, divisieId: POOLS.TOPDIVISIE }));
+
+const SECOND_DIVISION_POOL_A_TEAMS = [
+  'PV Gouda 1',
+  'JBV Amicale Cuyk 1',
+  'MIDI 1',
+  "JBC 't Dupke 2",
+  'Va-Tout 1',
+  'Amicale de Pétanque 1',
+  "L'Esprit 1",
+  'JBV De Walnoot 1',
+].map((name) => ({ id: slugifyTeam(name), name, divisie: DIVISIES.SECOND_DIVISION, divisieId: POOLS.SECOND_DIVISION_A }));
+
+const SECOND_DIVISION_POOL_B_TEAMS = [
+  'Le Biberon 1',
+  'De Bouledozers 1',
+  'PUK-Haarlem 2',
+  'JBC Randenbroek 1',
+  'Les Boules Fleuries 1',
+  'ELZA-Boules 1',
+  'Les Bohémiens de Petanque 1',
+  'De Gooiers 1',
+].map((name) => ({ id: slugifyTeam(name), name, divisie: DIVISIES.SECOND_DIVISION, divisieId: POOLS.SECOND_DIVISION_B }));
+
+const OFFICIAL_TEAMS = [
+  ...TOPDIVISIE_TEAMS,
+  ...SECOND_DIVISION_POOL_A_TEAMS,
+  ...SECOND_DIVISION_POOL_B_TEAMS,
+].map((team) => ({
+  ...team,
+  club: '',
+  locale: 'nl',
+  createdAt: '2025-08-01T00:00:00.000Z',
+}));
+
+function slugifyTeam(name) {
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 function buildInitialTeams() {
   return OFFICIAL_TEAMS;
@@ -55,7 +110,7 @@ async function migrateLocalFilesToBlob() {
   
   const filesToMigrate = [
     { local: teamsFile, blob: 'teams.json' },
-    { local: matchesFile, blob: 'matches.json' },
+    ...ALL_DIVISIE_IDS.map(id => ({ local: matchesFileFor(id), blob: `matches-${id}.json` })),
   ];
   
   let migratedCount = 0;
@@ -131,14 +186,17 @@ async function ensureFiles() {
       await writeBlobFile('teams.json', buildInitialTeams());
     }
     
-    // Ensure matches.json exists in blob
-    try {
-      await readBlobFile('matches.json');
-    } catch {
-      console.log('Creating matches.json in blob storage...');
-      await writeBlobFile('matches.json', []);
+    // Ensure per-divisie match files exist in blob
+    for (const divisieId of ALL_DIVISIE_IDS) {
+      const blobName = `matches-${divisieId}.json`;
+      try {
+        await readBlobFile(blobName);
+      } catch {
+        console.log(`Creating ${blobName} in blob storage...`);
+        await writeBlobFile(blobName, []);
+      }
     }
-    
+
     return;
   }
   
@@ -160,11 +218,14 @@ async function ensureFiles() {
   } catch {
     await fs.writeFile(teamsFile, JSON.stringify(buildInitialTeams(), null, 2), 'utf-8');
   }
-  // Ensure matches file exists
-  try {
-    await fs.access(matchesFile);
-  } catch {
-    await fs.writeFile(matchesFile, JSON.stringify([], null, 2), 'utf-8');
+  // Ensure per-divisie match files exist
+  for (const divisieId of ALL_DIVISIE_IDS) {
+    const f = matchesFileFor(divisieId);
+    try {
+      await fs.access(f);
+    } catch {
+      await fs.writeFile(f, JSON.stringify([], null, 2), 'utf-8');
+    }
   }
 }
 
@@ -172,9 +233,7 @@ async function readJson(file) {
   await ensureFiles();
   
   if (useBlob) {
-    // Determine blob name from file path
-    const fileName = file.includes('teams') ? 'teams.json' : 'matches.json';
-    return await readBlobFile(fileName);
+    return await readBlobFile(basename(file));
   }
   
   // Local file mode
@@ -186,9 +245,7 @@ async function writeJson(file, data) {
   await ensureFiles();
   
   if (useBlob) {
-    // Determine blob name from file path
-    const fileName = file.includes('teams') ? 'teams.json' : 'matches.json';
-    await writeBlobFile(fileName, data);
+    await writeBlobFile(basename(file), data);
     return;
   }
   
@@ -199,18 +256,32 @@ async function writeJson(file, data) {
 }
 
 // Teams
-export async function listTeams() {
+export async function listTeams(options = {}) {
+  const { divisieId, divisie } = options;
+  const normalizedDivisieId = divisieId ? String(divisieId) : null;
   // Always return the official teams; do not allow runtime changes
-  return [...OFFICIAL_TEAMS];
+  return OFFICIAL_TEAMS
+    .filter((team) => !normalizedDivisieId || String(team.divisieId) === normalizedDivisieId)
+    .filter((team) => !divisie || team.divisie === divisie)
+    .map((team) => ({ ...team }));
 }
 
 // Team creation is intentionally disabled; teams are seeded from the official list on first run.
 
 // Matches
-export async function listMatches() {
-  const matches = await readJson(matchesFile);
+export async function listMatches(options = {}) {
+  const { divisieId } = options;
+  const normalizedDivisieId = divisieId ? String(divisieId) : null;
+  let raw;
+  if (normalizedDivisieId) {
+    raw = await readJson(matchesFileFor(normalizedDivisieId));
+  } else {
+    const parts = await Promise.all(ALL_DIVISIE_IDS.map(id => readJson(matchesFileFor(id))));
+    raw = parts.flat();
+  }
+  const matches = normalizeMatches(raw);
   matches.sort((a, b) => new Date(b.date) - new Date(a.date));
-  const teams = await listTeams();
+  const teams = await listTeams({ divisieId: normalizedDivisieId });
   const byId = new Map(teams.map((t) => [t.id, t]));
   // Enrich with names for convenience
   return matches.map((m) => ({
@@ -229,23 +300,34 @@ export async function createMatch(input) {
     awayTeamId: input.awayTeamId,
     homeScore: Number(input.homeScore ?? 0),
     awayScore: Number(input.awayScore ?? 0),
+    divisieId: String(input.divisieId || POOLS.TOPDIVISIE),
+    divisie: input.divisie || (String(input.divisieId || POOLS.TOPDIVISIE) === POOLS.TOPDIVISIE ? DIVISIES.TOPDIVISIE : DIVISIES.SECOND_DIVISION),
     createdAt: new Date().toISOString(),
     submittedBy: input.submittedBy || null,
     submittedByUid: input.submittedByUid || null,
   };
-  return withLock(matchesFile, async () => {
-    const matches = await readJson(matchesFile);
+  const file = matchesFileFor(match.divisieId);
+  return withLock(file, async () => {
+    const matches = await readJson(file);
     matches.push(match);
-    await writeJson(matchesFile, matches);
+    await writeJson(file, matches);
     return match;
   });
 }
 
-export async function computeStandings() {
-  const teams = await listTeams();
-  const matches = await readJson(matchesFile);
+export async function computeStandings(options = {}) {
+  const { divisieId, divisie } = options;
+  const normalizedDivisieId = divisieId ? String(divisieId) : null;
+  const teams = await listTeams({ divisieId: normalizedDivisieId, divisie });
+  let rawMatches;
+  if (normalizedDivisieId) {
+    rawMatches = await readJson(matchesFileFor(normalizedDivisieId));
+  } else {
+    const parts = await Promise.all(ALL_DIVISIE_IDS.map(id => readJson(matchesFileFor(id))));
+    rawMatches = parts.flat();
+  }
   // All stored matches are considered completed
-  const completed = matches;
+  const completed = normalizeMatches(rawMatches);
   const byId = new Map(teams.map((t) => [t.id, t]));
   const table = new Map();
 
@@ -295,6 +377,21 @@ export async function computeStandings() {
   return rows.map(({ drawn, goalFor, goalAgainst, ...out }) => out);
 }
 
+function normalizeMatches(matches) {
+  return Array.isArray(matches)
+    ? matches.map((match) => {
+      if (match && match.divisieId) {
+        return match;
+      }
+      return {
+        ...match,
+        divisieId: POOLS.TOPDIVISIE,
+        divisie: DIVISIES.TOPDIVISIE,
+      };
+    })
+    : [];
+}
+
 export async function storageHealth() {
   try {
     await ensureFiles();
@@ -311,12 +408,17 @@ export async function storageHealth() {
 // Delete a single match result by id; returns true if deleted, false if not found
 export async function deleteMatch(id) {
   if (!id) return false;
-  return withLock(matchesFile, async () => {
-    const matches = await readJson(matchesFile);
-    const idx = matches.findIndex((m) => m.id === id);
-    if (idx === -1) return false;
-    matches.splice(idx, 1);
-    await writeJson(matchesFile, matches);
-    return true;
-  });
+  for (const divisieId of ALL_DIVISIE_IDS) {
+    const file = matchesFileFor(divisieId);
+    const found = await withLock(file, async () => {
+      const matches = await readJson(file);
+      const idx = matches.findIndex((m) => m.id === id);
+      if (idx === -1) return false;
+      matches.splice(idx, 1);
+      await writeJson(file, matches);
+      return true;
+    });
+    if (found) return true;
+  }
+  return false;
 }

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "le-biberon-1",
+    "name": "Le Biberon 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "de-bouledozers-1",
+    "name": "De Bouledozers 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "puk-haarlem-2",
+    "name": "PUK-Haarlem 2",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "jbc-randenbroek-1",
+    "name": "JBC Randenbroek 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "les-boules-fleuries-1",
+    "name": "Les Boules Fleuries 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "elza-boules-1",
+    "name": "ELZA-Boules 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "les-bohemiens-de-petanque-1",
+    "name": "Les Bohémiens de Petanque 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "id": "de-gooiers-1",
+    "name": "De Gooiers 1",
+    "divisie": "2e-divisie",
+    "divisieId": "2002",
+    "club": "",
+    "locale": "nl",
+    "createdAt": "2025-08-01T00:00:00Z"
+  }
+]
