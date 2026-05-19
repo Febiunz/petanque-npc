@@ -1,5 +1,5 @@
 import express from 'express';
-import { listMatches, createMatch, computeStandings } from '../storage/fileStore.js';
+import { listMatches, createMatch, computeStandings, POOLS } from '../storage/fileStore.js';
 import { getScheduledMatch } from '../storage/schedule.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import rateLimit from 'express-rate-limit';
@@ -38,7 +38,8 @@ const authPreLimiter = rateLimit({
 });
 
 router.get('/', matchGetLimiter, async (req, res) => {
-  const matches = await listMatches();
+  const { divisieId } = req.query;
+  const matches = await listMatches({ divisieId: divisieId || POOLS.TOPDIVISIE });
   res.json(matches);
 });
 
@@ -94,27 +95,28 @@ router.post(
     // Debug: trace incoming body for troubleshooting
     // Do not log tokens; headers are ignored.
     // Log only non-sensitive fields for debugging
-    const { matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date } = req.body || {};
+    const { matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date, divisieId } = req.body || {};
     try {
       if (process.env.NODE_ENV !== 'production') {
         console.log(
           'POST /api/matches body:',
-          JSON.stringify({ matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date })
+          JSON.stringify({ matchId: matchIdRaw, fixtureId: legacyFixtureId, homeScore, awayScore, date, divisieId })
         );
       }
     } catch {}
     const matchId = matchIdRaw || legacyFixtureId; // backward compatibility
     if (!matchId) return res.status(400).json({ error: 'matchId is required' });
+    if (!divisieId) return res.status(400).json({ error: 'divisieId is required' });
     // Validate scores: disallow 1, 3, 28, or 30 for either team
     const h = Number(homeScore);
     const a = Number(awayScore);
     if ([h, a].some((v) => v === 1 || v === 3 || v === 28 || v === 30)) {
       return res.status(400).json({ error: 'Ongeldig: 1, 3, 28, 30' });
     }
-    const scheduled = await getScheduledMatch(matchId);
+    const scheduled = await getScheduledMatch(matchId, { divisieId });
     if (!scheduled) return res.status(400).json({ error: 'Unknown match' });
     // prevent duplicate submission (check both fields for older records)
-    const existing = (await listMatches()).find((m) => m.fixtureId === matchId || m.matchId === matchId);
+    const existing = (await listMatches({ divisieId })).find((m) => m.fixtureId === matchId || m.matchId === matchId);
     if (existing) return res.status(409).json({ error: 'Result already submitted for this match' });
 
     const payload = {
@@ -126,6 +128,8 @@ router.post(
       awayTeamId: scheduled.awayTeamId,
       homeScore: Number(homeScore ?? 0),
       awayScore: Number(awayScore ?? 0),
+      divisieId: scheduled.divisieId,
+      divisie: scheduled.divisie,
       submittedBy: req.user?.name || req.user?.email || req.user?.uid || 'unknown',
       submittedByUid: req.user?.uid || null
     };

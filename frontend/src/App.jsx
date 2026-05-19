@@ -4,6 +4,12 @@ import { api } from './api';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 
+const POOL_OPTIONS = [
+  { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
+  { divisie: '2e-divisie', divisieId: '2001', label: '2e divisie - 2001' },
+  { divisie: '2e-divisie', divisieId: '2002', label: '2e divisie - 2002' },
+];
+
 function App() {
 
   const [user, setUser] = React.useState(null);
@@ -23,7 +29,7 @@ function App() {
 
   // Teams state
   const [teams, setTeams] = React.useState([]);
-  const loadTeams = async () => setTeams(await api.getTeams());
+  const [selectedDivisieId, setSelectedDivisieId] = React.useState('1001');
 
   // Match schedule + result submission
   const [round, setRound] = React.useState('');
@@ -33,6 +39,9 @@ function App() {
   const [availableRounds, setAvailableRounds] = React.useState([]);
   const [matchId, setMatchId] = React.useState('');
   const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
+  const [errorMsg, setErrorMsg] = React.useState('');
+  const [errorOpen, setErrorOpen] = React.useState(false);
+  const loadRequestRef = React.useRef(0);
   const disallowedScores = new Set([1, 3, 28, 30]);
   const homeScoreNum = parseInt(scores.homeScore, 10);
   const awayScoreNum = parseInt(scores.awayScore, 10);
@@ -66,16 +75,20 @@ function App() {
   }, [scheduleAll, completedSet]);
   const submitResult = async (e) => {
     e.preventDefault();
-    if (!matchId || !user) return;
+    if (!matchId || !user || !selectedDivisieId) return;
     try {
-      await api.submitResult({ matchId, homeScore: scores.homeScore, awayScore: scores.awayScore });
+      await api.submitResult({
+        matchId,
+        homeScore: scores.homeScore,
+        awayScore: scores.awayScore,
+        divisieId: selectedDivisieId,
+      });
       setMatchId('');
-  setScores({ homeScore: '', awayScore: '' });
-      await loadStandings();
-      // refresh submitted set so the just-saved match disappears
-      const submitted = await api.getMatches();
-      setCompletedSet(new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean)));
-  setResults(submitted);
+      setScores({ homeScore: '', awayScore: '' });
+        const pool = POOL_OPTIONS.find((p) => p.divisieId === selectedDivisieId);
+        await loadPoolData(selectedDivisieId, pool?.divisie || '');
+      setErrorOpen(false);
+      setErrorMsg('');
     } catch (err) {
       setErrorMsg(`Kon uitslag niet opslaan: ${err?.message || err}`);
       setErrorOpen(true);
@@ -84,28 +97,54 @@ function App() {
 
   // Standings state
   const [standings, setStandings] = React.useState([]);
-  const loadStandings = async () => setStandings(await api.getStandings());
+
+  const loadPoolData = React.useCallback(async (divisieId, divisie) => {
+    const requestId = ++loadRequestRef.current;
+    if (!divisieId) {
+      if (requestId !== loadRequestRef.current) return;
+      setTeams([]);
+      setScheduleAll([]);
+      setCompletedSet(new Set());
+      setStandings([]);
+      setResults([]);
+      return;
+    }
+    const [teamRows, standingsRows, scheduleRows, submittedRows] = await Promise.all([
+      api.getTeams({ divisieId, divisie }),
+      api.getStandings({ divisieId, divisie }),
+      api.getSchedule({ divisieId, divisie }),
+      api.getMatches({ divisieId }),
+    ]);
+    if (requestId !== loadRequestRef.current) return;
+    setTeams(teamRows);
+    setStandings(standingsRows);
+    setScheduleAll(scheduleRows);
+    setCompletedSet(new Set(submittedRows.map((row) => row.matchId || row.fixtureId).filter(Boolean)));
+    setResults(submittedRows);
+  }, []);
 
   React.useEffect(() => {
-    (async () => {
-  await loadTeams();
-  await loadStandings();
-  // prefetch all matches schedule so we can show dates per round
-  const all = await api.getSchedule();
-  setScheduleAll(all);
-  // build a set of submitted match ids to hide from selection
-  const submitted = await api.getMatches();
-  const ids = new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean));
-  setCompletedSet(ids);
-  setResults(submitted);
-    })();
-  }, []);
+    if (!selectedDivisieId) {
+      loadPoolData('', '');
+      return;
+    }
+    const pool = POOL_OPTIONS.find((p) => p.divisieId === selectedDivisieId);
+    let active = true;
+    loadPoolData(selectedDivisieId, pool?.divisie || '').catch((err) => {
+      if (!active) return;
+      setErrorMsg(`Kon divisiegegevens niet laden: ${err?.message || err}`);
+      setErrorOpen(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, [selectedDivisieId, loadPoolData]);
 
   return (
     <Container maxWidth="xs">
       <Box sx={{ textAlign: 'left', mt: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h5" sx={{ m: 0 }}>NPC Standen Topdivisie</Typography>
+          <Typography variant="h5" sx={{ m: 0 }}>NPC Standen</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {user ? (
               <>
@@ -125,70 +164,24 @@ function App() {
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
 
         <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Uitslag invoeren</Typography>
-          <Stack spacing={1} component="form" onSubmit={submitResult}>
-            {/* Speelronde selector - full width */}
-            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={!availableRounds.length}>
-              {availableRounds.map((r) => {
-                const dateForRound = (() => {
-                  const rows = scheduleAll.filter(m => String(m.round) === String(r));
-                  const withDate = rows.find(m => m.date);
-                  return withDate ? new Date(withDate.date).toLocaleDateString('nl-NL') : '—';
-                })();
-                return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
-              })}
-            </TextField>
-            {/* Wedstrijd selector - full width */}
-            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={!schedule.length}>
-              {schedule.map(m => {
-                const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
-                const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
-                const label = `${m.matchNumber ? `${m.matchNumber} ` : ''}${home} - ${away}`;
-                return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
-              })}
-            </TextField>
-            {/* Second row: score inputs below the match selector with submit button on the same line */}
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField
-                label="Thuis punten"
-                size="small"
-                type="number"
-                value={scores.homeScore}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  if (text === '') {
-                    setScores({ homeScore: '', awayScore: '' });
-                    return;
-                  }
-                  const raw = parseInt(text, 10);
-                  if (!Number.isFinite(raw)) {
-                    setScores({ homeScore: '', awayScore: '' });
-                    return;
-                  }
-                  const home = Math.max(0, Math.min(31, raw));
-                  const away = 31 - home;
-                  setScores({ homeScore: home, awayScore: away });
-                }}
-                inputProps={{ min: 0, max: 31, step: 1 }}
-                error={homeShowError}
-                helperText={homeShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
-                sx={{ width: 120 }}
-              />
-              <TextField
-                label="Uit punten"
-                size="small"
-                type="number"
-                value={scores.awayScore}
-                // Disabled: users can only input the home score; away is auto-calculated
-                disabled
-                inputProps={{ min: 0, max: 31, step: 1 }}
-                error={awayShowError}
-                helperText={awayShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
-                sx={{ width: 120 }}
-              />
-              <Button type="submit" variant="contained" size="small" disabled={!user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
-            </Box>
-          </Stack>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Divisie</Typography>
+          <TextField
+            label="Divisie"
+            size="small"
+            value={selectedDivisieId}
+            onChange={(e) => {
+              setSelectedDivisieId(e.target.value);
+              setRound('');
+              setMatchId('');
+              setScores({ homeScore: '', awayScore: '' });
+            }}
+            select
+            fullWidth
+          >
+            {POOL_OPTIONS.map((option) => (
+              <MenuItem key={option.divisieId} value={option.divisieId}>{option.label}</MenuItem>
+            ))}
+          </TextField>
         </Paper>
 
         <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
@@ -229,6 +222,72 @@ function App() {
               })}
             </Box>
           )}
+        </Paper>
+
+        <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Uitslag invoeren</Typography>
+          {errorOpen && (
+            <Typography variant="body2" color="error" sx={{ mb: 1 }}>{errorMsg}</Typography>
+          )}
+          <Stack spacing={1} component="form" onSubmit={submitResult}>
+            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={!selectedDivisieId || !availableRounds.length}>
+              {availableRounds.map((r) => {
+                const dateForRound = (() => {
+                  const rows = scheduleAll.filter(m => String(m.round) === String(r));
+                  const withDate = rows.find(m => m.date);
+                  return withDate ? new Date(withDate.date).toLocaleDateString('nl-NL') : '—';
+                })();
+                return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
+              })}
+            </TextField>
+            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={!selectedDivisieId || !schedule.length}>
+              {schedule.map(m => {
+                const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
+                const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
+                const label = `${m.matchNumber ? `${m.matchNumber} ` : ''}${home} - ${away}`;
+                return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
+              })}
+            </TextField>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField
+                label="Thuis punten"
+                size="small"
+                type="number"
+                value={scores.homeScore}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  if (text === '') {
+                    setScores({ homeScore: '', awayScore: '' });
+                    return;
+                  }
+                  const raw = parseInt(text, 10);
+                  if (!Number.isFinite(raw)) {
+                    setScores({ homeScore: '', awayScore: '' });
+                    return;
+                  }
+                  const home = Math.max(0, Math.min(31, raw));
+                  const away = 31 - home;
+                  setScores({ homeScore: home, awayScore: away });
+                }}
+                inputProps={{ min: 0, max: 31, step: 1 }}
+                error={homeShowError}
+                helperText={homeShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
+                sx={{ width: 120 }}
+              />
+              <TextField
+                label="Uit punten"
+                size="small"
+                type="number"
+                value={scores.awayScore}
+                disabled
+                inputProps={{ min: 0, max: 31, step: 1 }}
+                error={awayShowError}
+                helperText={awayShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
+                sx={{ width: 120 }}
+              />
+              <Button type="submit" variant="contained" size="small" disabled={!selectedDivisieId || !user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
+            </Box>
+          </Stack>
         </Paper>
 
         <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
@@ -279,7 +338,7 @@ function App() {
         </Paper>
 
         <Paper sx={{ p: 1.5, mb: 2 }} elevation={1}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Aankomende Wedstrijden</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Komende wedstrijden</Typography>
           {(() => {
             // Filter upcoming matches (not in completedSet), sort by date (older to newer)
             const upcomingMatches = scheduleAll

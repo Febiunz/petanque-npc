@@ -1,15 +1,25 @@
 import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listTeams } from './fileStore.js';
-import { readScheduleFromBlob, writeScheduleToBlob } from './blobStorage.js';
-import sanitizeHtml from 'sanitize-html';
+import { DIVISIES, listTeams, POOLS } from './fileStore.js';
+import { readBlobFile, writeBlobFile, deleteBlobFile } from './blobStorage.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set, otherwise use local file
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
 const dataDir = process.env.SCHEDULE_DATA_DIR || `${__dirname}/../data`;
-const scheduleFile = `${dataDir}/schedule.json`;
+const scheduleFileFor = (divisieId) => `${dataDir}/schedule-${divisieId}.json`;
+const legacyScheduleFile = `${dataDir}/schedule.json`;
+const ALLOWED_DIVISIE_IDS = new Set(Object.values(POOLS).map(String));
+let legacyScheduleMigrationAttempted = false;
+
+function normalizeDivisieIdOrThrow(divisieId) {
+  const normalized = String(divisieId || '');
+  if (!ALLOWED_DIVISIE_IDS.has(normalized)) {
+    throw new Error('Invalid divisieId');
+  }
+  return normalized;
+}
 
 async function ensureDir() {
   await fs.mkdir(dataDir, { recursive: true });
@@ -40,236 +50,209 @@ function roundRobinDouble(teamIds) {
   return rounds.concat(second);
 }
 
-// --- Official schedule scraping ---
-const OFFICIAL_URL = 'https://nlpetanque.nl/topdivisie-2025-2026-1001/';
-
-const MONTHS_NL = {
-  'JANUARI': 1,
-  'FEBRUARI': 2,
-  'MAART': 3,
-  'APRIL': 4,
-  'MEI': 5,
-  'JUNI': 6,
-  'JULI': 7,
-  'AUGUSTUS': 8,
-  'SEPTEMBER': 9,
-  'OKTOBER': 10,
-  'NOVEMBER': 11,
-  'DECEMBER': 12,
-};
-
-function toIsoDate(day, monthName) {
-  const m = MONTHS_NL[monthName?.toUpperCase()?.trim()] || null;
-  if (!m) return null;
-  const year = m >= 9 ? 2025 : 2026;
-  const dd = String(Number(day)).padStart(2, '0');
-  const mm = String(m).padStart(2, '0');
-  return `${year}-${mm}-${dd}`;
-}
-
-function cleanHtmlToLines(html) {
-  // Use sanitize-html to safely remove all script and style tags and their content
-  let s = sanitizeHtml(html, {
-    allowedTags: false, // Remove all tags except those we process below
-    allowedAttributes: false,
-    exclusiveFilter: function(frame) {
-      // Remove script and style nodes and their content
-      return frame.tag === 'script' || frame.tag === 'style';
-    }
-  });
-  // Now continue with line splitting and tag-break logic
-  s = s.replace(/<\/(tr|table|h\d)>/gi, '\n');
-  s = s.replace(/<br\s*\/?>(?=.)/gi, '\n');
-  s = s.replace(/<\/(td|th)>/gi, '|');
-  s = s.replace(/<[^>]+>/g, ' ');
-  s = s.replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-  s = s.replace(/\s+/g, ' ').replace(/\|\s*\|/g, '|');
-  return s.split(/\n+/).map(l => l.trim()).filter(Boolean);
-}
-
-async function tryFetchOfficialHtml() {
-  try {
-    const res = await fetch(OFFICIAL_URL, { method: 'GET' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.text();
-  } catch {
-    return null;
-  }
-}
-
-async function parseOfficialSchedule(html) {
-  const teams = await listTeams();
-  const teamNames = teams.map(t => t.name);
-  const nameToId = new Map(teams.map(t => [t.name, t.id]));
-  const lines = cleanHtmlToLines(html);
-  const schedule = [];
-  let currentRound = null;
-  let roundDefaultDate = null;
-
-  function findTeamsAfterIndex(cells, startIdx) {
-    const found = [];
-    for (let i = startIdx + 1; i < cells.length; i++) {
-      const c = cells[i].trim();
-      if (teamNames.includes(c)) {
-        found.push(c);
-        if (found.length === 2) break;
-      }
-    }
-    return found.length === 2 ? found : null;
-  }
-
-  for (const raw of lines) {
-    const hdr = raw.match(/(\d+)\.[^\d]*?(?:ZATERDAG|ZONDAG)\s+(\d{1,2})\s+([A-ZÀ-Ü]+)/i);
-    if (hdr) { currentRound = Number(hdr[1]); roundDefaultDate = toIsoDate(hdr[2], hdr[3]); continue; }
-
-    if (!/1001\d{2}/.test(raw)) continue;
-    const cells = raw.split('|').map(c => c.trim()).filter(c => c.length > 0);
-    const numIdx = cells.findIndex(c => /^1001\d{2}$/.test(c));
-    if (numIdx === -1) continue;
-
-    const matchNumber = cells[numIdx];
-    const dateCell = cells.slice(numIdx + 1).find(c => /\b\d{2}-\d{2}-\d{4}\b/.test(c));
-    let dateIso = null;
-    if (dateCell) { const [d, m, y] = dateCell.split('-'); dateIso = `${y}-${m}-${d}`; } else { dateIso = roundDefaultDate; }
-
-    const tnames = findTeamsAfterIndex(cells, numIdx);
-    if (!tnames || currentRound == null) continue;
-    const [homeName, awayName] = tnames;
-    const homeId = nameToId.get(homeName);
-    const awayId = nameToId.get(awayName);
-    if (!homeId || !awayId) continue;
-
-    schedule.push({
-      id: matchNumber,
-      matchNumber,
-      round: currentRound,
-      date: dateIso || null,
-      homeTeamId: homeId,
-      awayTeamId: awayId,
-    });
-  }
-
-  if (schedule.length >= 40) {
-    schedule.sort((a, b) => Number(a.matchNumber) - Number(b.matchNumber));
-    return schedule;
-  }
-  return null;
-}
+const POOL_CONFIGS = [
+  {
+    divisieId: POOLS.TOPDIVISIE,
+    divisie: DIVISIES.TOPDIVISIE,
+    matchPrefix: '1001',
+  },
+  {
+    divisieId: POOLS.SECOND_DIVISION_A,
+    divisie: DIVISIES.SECOND_DIVISION,
+    matchPrefix: '2001',
+  },
+  {
+    divisieId: POOLS.SECOND_DIVISION_B,
+    divisie: DIVISIES.SECOND_DIVISION,
+    matchPrefix: '2002',
+  },
+];
 
 export async function ensureSchedule() {
+  await migrateLegacySchedule();
   if (useBlob) {
-    // Using Azure Blob Storage
-    try {
-      await readScheduleFromBlob();
-      return; // Schedule exists in blob storage
-    } catch (err) {
-      // Schedule doesn't exist in blob storage
-      console.log('Schedule not found in blob storage, checking for local file to migrate...');
-    }
-    
-    // Check if local schedule.json exists to migrate
-    await ensureDir();
-    let localExists = false;
-    try {
-      await fs.access(scheduleFile);
-      localExists = true;
-    } catch {
-      localExists = false;
-    }
-    
-    if (localExists) {
-      // Migrate local file to blob storage
-      console.log('Found local schedule.json, migrating to blob storage...');
+    // Ensure each divisie's schedule exists in blob storage
+    for (const config of POOL_CONFIGS) {
+      const blobName = `schedule-${config.divisieId}.json`;
       try {
-        const localContent = await fs.readFile(scheduleFile, 'utf-8');
-        const schedule = JSON.parse(localContent);
-        await writeScheduleToBlob(schedule);
-        console.log('Successfully migrated schedule.json to blob storage');
-        return;
-      } catch (migrateErr) {
-        console.error('Error migrating local schedule to blob storage:', migrateErr.message);
-        // Continue to create new schedule if migration fails
+        const existing = await readBlobFile(blobName);
+        const normalized = normalizeScheduleRows(existing);
+        if (normalized.length) continue; // already has data
+      } catch {
+        // doesn't exist yet
       }
+      const rows = await buildAlgorithmicSchedule(config);
+      await writeBlobFile(blobName, rows);
     }
-    
-    // Try to fetch from official website
-    const html = await tryFetchOfficialHtml();
-    if (html) {
-      const schedule = await parseOfficialSchedule(html);
-      if (schedule) {
-        await writeScheduleToBlob(schedule);
-        return;
-      }
-    }
-    
-    // Last resort: algorithmic schedule
-    const teamIds = (await listTeams()).map(t => t.id);
-    const rounds = roundRobinDouble(teamIds);
-    const out = [];
-    for (let r = 0; r < rounds.length; r++) {
-      const round = r + 1;
-      for (const p of rounds[r]) {
-        out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId });
-      }
-    }
-    await writeScheduleToBlob(out);
-  } else {
-    // Using local file storage
-    await ensureDir();
+    return;
+  }
+
+  // Local file storage
+  await ensureDir();
+  for (const config of POOL_CONFIGS) {
+    const file = scheduleFileFor(config.divisieId);
     let exists = true;
-    try { await fs.access(scheduleFile); } catch { exists = false; }
+    try { await fs.access(file); } catch { exists = false; }
 
     if (!exists) {
-      const html = await tryFetchOfficialHtml();
-      if (html) {
-        const schedule = await parseOfficialSchedule(html);
-        if (schedule) { await fs.writeFile(scheduleFile, JSON.stringify(schedule, null, 2), 'utf-8'); return; }
+      const rows = await buildAlgorithmicSchedule(config);
+      await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf-8');
+    } else {
+      const existing = JSON.parse(await fs.readFile(file, 'utf-8') || '[]');
+      const normalized = normalizeScheduleRows(existing);
+      if (!normalized.length) {
+        const rows = await buildAlgorithmicSchedule(config);
+        await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf-8');
       }
-      // Last resort: algorithmic schedule
-      const teamIds = (await listTeams()).map(t => t.id);
-      const rounds = roundRobinDouble(teamIds);
-      const out = [];
-      for (let r = 0; r < rounds.length; r++) {
-        const round = r + 1;
-        for (const p of rounds[r]) {
-          out.push({ id: `r${round}-${p.homeTeamId}-${p.awayTeamId}`, matchNumber: null, round, date: null, homeTeamId: p.homeTeamId, awayTeamId: p.awayTeamId });
-        }
-      }
-      await fs.writeFile(scheduleFile, JSON.stringify(out, null, 2), 'utf-8');
     }
   }
 }
 
-export async function listSchedule() {
-  await ensureSchedule();
-  
-  let raw;
+async function migrateLegacySchedule() {
+  if (legacyScheduleMigrationAttempted) return;
+  legacyScheduleMigrationAttempted = true;
+  const targetDivisieId = POOLS.TOPDIVISIE;
+  const targetName = `schedule-${targetDivisieId}.json`;
+
   if (useBlob) {
-    raw = await readScheduleFromBlob();
-  } else {
-    const buf = await fs.readFile(scheduleFile, 'utf-8');
-    raw = JSON.parse(buf || '[]');
+    let legacy = null;
+    try {
+      legacy = await readBlobFile('schedule.json');
+    } catch {
+      return;
+    }
+    const normalizedLegacy = normalizeScheduleRows(legacy);
+    if (!normalizedLegacy.length) return;
+
+    let current = [];
+    try {
+      current = normalizeScheduleRows(await readBlobFile(targetName));
+    } catch {}
+    if (!current.length) {
+      await writeBlobFile(targetName, normalizedLegacy);
+    }
+    try {
+      await deleteBlobFile('schedule.json');
+    } catch {}
+    return;
   }
-  
+
+  try {
+    await fs.access(legacyScheduleFile);
+  } catch {
+    return;
+  }
+
+  const normalizedLegacy = normalizeScheduleRows(
+    JSON.parse((await fs.readFile(legacyScheduleFile, 'utf-8')) || '[]')
+  );
+  if (!normalizedLegacy.length) return;
+  const targetFile = scheduleFileFor(targetDivisieId);
+  let current = [];
+  try {
+    current = normalizeScheduleRows(JSON.parse((await fs.readFile(targetFile, 'utf-8')) || '[]'));
+  } catch {}
+  if (!current.length) {
+    await fs.writeFile(targetFile, JSON.stringify(normalizedLegacy, null, 2), 'utf-8');
+  }
+  try {
+    await fs.unlink(legacyScheduleFile);
+  } catch {}
+}
+
+async function buildAlgorithmicSchedule(poolConfig) {
+  const teams = await listTeams({ divisieId: poolConfig.divisieId });
+  const teamIds = teams.map((team) => team.id);
+  const rounds = roundRobinDouble(teamIds);
+  const out = [];
+  let sequence = 1;
+  for (let r = 0; r < rounds.length; r++) {
+    const round = r + 1;
+    for (const pairing of rounds[r]) {
+      const matchNumber = `${poolConfig.matchPrefix}${String(sequence).padStart(2, '0')}`;
+      out.push({
+        id: matchNumber,
+        matchNumber,
+        round,
+        date: null,
+        homeTeamId: pairing.homeTeamId,
+        awayTeamId: pairing.awayTeamId,
+        divisieId: poolConfig.divisieId,
+        divisie: poolConfig.divisie,
+      });
+      sequence += 1;
+    }
+  }
+  return out;
+}
+
+export async function listSchedule(options = {}) {
+  const { divisieId, divisie } = options;
+  await ensureSchedule();
+
+  const safeDivisieId = divisieId ? normalizeDivisieIdOrThrow(divisieId) : null;
+  let raw;
+  if (safeDivisieId) {
+    if (useBlob) {
+      raw = await readBlobFile(`schedule-${safeDivisieId}.json`);
+    } else {
+      const buf = await fs.readFile(scheduleFileFor(safeDivisieId), 'utf-8');
+      raw = JSON.parse(buf || '[]');
+    }
+  } else {
+    const allRaw = await Promise.all(POOL_CONFIGS.map(async (config) => {
+      if (useBlob) {
+        try { return await readBlobFile(`schedule-${config.divisieId}.json`); } catch { return []; }
+      } else {
+        const buf = await fs.readFile(scheduleFileFor(config.divisieId), 'utf-8').catch(() => '[]');
+        return JSON.parse(buf || '[]');
+      }
+    }));
+    raw = allRaw.flat();
+  }
+
   // Sanitize: drop any legacy 'status' fields and persist cleaned file
   let changed = false;
   const cleaned = Array.isArray(raw) ? raw.map((m) => {
     if (m && Object.prototype.hasOwnProperty.call(m, 'status')) { const { status, ...rest } = m; changed = true; return rest; }
     return m;
   }) : [];
-  
-  if (changed) {
+
+  if (changed && safeDivisieId) {
     if (useBlob) {
-      await writeScheduleToBlob(cleaned);
+      await writeBlobFile(`schedule-${safeDivisieId}.json`, cleaned);
     } else {
-      await fs.writeFile(scheduleFile, JSON.stringify(cleaned, null, 2), 'utf-8');
+      await fs.writeFile(scheduleFileFor(safeDivisieId), JSON.stringify(cleaned, null, 2), 'utf-8');
     }
   }
-  return cleaned;
+
+  const normalized = normalizeScheduleRows(cleaned);
+  return normalized
+    .filter((match) => !safeDivisieId || String(match.divisieId) === String(safeDivisieId))
+    .filter((match) => !divisie || match.divisie === divisie);
 }
 
-export async function getScheduledMatch(matchId) {
-  const schedule = await listSchedule();
+function normalizeScheduleRows(rows) {
+  const source = Array.isArray(rows) ? rows : [];
+  return source.map((match) => ({
+    ...match,
+    divisieId: String(match.divisieId || inferDivisieId(match.id)),
+    divisie: match.divisie || inferDivisie(match.divisieId || inferDivisieId(match.id)),
+  }));
+}
+
+function inferDivisieId(matchId) {
+  const value = String(matchId || '');
+  if (value.startsWith('2002')) return POOLS.SECOND_DIVISION_B;
+  if (value.startsWith('2001')) return POOLS.SECOND_DIVISION_A;
+  return POOLS.TOPDIVISIE;
+}
+
+function inferDivisie(divisieId) {
+  return String(divisieId) === POOLS.TOPDIVISIE ? DIVISIES.TOPDIVISIE : DIVISIES.SECOND_DIVISION;
+}
+
+export async function getScheduledMatch(matchId, options = {}) {
+  const schedule = await listSchedule({ divisieId: options.divisieId });
   return schedule.find(m => m.id === matchId) || null;
 }
-

@@ -1,7 +1,7 @@
 # GitHub Copilot Instructions for petanque-npc Repository
 
 ## Overview
-This repository contains a petanque match management system with a React frontend and Node.js backend. It allows users to submit and track match results for the Topdivisie petanque league.
+This repository contains a petanque match management system with a React frontend and Node.js backend. It allows users to submit and track match results for multiple NPC competition divisions.
 
 ## Technology Stack
 - **Frontend**: React 18 + Vite + Material UI (MUI)
@@ -72,28 +72,30 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 
 ### Public Endpoints
 - `GET /api/health` - Service status check
-- `GET /api/teams` - Fixed Topdivisie teams list
-- `GET /api/matches/schedule` - Full schedule (filter: `?round=NUMBER`)
-- `GET /api/matches` - Submitted matches (most recent first)
-- `GET /api/standings` - Current standings
+- `GET /api/teams` - Teams list (supports `?divisieId=1001|2001|2002`, optional `?divisie=topdivisie|2e-divisie`)
+- `GET /api/matches/schedule` - Full schedule (filters: `?divisieId=...`, optional `?divisie=...`, `?round=NUMBER`)
+- `GET /api/matches` - Submitted matches (most recent first; supports `?divisieId=...`)
+- `GET /api/standings` - Current standings (supports `?divisieId=...`, optional `?divisie=...`)
 
 ### Protected Endpoints (Require Firebase Auth)
 - `POST /api/matches` - Submit result
-  - Body: `{ matchId, homeScore, awayScore }`
+  - Body: `{ matchId, divisieId, homeScore, awayScore }`
   - Scores: integers [0, 31], must sum to 31
-  - **FORBIDDEN**: scores of 1 or 3 for either team
+  - **FORBIDDEN**: scores of 1, 3, 28 or 30 for either team
+  - `divisieId` is required and must match the selected pool in the UI
 
 ## Key Business Rules
 
 ### Score Validation
-- Valid scores: 0, 2, 4-31 (integers only)
+- Valid scores: 0, 2, 4-27, 29, 31 (integers only)
 - Total must equal 31 (homeScore + awayScore = 31)
-- Values 1 and 3 are FORBIDDEN for either team
+- Values 1, 3, 28 and 30 are FORBIDDEN for either team
 - Example valid scores: (13, 18), (0, 31), (15, 16)
-- Example invalid scores: (1, 30), (14, 3), (10, 20)
+- Example invalid scores: (1, 30), (14, 3), (30, 1), (10, 20)
 
 ### Data Integrity
-- Match completion derived from `matches.json` - NEVER use `schedule.status`
+- Match completion derived from per-division `matches-<divisieId>.json` storage - NEVER use `schedule.status`
+- Schedule is generated locally (round-robin) from pool teams; do not add external official schedule fetch/parsing.
 - All file writes are serialized with in-process mutex
 - No duplicate submissions for same match allowed
 
@@ -133,7 +135,9 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 ## UI/UX Requirements
 
 ### Form Behavior
-- Form title: "Uitslag invoeren Topdivisie"
+- Form title: "Uitslag invoeren"
+- Users must select divisie and pool first
+- Pool identifiers: `1001` (Topdivisie), `2001` (2e divisie), `2002` (2e divisie)
 - Score inputs start empty
 - Auto-complement second score to reach 31
 - Block scores of 1 and 3
