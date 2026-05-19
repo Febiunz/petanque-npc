@@ -94,7 +94,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - Example invalid scores: (1, 30), (14, 3), (10, 20)
 
 ### Data Integrity
-- Match completion derived from `matches.json` - NEVER use `schedule.status`
+- Match completion derived from per-division `matches-<divisieId>.json` storage - NEVER use `schedule.status`
 - Schedule is generated locally (round-robin) from pool teams; do not add external official schedule fetch/parsing.
 - All file writes are serialized with in-process mutex
 - No duplicate submissions for same match allowed
