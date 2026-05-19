@@ -31,6 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        env:
+          NODE_NO_WARNINGS: 1
 
       # Optional: quick lint/test hooks could go here
       # NOTE: working-directory is already 'backend'. Using '.' prevents an incorrect nested path (./backend) that can cause OneDeploy conflicts.
