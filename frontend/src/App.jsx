@@ -41,6 +41,7 @@ function App() {
   const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
   const [errorMsg, setErrorMsg] = React.useState('');
   const [errorOpen, setErrorOpen] = React.useState(false);
+  const loadRequestRef = React.useRef(0);
   const disallowedScores = new Set([1, 3, 28, 30]);
   const homeScoreNum = parseInt(scores.homeScore, 10);
   const awayScoreNum = parseInt(scores.awayScore, 10);
@@ -83,13 +84,9 @@ function App() {
         divisieId: selectedDivisieId,
       });
       setMatchId('');
-  setScores({ homeScore: '', awayScore: '' });
+      setScores({ homeScore: '', awayScore: '' });
         const pool = POOL_OPTIONS.find((p) => p.divisieId === selectedDivisieId);
         await loadPoolData(selectedDivisieId, pool?.divisie || '');
-      // refresh submitted set so the just-saved match disappears
-      const submitted = await api.getMatches({ divisieId: selectedDivisieId });
-      setCompletedSet(new Set(submitted.map(m => m.matchId || m.fixtureId).filter(Boolean)));
-  setResults(submitted);
       setErrorOpen(false);
       setErrorMsg('');
     } catch (err) {
@@ -102,7 +99,9 @@ function App() {
   const [standings, setStandings] = React.useState([]);
 
   const loadPoolData = React.useCallback(async (divisieId, divisie) => {
+    const requestId = ++loadRequestRef.current;
     if (!divisieId) {
+      if (requestId !== loadRequestRef.current) return;
       setTeams([]);
       setScheduleAll([]);
       setCompletedSet(new Set());
@@ -116,6 +115,7 @@ function App() {
       api.getSchedule({ divisieId, divisie }),
       api.getMatches({ divisieId }),
     ]);
+    if (requestId !== loadRequestRef.current) return;
     setTeams(teamRows);
     setStandings(standingsRows);
     setScheduleAll(scheduleRows);
@@ -129,7 +129,15 @@ function App() {
       return;
     }
     const pool = POOL_OPTIONS.find((p) => p.divisieId === selectedDivisieId);
-    loadPoolData(selectedDivisieId, pool?.divisie || '');
+    let active = true;
+    loadPoolData(selectedDivisieId, pool?.divisie || '').catch((err) => {
+      if (!active) return;
+      setErrorMsg(`Kon divisiegegevens niet laden: ${err?.message || err}`);
+      setErrorOpen(true);
+    });
+    return () => {
+      active = false;
+    };
   }, [selectedDivisieId, loadPoolData]);
 
   return (

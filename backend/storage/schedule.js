@@ -2,14 +2,16 @@ import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DIVISIES, listTeams, POOLS } from './fileStore.js';
-import { readBlobFile, writeBlobFile } from './blobStorage.js';
+import { readBlobFile, writeBlobFile, deleteBlobFile } from './blobStorage.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set, otherwise use local file
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
 const dataDir = process.env.SCHEDULE_DATA_DIR || `${__dirname}/../data`;
 const scheduleFileFor = (divisieId) => `${dataDir}/schedule-${divisieId}.json`;
+const legacyScheduleFile = `${dataDir}/schedule.json`;
 const ALLOWED_DIVISIE_IDS = new Set(Object.values(POOLS).map(String));
+let legacyScheduleMigrationAttempted = false;
 
 function normalizeDivisieIdOrThrow(divisieId) {
   const normalized = String(divisieId || '');
@@ -67,6 +69,7 @@ const POOL_CONFIGS = [
 ];
 
 export async function ensureSchedule() {
+  await migrateLegacySchedule();
   if (useBlob) {
     // Ensure each divisie's schedule exists in blob storage
     for (const config of POOL_CONFIGS) {
@@ -103,6 +106,58 @@ export async function ensureSchedule() {
       }
     }
   }
+}
+
+async function migrateLegacySchedule() {
+  if (legacyScheduleMigrationAttempted) return;
+  legacyScheduleMigrationAttempted = true;
+  const targetDivisieId = POOLS.TOPDIVISIE;
+  const targetName = `schedule-${targetDivisieId}.json`;
+
+  if (useBlob) {
+    let legacy = null;
+    try {
+      legacy = await readBlobFile('schedule.json');
+    } catch {
+      return;
+    }
+    const normalizedLegacy = normalizeScheduleRows(legacy);
+    if (!normalizedLegacy.length) return;
+
+    let current = [];
+    try {
+      current = normalizeScheduleRows(await readBlobFile(targetName));
+    } catch {}
+    if (!current.length) {
+      await writeBlobFile(targetName, normalizedLegacy);
+    }
+    try {
+      await deleteBlobFile('schedule.json');
+    } catch {}
+    return;
+  }
+
+  try {
+    await fs.access(legacyScheduleFile);
+  } catch {
+    return;
+  }
+
+  const normalizedLegacy = normalizeScheduleRows(
+    JSON.parse((await fs.readFile(legacyScheduleFile, 'utf-8')) || '[]')
+  );
+  if (!normalizedLegacy.length) return;
+  const targetFile = scheduleFileFor(targetDivisieId);
+  let current = [];
+  try {
+    current = normalizeScheduleRows(JSON.parse((await fs.readFile(targetFile, 'utf-8')) || '[]'));
+  } catch {}
+  if (!current.length) {
+    await fs.writeFile(targetFile, JSON.stringify(normalizedLegacy, null, 2), 'utf-8');
+  }
+  try {
+    await fs.unlink(legacyScheduleFile);
+  } catch {}
 }
 
 async function buildAlgorithmicSchedule(poolConfig) {
@@ -201,4 +256,3 @@ export async function getScheduledMatch(matchId, options = {}) {
   const schedule = await listSchedule({ divisieId: options.divisieId });
   return schedule.find(m => m.id === matchId) || null;
 }
-

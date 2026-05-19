@@ -78,7 +78,7 @@ Run each app separately (optional):
   - `PORT` (optional): API port, default `5000` in dev (App Service injects one in prod).
   - `FIREBASE_PROJECT_ID` (required): Firebase project id for token verification.
   - `CHECK_REVOKED` (optional): `'true'` to enable token revocation checks; default is disabled.
-  - `AZURE_STORAGE_CONNECTION_STRING` (production): Connection string for Azure Blob Storage. When set, schedule.json is stored in blob storage instead of local files.
+  - `AZURE_STORAGE_CONNECTION_STRING` (production): Connection string for Azure Blob Storage. When set, per-division schedule/match files are stored in blob storage instead of local files.
   - `STORAGE_CONTAINER_NAME` (optional): Blob container name, defaults to `data`.
   - Note: The backend also loads `frontend/.env.local` for convenience in dev if present.
 - Frontend
@@ -95,8 +95,9 @@ Run each app separately (optional):
 
 - Teams are fixed to official divisions and returned from the backend (not user-editable).
 - Schedule is generated locally (round-robin) from division teams; no external official schedule fetch/parsing is used.
-- Schedule is stored in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule.json`) in production. Falls back to local file in development.
-- Results are persisted in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches.json`) when in production, or local `backend/data/matches.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
+- Schedule is stored per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule-1001.json`, `schedule-2001.json`, `schedule-2002.json`) in production. Falls back to local `backend/data/schedule-<divisieId>.json` files in development.
+- Results are persisted per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches-1001.json`, `matches-2001.json`, `matches-2002.json`) in production, or local `backend/data/matches-<divisieId>.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
+- Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
   - `date` (ISO date of match), `createdAt` (submission timestamp)
@@ -112,7 +113,7 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `GET /api/matches` — Submitted matches (most recent first); supports `?divisieId=1001|2001|2002`
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, divisieId, homeScore, awayScore }`
-  - Validation: requires a scheduled match; rejects duplicates; disallows scores 1 or 3 for either team.
+  - Validation: requires a scheduled match; rejects duplicates; disallows scores 1, 3, 28, or 30 for either team.
 - `GET /api/standings` — Current standings; supports `?divisieId=1001|2001|2002` and optional `?divisie=...`
 
 Rate limiting (subject to tuning; current values from code):
@@ -126,7 +127,7 @@ Rate limiting (subject to tuning; current values from code):
 - User must select divisie and pool before rounds/matches become selectable.
 - Speelronde selector shows only rounds with at least one open (not completed) match and includes a date hint.
 - Match dropdown shows only matches not yet completed/submitted for the selected round and selected division.
-- Score inputs auto-complement to 31, clamp to 0–31, and start empty; scores 1 and 3 are blocked.
+- Score inputs auto-complement to 31, clamp to 0–31, and start empty; scores 1, 3, 28, and 30 are blocked.
 - After submit, standings and results refresh; the saved match disappears from the selection. If a round fully completes, it’s removed from the selector.
 - Results list is compact (single-line).
 

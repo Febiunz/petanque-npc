@@ -24,6 +24,7 @@ export const POOLS = {
 
 const ALL_DIVISIE_IDS = ['1001', '2001', '2002'];
 const matchesFileFor = (divisieId) => `${dataDir}/matches-${divisieId}.json`;
+const teamsFileFor = (divisieId) => `${dataDir}/teams-${divisieId}.json`;
 const legacyMatchesFile = `${dataDir}/matches.json`;
 
 // Track if migration has been attempted
@@ -111,6 +112,7 @@ async function migrateLocalFilesToBlob() {
   
   const filesToMigrate = [
     { local: teamsFile, blob: 'teams.json' },
+    ...ALL_DIVISIE_IDS.map(id => ({ local: teamsFileFor(id), blob: `teams-${id}.json` })),
     { local: legacyMatchesFile, blob: 'matches.json' },
     ...ALL_DIVISIE_IDS.map(id => ({ local: matchesFileFor(id), blob: `matches-${id}.json` })),
   ];
@@ -289,6 +291,17 @@ async function ensureFiles() {
       console.log('Creating teams.json in blob storage...');
       await writeBlobFile('teams.json', buildInitialTeams());
     }
+    for (const divisieId of ALL_DIVISIE_IDS) {
+      const blobName = `teams-${divisieId}.json`;
+      try {
+        const existing = await readBlobFile(blobName);
+        if (Array.isArray(existing) && existing.length) continue;
+      } catch {}
+      await writeBlobFile(
+        blobName,
+        OFFICIAL_TEAMS.filter((team) => String(team.divisieId) === String(divisieId))
+      );
+    }
     
     // Ensure per-divisie match files exist in blob
     for (const divisieId of ALL_DIVISIE_IDS) {
@@ -323,6 +336,23 @@ async function ensureFiles() {
     await fs.writeFile(teamsFile, JSON.stringify(buildInitialTeams(), null, 2), 'utf-8');
   }
   await migrateLegacyMatches();
+  for (const divisieId of ALL_DIVISIE_IDS) {
+    const f = teamsFileFor(divisieId);
+    try {
+      await fs.access(f);
+      const existing = JSON.parse((await fs.readFile(f, 'utf-8')) || '[]');
+      if (Array.isArray(existing) && existing.length) continue;
+    } catch {}
+    await fs.writeFile(
+      f,
+      JSON.stringify(
+        OFFICIAL_TEAMS.filter((team) => String(team.divisieId) === String(divisieId)),
+        null,
+        2
+      ),
+      'utf-8'
+    );
+  }
   // Ensure per-divisie match files exist
   for (const divisieId of ALL_DIVISIE_IDS) {
     const f = matchesFileFor(divisieId);
@@ -364,8 +394,18 @@ async function writeJson(file, data) {
 export async function listTeams(options = {}) {
   const { divisieId, divisie } = options;
   const normalizedDivisieId = divisieId ? String(divisieId) : null;
-  // Always return the official teams; do not allow runtime changes
-  return OFFICIAL_TEAMS
+  let source = OFFICIAL_TEAMS;
+  try {
+    if (normalizedDivisieId && ALL_DIVISIE_IDS.includes(normalizedDivisieId)) {
+      source = await readJson(teamsFileFor(normalizedDivisieId));
+    } else if (!normalizedDivisieId) {
+      const parts = await Promise.all(ALL_DIVISIE_IDS.map((id) => readJson(teamsFileFor(id))));
+      source = parts.flat();
+    }
+  } catch {
+    source = OFFICIAL_TEAMS;
+  }
+  return source
     .filter((team) => !normalizedDivisieId || String(team.divisieId) === normalizedDivisieId)
     .filter((team) => !divisie || team.divisie === divisie)
     .map((team) => ({ ...team }));
