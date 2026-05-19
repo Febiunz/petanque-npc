@@ -33,7 +33,7 @@ package.json       # Root convenience scripts
 
 ## Critical Commands and Timing
 
-### ⚠️ NEVER CANCEL THESE COMMANDS - They require full execution time ⚠️
+### Do not cancel the following commands before completion: `npm run install:all`, `npm run dev`, `npm run build`
 
 ### Installation (Timeout: 300 seconds)
 ```bash
@@ -68,7 +68,7 @@ cd frontend && npm run dev      # Development server
 cd frontend && npm run preview  # Preview built app (port 4173)
 ```
 
-## API Endpoints and Validation
+## API Endpoints
 
 ### Public Endpoints
 - `GET /api/health` - Service status check
@@ -111,6 +111,8 @@ cd frontend && npm run preview  # Preview built app (port 4173)
   - Per user+match: 100 submissions per 2 minutes
   - Per user daily cap: 100/day
   - Global per match: 100/min across all users
+
+When a rate limit is exceeded, the server responds with HTTP 429 Too Many Requests.
 
 **⚠️ If rate limits change in `backend/routes/matches.js`, update README.md and COPILOT.md together!**
 
