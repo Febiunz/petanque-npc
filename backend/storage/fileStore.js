@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs';
 import { dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
-import { readBlobFile, writeBlobFile, blobExists } from './blobStorage.js';
+import { readBlobFile, writeBlobFile, blobExists, deleteBlobFile } from './blobStorage.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
@@ -24,6 +24,7 @@ export const POOLS = {
 
 const ALL_DIVISIE_IDS = ['1001', '2001', '2002'];
 const matchesFileFor = (divisieId) => `${dataDir}/matches-${divisieId}.json`;
+const legacyMatchesFile = `${dataDir}/matches.json`;
 
 // Track if migration has been attempted
 let migrationAttempted = false;
@@ -110,6 +111,7 @@ async function migrateLocalFilesToBlob() {
   
   const filesToMigrate = [
     { local: teamsFile, blob: 'teams.json' },
+    { local: legacyMatchesFile, blob: 'matches.json' },
     ...ALL_DIVISIE_IDS.map(id => ({ local: matchesFileFor(id), blob: `matches-${id}.json` })),
   ];
   
@@ -173,10 +175,112 @@ async function migrateLocalFilesToBlob() {
   }
 }
 
+function normalizeDivisieId(input) {
+  const normalized = String(input || '');
+  return ALL_DIVISIE_IDS.includes(normalized) ? normalized : POOLS.TOPDIVISIE;
+}
+
+function normalizeLegacyMatch(match) {
+  const divisieId = normalizeDivisieId(match?.divisieId);
+  const divisie =
+    match?.divisie || (divisieId === POOLS.TOPDIVISIE ? DIVISIES.TOPDIVISIE : DIVISIES.SECOND_DIVISION);
+  return {
+    ...match,
+    divisieId,
+    divisie,
+  };
+}
+
+function splitLegacyMatchesByDivisie(rawMatches) {
+  const byDivisie = new Map(ALL_DIVISIE_IDS.map((id) => [id, []]));
+  if (!Array.isArray(rawMatches)) return byDivisie;
+  for (const match of rawMatches) {
+    const normalized = normalizeLegacyMatch(match);
+    byDivisie.get(normalized.divisieId).push(normalized);
+  }
+  return byDivisie;
+}
+
+function mergeUniqueById(existing, additions) {
+  const result = Array.isArray(existing) ? [...existing] : [];
+  const existingIds = new Set(result.map((m) => m?.id).filter(Boolean));
+  let added = 0;
+  for (const match of additions) {
+    if (match?.id && existingIds.has(match.id)) continue;
+    result.push(match);
+    if (match?.id) existingIds.add(match.id);
+    added++;
+  }
+  return { merged: result, added };
+}
+
+async function migrateLegacyMatches() {
+  try {
+    if (useBlob) {
+      if (!(await blobExists('matches.json'))) return;
+      const legacy = await readBlobFile('matches.json');
+      const split = splitLegacyMatchesByDivisie(legacy);
+      let migrated = 0;
+      for (const divisieId of ALL_DIVISIE_IDS) {
+        const blobName = `matches-${divisieId}.json`;
+        const blobAlreadyExists = await blobExists(blobName);
+        const existing = blobAlreadyExists ? await readBlobFile(blobName) : [];
+        const { merged, added } = mergeUniqueById(existing, split.get(divisieId) || []);
+        if (added > 0 || !blobAlreadyExists) {
+          await writeBlobFile(blobName, merged);
+        }
+        migrated += added;
+      }
+      try {
+        await deleteBlobFile('matches.json');
+      } catch (err) {
+        console.warn('Could not delete legacy matches.json blob:', err?.message || err);
+      }
+      if (migrated > 0) {
+        console.log(`✅ Migrated ${migrated} legacy match row(s) from matches.json`);
+      }
+      return;
+    }
+
+    try {
+      await fs.access(legacyMatchesFile);
+    } catch {
+      return;
+    }
+
+    const legacy = JSON.parse((await fs.readFile(legacyMatchesFile, 'utf-8')) || '[]');
+    const split = splitLegacyMatchesByDivisie(legacy);
+    let migrated = 0;
+    for (const divisieId of ALL_DIVISIE_IDS) {
+      const targetFile = matchesFileFor(divisieId);
+      let existing = [];
+      try {
+        existing = JSON.parse((await fs.readFile(targetFile, 'utf-8')) || '[]');
+      } catch {}
+      const { merged, added } = mergeUniqueById(existing, split.get(divisieId) || []);
+      if (added > 0) {
+        await fs.writeFile(targetFile, JSON.stringify(merged, null, 2), 'utf-8');
+      }
+      migrated += added;
+    }
+    try {
+      await fs.unlink(legacyMatchesFile);
+    } catch (err) {
+      console.warn('Could not delete legacy local matches.json:', err?.message || err);
+    }
+    if (migrated > 0) {
+      console.log(`✅ Migrated ${migrated} legacy match row(s) from local matches.json`);
+    }
+  } catch (err) {
+    console.warn('Legacy matches migration skipped due to error:', err?.message || err);
+  }
+}
+
 async function ensureFiles() {
   if (useBlob) {
     // In blob mode, ensure files exist in blob storage
     await migrateLocalFilesToBlob();
+    await migrateLegacyMatches();
     
     // Ensure teams.json exists in blob
     try {
@@ -218,6 +322,7 @@ async function ensureFiles() {
   } catch {
     await fs.writeFile(teamsFile, JSON.stringify(buildInitialTeams(), null, 2), 'utf-8');
   }
+  await migrateLegacyMatches();
   // Ensure per-divisie match files exist
   for (const divisieId of ALL_DIVISIE_IDS) {
     const f = matchesFileFor(divisieId);
