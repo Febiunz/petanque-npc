@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const { round, divisieId, divisie } = req.query;
-  const all = await listSchedule({ divisieId: divisieId || POOLS.TOPDIVISIE, divisie });
+  const effectiveDivisieId = divisieId || (!divisie ? POOLS.TOPDIVISIE : undefined);
+  const all = await listSchedule({ divisieId: effectiveDivisieId, divisie });
   const rows = round ? all.filter(m => String(m.round) === String(round)) : all;
   res.json(rows);
 });

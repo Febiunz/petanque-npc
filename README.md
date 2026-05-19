@@ -13,7 +13,7 @@ This project provides:
 - Supported division identifiers: `1001` (Topdivisie), `2001` and `2002` (2e divisie).
 - Speelronde selector with round date; only rounds with open matches are shown.
 - Result entry form with scores that always sum to 31 (clamped 0–31) and start blank.
-- Score validation: 1 and 3 are not allowed for either team (client and server enforced).
+- Score validation: 1, 3, 28 and 30 are not allowed for either team (client and server enforced).
 - Hides matches already submitted; hides a round entirely when all its matches are completed.
 - Standings calculation:
   - Winner = 2 points, loser = 0 points.
