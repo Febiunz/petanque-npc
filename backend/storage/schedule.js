@@ -9,6 +9,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
 const dataDir = process.env.SCHEDULE_DATA_DIR || `${__dirname}/../data`;
 const scheduleFileFor = (divisieId) => `${dataDir}/schedule-${divisieId}.json`;
+const ALLOWED_DIVISIE_IDS = new Set(Object.values(POOLS).map(String));
+
+function normalizeDivisieIdOrThrow(divisieId) {
+  const normalized = String(divisieId || '');
+  if (!ALLOWED_DIVISIE_IDS.has(normalized)) {
+    throw new Error('Invalid divisieId');
+  }
+  return normalized;
+}
 
 async function ensureDir() {
   await fs.mkdir(dataDir, { recursive: true });
@@ -126,12 +135,13 @@ export async function listSchedule(options = {}) {
   const { divisieId, divisie } = options;
   await ensureSchedule();
 
+  const safeDivisieId = divisieId ? normalizeDivisieIdOrThrow(divisieId) : null;
   let raw;
-  if (divisieId) {
+  if (safeDivisieId) {
     if (useBlob) {
-      raw = await readBlobFile(`schedule-${divisieId}.json`);
+      raw = await readBlobFile(`schedule-${safeDivisieId}.json`);
     } else {
-      const buf = await fs.readFile(scheduleFileFor(divisieId), 'utf-8');
+      const buf = await fs.readFile(scheduleFileFor(safeDivisieId), 'utf-8');
       raw = JSON.parse(buf || '[]');
     }
   } else {
@@ -153,17 +163,17 @@ export async function listSchedule(options = {}) {
     return m;
   }) : [];
 
-  if (changed && divisieId) {
+  if (changed && safeDivisieId) {
     if (useBlob) {
-      await writeBlobFile(`schedule-${divisieId}.json`, cleaned);
+      await writeBlobFile(`schedule-${safeDivisieId}.json`, cleaned);
     } else {
-      await fs.writeFile(scheduleFileFor(divisieId), JSON.stringify(cleaned, null, 2), 'utf-8');
+      await fs.writeFile(scheduleFileFor(safeDivisieId), JSON.stringify(cleaned, null, 2), 'utf-8');
     }
   }
 
   const normalized = normalizeScheduleRows(cleaned);
   return normalized
-    .filter((match) => !divisieId || String(match.divisieId) === String(divisieId))
+    .filter((match) => !safeDivisieId || String(match.divisieId) === String(safeDivisieId))
     .filter((match) => !divisie || match.divisie === divisie);
 }
 
