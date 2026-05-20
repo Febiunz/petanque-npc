@@ -4,7 +4,6 @@
     "name": "Dune Rangers 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -13,7 +12,6 @@
     "name": "Orbit Stingers 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -22,7 +20,6 @@
     "name": "River Nomads 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -31,7 +28,6 @@
     "name": "Copper Owls 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -40,7 +36,6 @@
     "name": "Stone Pilots 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -49,7 +44,6 @@
     "name": "Midnight Petals 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -58,7 +52,6 @@
     "name": "Lime Cyclones 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -67,7 +60,6 @@
     "name": "Cobalt Lynx 1",
     "divisie": "2e-divisie",
     "divisieId": "2001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   }

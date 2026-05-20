@@ -94,6 +94,7 @@ Run each app separately (optional):
 ## Data & storage
 
 - Teams are fixed to official divisions and returned from the backend (not user-editable).
+- Team rows use: `id`, `name`, `divisie`, `divisieId`, `locale`, `createdAt` (no `club` field).
 - Schedule is generated locally (round-robin) from division teams; no external official schedule fetch/parsing is used.
 - Schedule is stored per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule-1001.json`, `schedule-2001.json`, `schedule-2002.json`) in production. Falls back to local `backend/data/schedule-<divisieId>.json` files in development.
 - Results are persisted per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches-1001.json`, `matches-2001.json`, `matches-2002.json`) in production, or local `backend/data/matches-<divisieId>.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.

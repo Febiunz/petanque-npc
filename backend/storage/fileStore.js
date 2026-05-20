@@ -84,7 +84,6 @@ const OFFICIAL_TEAMS = [
   ...SECOND_DIVISION_POOL_B_TEAMS,
 ].map((team) => ({
   ...team,
-  club: '',
   locale: 'nl',
   createdAt: '2025-08-01T00:00:00.000Z',
 }));

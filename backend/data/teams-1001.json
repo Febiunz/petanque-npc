@@ -4,7 +4,6 @@
     "name": "Northern Jackals 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -13,7 +12,6 @@
     "name": "Silver Meteors 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -22,7 +20,6 @@
     "name": "Delta Comets 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -31,7 +28,6 @@
     "name": "Rolling Pines 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -40,7 +36,6 @@
     "name": "Harbor Foxes 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -49,7 +44,6 @@
     "name": "Azure Arrows 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -58,7 +52,6 @@
     "name": "Marble Titans 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
@@ -67,7 +60,6 @@
     "name": "Crimson Lanterns 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   }
