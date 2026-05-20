@@ -7,5 +7,5 @@ Team seed objects contain `id`, `name`, `divisie`, `divisieId`, `locale`, and `c
 ## Documentation policy
 
 - When backend behavior, API contracts, data shape, storage, or operational steps change, update:
-  - `/home/runner/work/petanque-npc/petanque-npc/backend/README.md`
-  - `/home/runner/work/petanque-npc/petanque-npc/README.md`
+  - `backend/README.md`
+  - `README.md`
