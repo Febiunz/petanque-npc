@@ -46,36 +46,36 @@ async function withLock(filePath, fn) {
 }
 
 const TOPDIVISIE_TEAMS = [
-  { id: 'amicale-boule-d-argent-1', name: "Amicale Boule d'Argent 1" },
-  { id: 'boul-animo-1', name: "Boul'Animo 1" },
-  { id: 'cdp-les-cailloux-1', name: 'CdP Les Cailloux 1' },
-  { id: 'jbc-t-dupke-1', name: "JBC 't Dupke 1" },
-  { id: 'jeu-de-bommel-1', name: 'Jeu de Bommel 1' },
-  { id: 'petangeske-1', name: 'Petangeske 1' },
-  { id: 'puk-haarlem-1', name: 'PUK-Haarlem 1' },
-  { id: 't-zwijntje-1', name: "'t Zwijntje 1" },
-].map((team) => ({ ...team, divisie: DIVISIES.TOPDIVISIE, divisieId: POOLS.TOPDIVISIE }));
+  'Northern Jackals 1',
+  'Silver Meteors 1',
+  'Delta Comets 1',
+  'Rolling Pines 1',
+  'Harbor Foxes 1',
+  'Azure Arrows 1',
+  'Marble Titans 1',
+  'Crimson Lanterns 1',
+].map((name) => ({ id: slugifyTeam(name), name, divisie: DIVISIES.TOPDIVISIE, divisieId: POOLS.TOPDIVISIE }));
 
 const SECOND_DIVISION_POOL_A_TEAMS = [
-  'PV Gouda 1',
-  'JBV Amicale Cuyk 1',
-  'MIDI 1',
-  "JBC 't Dupke 2",
-  'Va-Tout 1',
-  'Amicale de Pétanque 1',
-  "L'Esprit 1",
-  'JBV De Walnoot 1',
+  'Dune Rangers 1',
+  'Orbit Stingers 1',
+  'River Nomads 1',
+  'Copper Owls 1',
+  'Stone Pilots 1',
+  'Midnight Petals 1',
+  'Lime Cyclones 1',
+  'Cobalt Lynx 1',
 ].map((name) => ({ id: slugifyTeam(name), name, divisie: DIVISIES.SECOND_DIVISION, divisieId: POOLS.SECOND_DIVISION_A }));
 
 const SECOND_DIVISION_POOL_B_TEAMS = [
-  'Le Biberon 1',
-  'De Bouledozers 1',
-  'PUK-Haarlem 2',
-  'JBC Randenbroek 1',
-  'Les Boules Fleuries 1',
-  'ELZA-Boules 1',
-  'Les Bohémiens de Petanque 1',
-  'De Gooiers 1',
+  'Polar Vipers 1',
+  'Sunset Drifters 1',
+  'Echo Badgers 1',
+  'Velvet Rockets 1',
+  'Iron Swans 1',
+  'Fjord Phantoms 1',
+  'Neon Cedars 1',
+  'Golden Wombats 1',
 ].map((name) => ({ id: slugifyTeam(name), name, divisie: DIVISIES.SECOND_DIVISION, divisieId: POOLS.SECOND_DIVISION_B }));
 
 const OFFICIAL_TEAMS = [
@@ -84,9 +84,8 @@ const OFFICIAL_TEAMS = [
   ...SECOND_DIVISION_POOL_B_TEAMS,
 ].map((team) => ({
   ...team,
-  club: '',
   locale: 'nl',
-  createdAt: '2025-08-01T00:00:00.000Z',
+  createdAt: '2026-08-01T00:00:00.000Z',
 }));
 
 function slugifyTeam(name) {

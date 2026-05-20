@@ -1,74 +1,66 @@
 [
   {
-    "id": "amicale-boule-d-argent-1",
-    "name": "Amicale Boule d'Argent 1",
+    "id": "northern-jackals-1",
+    "name": "Northern Jackals 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "boul-animo-1",
-    "name": "Boul'Animo 1",
+    "id": "silver-meteors-1",
+    "name": "Silver Meteors 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "cdp-les-cailloux-1",
-    "name": "CdP Les Cailloux 1",
+    "id": "delta-comets-1",
+    "name": "Delta Comets 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "jbc-t-dupke-1",
-    "name": "JBC 't Dupke 1",
+    "id": "rolling-pines-1",
+    "name": "Rolling Pines 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "jeu-de-bommel-1",
-    "name": "Jeu de Bommel 1",
+    "id": "harbor-foxes-1",
+    "name": "Harbor Foxes 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "petangeske-1",
-    "name": "Petangeske 1",
+    "id": "azure-arrows-1",
+    "name": "Azure Arrows 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "puk-haarlem-1",
-    "name": "PUK-Haarlem 1",
+    "id": "marble-titans-1",
+    "name": "Marble Titans 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "t-zwijntje-1",
-    "name": "'t Zwijntje 1",
+    "id": "crimson-lanterns-1",
+    "name": "Crimson Lanterns 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
-    "club": "",
     "locale": "nl",
-    "createdAt": "2025-08-01T00:00:00Z"
+    "createdAt": "2026-08-01T00:00:00Z"
   }
 ]
