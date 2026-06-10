@@ -9,6 +9,6 @@
     "start": "concurrently -n backend,frontend -c green,cyan \"npm run start --prefix backend\" \"npm run preview --prefix frontend\""
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^10.0.3"
   }
 }
