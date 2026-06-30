@@ -39,7 +39,7 @@ This project provides:
 
 ## Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 24+ and npm
 
 ## Quick start (development)
 
