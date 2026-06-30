@@ -11,7 +11,6 @@ const POOL_OPTIONS = [
 ];
 
 function App() {
-
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
@@ -170,10 +169,19 @@ function App() {
             size="small"
             value={selectedDivisieId}
             onChange={(e) => {
+              setStandings([]);
+              setResults([]);
+              setTeams([]);
+              setSchedule([]);
+              setScheduleAll([]);
+              setCompletedSet(new Set());
+              setAvailableRounds([]);
               setSelectedDivisieId(e.target.value);
               setRound('');
               setMatchId('');
               setScores({ homeScore: '', awayScore: '' });
+              setErrorOpen(false);
+              setErrorMsg('');
             }}
             select
             fullWidth
