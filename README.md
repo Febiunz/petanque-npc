@@ -138,6 +138,14 @@ Rate limiting (subject to tuning; current values from code):
 - After submit, standings and results refresh; the saved match disappears from the selection. If a round fully completes, it’s removed from the selector.
 - Results list is compact (single-line).
 
+## Continuous integration
+
+GitHub Actions workflow at `.github/workflows/ci.yml` runs on every pull request to `main` (and on pushes to `main`):
+- **Backend job**: `npm ci` in `backend/`, then a smoke test that boots `index.js` and checks `/api/health`, `/api/teams`, `/api/matches/schedule`, and `/api/standings`.
+- **Frontend job**: `npm ci` in `frontend/`, then `npm run build` with placeholder `VITE_FIREBASE_*` values (no real secrets required).
+
+This validates Dependabot dependency updates before anything is deployed to Azure. Dependabot is configured (`.github/dependabot.yml`) to update npm packages in `/`, `/backend`, and `/frontend`, plus GitHub Actions and Docker, weekly.
+
 ## Production notes (Azure)
 
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
