@@ -1,63 +1,63 @@
 [
   {
-    "id": "northern-jackals-1",
-    "name": "Northern Jackals 1",
+    "id": "boulanimo-1",
+    "name": "Boul'Animo 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "silver-meteors-1",
-    "name": "Silver Meteors 1",
+    "id": "cdp-les-cailloux-1",
+    "name": "CdP Les Cailloux 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "delta-comets-1",
-    "name": "Delta Comets 1",
+    "id": "jbc-t-dupke-1",
+    "name": "JBC 't Dupke 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "rolling-pines-1",
-    "name": "Rolling Pines 1",
+    "id": "le-biberon-1",
+    "name": "Le Biberon 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "harbor-foxes-1",
-    "name": "Harbor Foxes 1",
+    "id": "petangeske-1",
+    "name": "Petangeske 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "azure-arrows-1",
-    "name": "Azure Arrows 1",
+    "id": "puk-haarlem-1",
+    "name": "PUK-Haarlem 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "marble-titans-1",
-    "name": "Marble Titans 1",
+    "id": "pv-gouda-1",
+    "name": "PV Gouda 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
     "createdAt": "2026-08-01T00:00:00Z"
   },
   {
-    "id": "crimson-lanterns-1",
-    "name": "Crimson Lanterns 1",
+    "id": "t-zwijntje-1",
+    "name": "'t Zwijntje 1",
     "divisie": "topdivisie",
     "divisieId": "1001",
     "locale": "nl",
