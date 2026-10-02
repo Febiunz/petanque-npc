@@ -150,9 +150,11 @@ This validates Dependabot dependency updates before anything is deployed to Azur
 
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 - Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
+- Backend data → all `backend/data/*.json` files are uploaded to the blob container `data` using `AZURE_STORAGE_CONNECTION_STRING`. Existing blobs are always overwritten, so results submitted in production are replaced by the data in the repository.
 - Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
 
 Secrets to configure (repository or environment secrets):
+- `AZURE_STORAGE_CONNECTION_STRING` (used by the workflow to upload `backend/data/*.json`).
 - Frontend build-time: all `VITE_FIREBASE_*` vars listed above, plus `VITE_API_BASE` pointing to your backend URL.
 - Backend runtime (App Service Application settings): 
   - `FIREBASE_PROJECT_ID` (required)
