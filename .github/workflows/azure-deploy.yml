@@ -32,6 +32,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify match results and package backend
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+
+          for (const divisionId of ['1001', '2001', '2002']) {
+            const path = `data/matches-${divisionId}.json`;
+            const matches = JSON.parse(await readFile(path, 'utf8'));
+            if (!Array.isArray(matches) || matches.length === 0) {
+              throw new Error(`${path} is missing or contains no results`);
+            }
+            console.log(`${path}: ${matches.length} match results`);
+          }
+          NODE
+          zip -r ../backend-deploy.zip .
+
       # Optional: quick lint/test hooks could go here
       # NOTE: working-directory is already 'backend'. Using '.' prevents an incorrect nested path (./backend) that can cause OneDeploy conflicts.
       - name: Deploy to Azure App Service
@@ -39,7 +55,7 @@ jobs:
         with:
           app-name: npc-standen-backend
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./backend
+          package: ./backend-deploy.zip
 
       - name: Post-deploy note
         run: |
