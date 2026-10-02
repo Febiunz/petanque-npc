@@ -57,6 +57,19 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./backend-deploy.zip
 
+      # Overwrites existing blobs, so results submitted in production are replaced by the repo data.
+      - name: Upload backend data files to Azure Blob Storage
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: |
+          az storage container create --name data --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+          az storage blob upload-batch \
+            --destination data \
+            --source data \
+            --pattern "*.json" \
+            --overwrite true \
+            --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+
       - name: Post-deploy note
         run: |
           echo "Ensure these App Service settings are configured in the Azure Portal (Configuration > Application settings):"
