@@ -213,7 +213,7 @@ curl http://localhost:5000/api/health
 # Check storage files
 ls -la backend/data/
 cat backend/data/matches.json | head -20
-cat backend/data/teams.json | head -20
+cat backend/data/teams-1001.json | head -20
 ```
 
 ### Environment Setup
