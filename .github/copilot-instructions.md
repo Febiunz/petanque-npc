@@ -195,6 +195,7 @@ cd frontend && npm run preview
 - Frontend deploys to Azure Static Web Apps
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
+- Workflow also uploads `backend/data/*.json` to the blob container `data` (`AZURE_STORAGE_CONNECTION_STRING` secret) and always overwrites existing blobs
 
 ## Common Tasks and Commands
 
@@ -213,7 +214,7 @@ curl http://localhost:5000/api/health
 # Check storage files
 ls -la backend/data/
 cat backend/data/matches.json | head -20
-cat backend/data/teams.json | head -20
+cat backend/data/teams-1001.json | head -20
 ```
 
 ### Environment Setup
