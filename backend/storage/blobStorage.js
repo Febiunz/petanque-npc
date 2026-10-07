@@ -3,7 +3,7 @@ import { BlobServiceClient } from '@azure/storage-blob';
 /**
  * Azure Blob Storage helper for all data files
  * Both the backend and Azure Function use this to access shared data
- * Supports: schedule.json, teams.json, matches.json
+ * Supports division-specific team, schedule, and match data files.
  */
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;

@@ -6,7 +6,6 @@ import { readBlobFile, writeBlobFile, blobExists, deleteBlobFile } from './blobS
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = `${__dirname}/../data`;
-const teamsFile = `${dataDir}/teams.json`;
 
 // Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -97,10 +96,6 @@ function slugifyTeam(name) {
     .replace(/^-+|-+$/g, '');
 }
 
-function buildInitialTeams() {
-  return OFFICIAL_TEAMS;
-}
-
 async function migrateLocalFilesToBlob() {
   if (!useBlob || migrationAttempted) {
     return;
@@ -110,7 +105,6 @@ async function migrateLocalFilesToBlob() {
   console.log('Checking for local data files to migrate to blob storage...');
   
   const filesToMigrate = [
-    { local: teamsFile, blob: 'teams.json' },
     ...ALL_DIVISIE_IDS.map(id => ({ local: teamsFileFor(id), blob: `teams-${id}.json` })),
     { local: legacyMatchesFile, blob: 'matches.json' },
     ...ALL_DIVISIE_IDS.map(id => ({ local: matchesFileFor(id), blob: `matches-${id}.json` })),
@@ -283,13 +277,6 @@ async function ensureFiles() {
     await migrateLocalFilesToBlob();
     await migrateLegacyMatches();
     
-    // Ensure teams.json exists in blob
-    try {
-      await readBlobFile('teams.json');
-    } catch {
-      console.log('Creating teams.json in blob storage...');
-      await writeBlobFile('teams.json', buildInitialTeams());
-    }
     for (const divisieId of ALL_DIVISIE_IDS) {
       const blobName = `teams-${divisieId}.json`;
       try {
@@ -318,22 +305,6 @@ async function ensureFiles() {
   
   // Local file mode (development)
   await fs.mkdir(dataDir, { recursive: true });
-  // Ensure teams file exists; and keep it synced to the official list for visibility
-  try {
-    await fs.access(teamsFile);
-    try {
-      const current = JSON.parse(await fs.readFile(teamsFile, 'utf-8') || '[]');
-      const names = (arr) => Array.isArray(arr) ? arr.map(t => t.name) : [];
-      const a = names(current);
-      const b = names(buildInitialTeams());
-      const same = a.length === b.length && a.every((name, i) => name === b[i]);
-      if (!same) {
-        await fs.writeFile(teamsFile, JSON.stringify(buildInitialTeams(), null, 2), 'utf-8');
-      }
-    } catch {}
-  } catch {
-    await fs.writeFile(teamsFile, JSON.stringify(buildInitialTeams(), null, 2), 'utf-8');
-  }
   await migrateLegacyMatches();
   for (const divisieId of ALL_DIVISIE_IDS) {
     const f = teamsFileFor(divisieId);
@@ -539,9 +510,10 @@ function normalizeMatches(matches) {
 export async function storageHealth() {
   try {
     await ensureFiles();
+    const teamsFile = teamsFileFor(POOLS.TOPDIVISIE);
     await withLock(teamsFile, async () => {
-      const t = await readJson(teamsFile);
-      await writeJson(teamsFile, t);
+      const teams = await readJson(teamsFile);
+      await writeJson(teamsFile, teams);
     });
     return { ok: true, readable: true, writable: true, type: 'file' };
   } catch (e) {
