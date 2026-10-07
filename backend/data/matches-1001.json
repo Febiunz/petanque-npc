@@ -66,5 +66,39 @@
     "officialDate": "2026-09-19",
     "divisieId": "1001",
     "divisie": "topdivisie"
+  },
+  {
+    "id": "official-100105",
+    "date": "2026-10-03T12:00:00.000Z",
+    "fixtureId": "100105",
+    "matchId": "100105",
+    "matchNumber": "100105",
+    "homeTeamId": "puk-haarlem-1",
+    "awayTeamId": "boulanimo-1",
+    "homeScore": 29,
+    "awayScore": 2,
+    "createdAt": "2026-10-07T08:41:29.541Z",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-10-03",
+    "divisieId": "1001",
+    "divisie": "topdivisie"
+  },
+  {
+    "id": "official-100108",
+    "date": "2026-10-03T12:00:00.000Z",
+    "fixtureId": "100108",
+    "matchId": "100108",
+    "matchNumber": "100108",
+    "homeTeamId": "jbc-t-dupke-1",
+    "awayTeamId": "pv-gouda-1",
+    "homeScore": 22,
+    "awayScore": 9,
+    "createdAt": "2026-10-07T08:41:29.541Z",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-10-03",
+    "divisieId": "1001",
+    "divisie": "topdivisie"
   }
 ]
