@@ -95,15 +95,17 @@ Run each app separately (optional):
 
 - Teams are fixed to official divisions and returned from the backend (not user-editable).
 - Team rows use: `id`, `name`, `divisie`, `divisieId`, `locale`, `createdAt` (no `club` field).
-- Schedule is generated locally (round-robin) from division teams; no external official schedule fetch/parsing is used.
+- Committed teams, schedules, and results are synchronized with the official NLpetanque pages listed below. A generated round-robin schedule is only a fallback when stored schedule data is unavailable.
 - Schedule is stored per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule-1001.json`, `schedule-2001.json`, `schedule-2002.json`) in production. Falls back to local `backend/data/schedule-<divisieId>.json` files in development.
 - Results are persisted per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches-1001.json`, `matches-2001.json`, `matches-2002.json`) in production, or local `backend/data/matches-<divisieId>.json` in development. Writes are serialized via a simple in-process mutex to avoid corruption.
-- Current seeded season data is prepared for **2026–2027**:
-  - 3 divisions (`1001`, `2001`, `2002`) with generated team names
+- Current official season data is prepared for **2026–2027**, last checked on **16 October 2026**:
+  - 3 divisions (`1001`, `2001`, `2002`) with 8 official teams and 56 fixtures each
+  - Sources: [Topdivisie 1001](https://nlpetanque.nl/topdivisie-2026-2027-1001/), [2e divisie 2001](https://nlpetanque.nl/2e-divisie-2026-2027-2001/), [2e divisie 2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/)
   - Round dates mapped to:
     - 2026: `19-sep`, `3-okt`, `17-okt`, `31-okt`, `14-nov`, `28-nov`, `19-dec`
-    - 2027: `9-jan`, `23-jan`, `6-feb`, `20-feb`, `6-mrt`, `20-mrt`, `27-mrt`
-  - Example results seeded per division: rounds 1–3 complete and 2 matches from round 4
+    - 2027: `9-jan`, `23-jan`, `6-feb`, `20-feb`, `6-mrt`, `20-mrt`, `3-apr`
+  - Individual fixtures use adjusted dates when published by NLpetanque; match `100107` is scheduled for `2026-12-13`.
+  - Published results: 6 in `1001`, 9 in `2001`, and 8 in `2002`. Unplayed fixtures have no result entry.
 - Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`

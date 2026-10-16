@@ -134,5 +134,22 @@
     "officialDate": "2026-10-03",
     "divisieId": "2001",
     "divisie": "2e-divisie"
+  },
+  {
+    "id": "official-200111",
+    "date": "2026-10-17T12:00:00.000Z",
+    "fixtureId": "200111",
+    "matchId": "200111",
+    "matchNumber": "200111",
+    "homeTeamId": "cjb-middelburg-1",
+    "awayTeamId": "va-tout-1",
+    "homeScore": 14,
+    "awayScore": 17,
+    "createdAt": "2026-10-16T09:42:20.929Z",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-10-17",
+    "divisieId": "2001",
+    "divisie": "2e-divisie"
   }
 ]
