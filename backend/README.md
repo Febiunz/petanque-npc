@@ -6,13 +6,14 @@ Team seed objects contain `id`, `name`, `divisie`, `divisieId`, `locale`, and `c
 
 ## Official season data
 
-All nine JSON files in `data/` were checked against the official NLpetanque 2026-2027 tables on 21 October 2026:
+All nine JSON files in `data/` were checked against the official NLpetanque 2026-2027 tables on 2 November 2026:
 [1001](https://nlpetanque.nl/topdivisie-2026-2027-1001/),
 [2001](https://nlpetanque.nl/2e-divisie-2026-2027-2001/), and
 [2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/).
-Each division has 8 teams and 56 fixtures, with 10, 12, and 12 published results respectively.
+Each division has 8 teams and 56 fixtures, with 14, 16, and 15 published results respectively.
 Schedules preserve official match numbers and published adjusted dates; results are included only when both scores are published.
-The latest update adds 11 published results from round three (17 October 2026); teams and schedules remain unchanged.
+The latest update adds 11 published results from round four (31 October 2026); teams and schedules remain unchanged.
+Match `200215` has no published score yet and remains without a result entry.
 Unchanged files retain their existing content and timestamps.
 
 ## Documentation policy
