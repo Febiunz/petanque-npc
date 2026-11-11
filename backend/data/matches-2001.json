@@ -14,7 +14,65 @@
     "submittedByUid": null,
     "officialDate": "2026-09-19",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 0
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 9,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200102",
@@ -31,7 +89,65 @@
     "submittedByUid": null,
     "officialDate": "2026-09-19",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 2,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200103",
@@ -48,7 +164,65 @@
     "submittedByUid": null,
     "officialDate": "2026-09-19",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 4
+      }
+    ]
   },
   {
     "id": "official-200104",
@@ -65,7 +239,65 @@
     "submittedByUid": null,
     "officialDate": "2026-09-19",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 8,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200105",
@@ -82,7 +314,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-03",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 2,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 3,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 9
+      }
+    ]
   },
   {
     "id": "official-200106",
@@ -99,7 +389,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-03",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 1,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 9,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200107",
@@ -116,7 +464,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-03",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 4
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 0
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 10
+      }
+    ]
   },
   {
     "id": "official-200108",
@@ -133,7 +539,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-03",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 0
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 11,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200109",
@@ -150,7 +614,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-17",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 6
+      }
+    ]
   },
   {
     "id": "official-200110",
@@ -167,7 +689,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-17",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 1
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 8,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200111",
@@ -184,7 +764,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-17",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 2,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 9,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200112",
@@ -201,7 +839,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-17",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 4
+      }
+    ]
   },
   {
     "id": "official-200113",
@@ -218,7 +914,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-31",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 1
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 4
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      }
+    ]
   },
   {
     "id": "official-200114",
@@ -235,7 +989,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-31",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 3,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 8
+      }
+    ]
   },
   {
     "id": "official-200115",
@@ -252,7 +1064,65 @@
     "submittedByUid": null,
     "officialDate": "2026-10-31",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 1
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 8,
+        "awayScore": 13
+      }
+    ]
   },
   {
     "id": "official-200116",
@@ -269,6 +1139,64 @@
     "submittedByUid": null,
     "officialDate": "2026-10-31",
     "divisieId": "2001",
-    "divisie": "2e-divisie"
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 1,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 4
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 8
+      }
+    ]
   }
 ]

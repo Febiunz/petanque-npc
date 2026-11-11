@@ -9,7 +9,9 @@ async function http(url, options = {}) {
   if (!res.ok) {
     let msg = `HTTP ${res.status}`;
     try { const j = await res.json(); msg += `: ${j.error || JSON.stringify(j)}`; } catch {}
-    throw new Error(msg);
+    const error = new Error(msg);
+    error.status = res.status;
+    throw error;
   }
   return res.json();
 }
@@ -31,11 +33,11 @@ export const api = {
   getMatches: ({ divisieId } = {}) => http(withQuery('/api/matches', { divisieId })),
   // schedule of matches (previously /api/fixtures)
   getSchedule: ({ round, divisieId, divisie } = {}) => http(withQuery('/api/matches/schedule', { round, divisieId, divisie })),
-  submitResult: async ({ matchId, homeScore, awayScore, divisieId }) => {
-    const token = await auth.currentUser?.getIdToken();
+  submitResult: async ({ matchId, scoreFormat, games, divisieId }) => {
+    const token = await auth?.currentUser?.getIdToken();
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, homeScore, awayScore, divisieId }) });
+    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, scoreFormat, games, divisieId }) });
   },
   getStandings: ({ divisieId, divisie } = {}) => http(withQuery('/api/standings', { divisieId, divisie })),
 };

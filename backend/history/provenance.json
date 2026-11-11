@@ -1,0 +1,640 @@
+{
+  "season": "2026-2027",
+  "retrievedAt": "2026-11-11T12:40:11.216474+00:00",
+  "pools": {
+    "1001": {
+      "pageUrl": "https://nlpetanque.nl/topdivisie-2026-2027-1001/",
+      "pageSha256": "a750a19c5c2ced0e104205a665b424d67aa7968d4ac5585b3c01bff6aed983d1",
+      "coverage": {
+        "publishedCompletedCount": 14,
+        "validatedCount": 14,
+        "excludedCount": 0,
+        "coverageComplete": true
+      },
+      "matches": [
+        {
+          "matchId": "100101",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100101.xlsx",
+          "workbookSha256": "bd0ec201bb8918407fdd7fdfd53c890b29e49cce0fcce26df1e700522071d9f1",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            89,
+            127
+          ],
+          "metadataSha256": "3f721edb5655280e7361dcbf698e2052427df5509dcee12e6f1d54d757eec3b2",
+          "gamesSha256": "ac61dcba95e9f642c6997004c438d7ff6ecc1418afe077a48591e283b06e9992"
+        },
+        {
+          "matchId": "100102",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100102.xlsx",
+          "workbookSha256": "ffcfea67737149febed614dd09d97c0cf1cf0fc1075efa6ba0b81d51590e165b",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            112,
+            112
+          ],
+          "metadataSha256": "956057629754511c11fa276a49c2e18917940a2cc0a6684e0dd92051db9c6d32",
+          "gamesSha256": "d81aa3335f5251d64c56d874f57ecd727a15a3374e546786889950dbae8fb667"
+        },
+        {
+          "matchId": "100103",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100103.xlsx",
+          "workbookSha256": "b5a6fbf9748215c95199a24396429d391b8fe815d26da20f739a6fe31dc297e0",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            123,
+            96
+          ],
+          "metadataSha256": "1b4615806ae707856ef511d857b594fb26fadfe58f2dd393809a530db2f315fd",
+          "gamesSha256": "6a921f39eb39bede7bbde57e487a6149356bf4cb06d8bfd589be4bead27f1850"
+        },
+        {
+          "matchId": "100104",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100104.xlsx",
+          "workbookSha256": "3f1cef0706dd2c3b9844893f662ee40580d7d7e55fe244e9695f094f994a93e9",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            92,
+            129
+          ],
+          "metadataSha256": "af7dc377b5d0c9d1d514db6194e9449f6b07b1497715d50ce63ef17c06ac232d",
+          "gamesSha256": "30d6fb231c510bcfca35c562fb57e73e4fa5e519b3c9092e0599a247a29d2f03"
+        },
+        {
+          "matchId": "100105",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100105.xlsx",
+          "workbookSha256": "67f6687230c4c42f56cdf153a36f73c7894b36e9125d203451c5102fd544e08b",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            139,
+            60
+          ],
+          "metadataSha256": "c6fc9541013aa0580ecb50659e8410ec7a3bb6e31b3f073d89d9c277bc789dd2",
+          "gamesSha256": "c5b684835632cc210e60c9fdf6512c7a6437856979abdcf65bc676f436c5706b"
+        },
+        {
+          "matchId": "100108",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100108.xlsx",
+          "workbookSha256": "2152bcfa5c19cb0b4f1d9917b5d3f4fff04e45722fb73c1fe07858948359ae63",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            116,
+            103
+          ],
+          "metadataSha256": "9966524f20a85584593df259b64dd66a215d74a79f4860332bc5df964211d0cf",
+          "gamesSha256": "490c9a888c421cddff9456544eb38dd755eff70566f2925eec4f0ead5fb96ae1"
+        },
+        {
+          "matchId": "100109",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100109.xlsx",
+          "workbookSha256": "21ce81aa8b23343170aa4d47248c0a6285c46c951a3a798723019a55baefad77",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            104,
+            101
+          ],
+          "metadataSha256": "112263e44a2974d8d0c366d5df02b9f62a462f8762d44bc65bbc785b979acd51",
+          "gamesSha256": "f6d80504bf1eca24d8cd644f649e7bb3ad5292212221d630edbf0faad61fe541"
+        },
+        {
+          "matchId": "100110",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100110.xlsx",
+          "workbookSha256": "dfb1d81526b14f19718639bd971b2250b31a7f5c3d0e9f942468c03c506288c3",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            119,
+            124
+          ],
+          "metadataSha256": "d06e95a826dcdb2ed2633f2ea83b7935710ab90a639c3ea868b9de9b928a0cf8",
+          "gamesSha256": "cd3fbc696312117a7ddadbad2027ac8fefa78531770792b7f9807145590a6c57"
+        },
+        {
+          "matchId": "100111",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100111.xlsx",
+          "workbookSha256": "1a8cb7b2896161503bcf1e09c76e0ef700b7d5ecc78245034e57751feeebf043",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            92,
+            122
+          ],
+          "metadataSha256": "4abe3a03a6151ee495ce20c3580d327ca6a701f073c837e6619519b0096f9912",
+          "gamesSha256": "a39b7c47d3aafe47d3c6bc720a9b3c78885472186cd03721d1088e311a48b63f"
+        },
+        {
+          "matchId": "100112",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100112.xlsx",
+          "workbookSha256": "3884889111229dbebc1dcf7283acaf6157623ea0639988dc6fbe26d45ee1be66",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            118,
+            91
+          ],
+          "metadataSha256": "bcd3bf7527644f9725c945367d32ab65517452f6f9f94a9217f4d5641a4e0ec7",
+          "gamesSha256": "f2ea70820225f3b7089591b8168dfc4664bd07d1c2b3939b0e85f22c5e38b8f2"
+        },
+        {
+          "matchId": "100113",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100113.xlsx",
+          "workbookSha256": "de58b127d99642dd1319fa26e07364af0bc29a04bbe832f322ab51d44568af29",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            76,
+            137
+          ],
+          "metadataSha256": "876ea40cf1d32392253b653372a939ecf1717a45b928928550f79312c5e42a20",
+          "gamesSha256": "4217a6890d7c1bcfe485844593382875b0c226a644120cbc00e96717914cc6c8"
+        },
+        {
+          "matchId": "100114",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100114.xlsx",
+          "workbookSha256": "0b1c6b0589c76b0a237270fe07604172188fbd0468720c3065442e2ac1389619",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            105,
+            106
+          ],
+          "metadataSha256": "c4a67fff7342141482b740caae151afd8ad1a9da9a81aac7af3d3fd030f4399f",
+          "gamesSha256": "1ca35a3fe17442bb058d2c042851be34a23643f5baff0b83ceecf69916d150e4"
+        },
+        {
+          "matchId": "100115",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100115.xlsx",
+          "workbookSha256": "0365b9d26891a6bbaefd53b046e325041cce9d747ab81c38c5ebfb8240500dbc",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            86,
+            143
+          ],
+          "metadataSha256": "db44783d0ad9e131cfb9a7446fc335c21a87ce9fe2f7897f357c2d9861363e5b",
+          "gamesSha256": "93bc3bb31854c4b43f61cacb4716a9c2b94c3068faf0f8f10506af6fd78abead"
+        },
+        {
+          "matchId": "100116",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100116.xlsx",
+          "workbookSha256": "07603ccc223735520e48defcd831da594e5fa9dce12ffbb5e1e3b6d944c82f32",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            133,
+            102
+          ],
+          "metadataSha256": "9e62c6d16e17672acf566518eb30b58b5504146da738761492d8df7a07282782",
+          "gamesSha256": "e412e7635cbbfc649dada62fb2c078a285b0a63de414c1300abd6dd49fd2807c"
+        }
+      ]
+    },
+    "2001": {
+      "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2001/",
+      "pageSha256": "81604c43906f275f81f80bd04fac0ee0ab68781fbb28369982aae14cccd63659",
+      "coverage": {
+        "publishedCompletedCount": 16,
+        "validatedCount": 16,
+        "excludedCount": 0,
+        "coverageComplete": true
+      },
+      "matches": [
+        {
+          "matchId": "200101",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200101.xlsx",
+          "workbookSha256": "3633efaa9d593a55df28bf13ff64382ffc4d66985f397c7a7080488789c8dc12",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            105,
+            123
+          ],
+          "metadataSha256": "f16777ef408e9a2291334dd28dab50b8aeb429aee09039e90c09503c25684335",
+          "gamesSha256": "f3270a287932bcf2cc17f57edc22d37646914576f506b7e868c5894f1a59a1aa"
+        },
+        {
+          "matchId": "200102",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200102.xlsx",
+          "workbookSha256": "22c48790ad4fbe699df9ef123674b55af87ae8ab6b89fcde15c146cba65efec4",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            124,
+            98
+          ],
+          "metadataSha256": "dfb007d9a50a9c024d509ca7b5522171c2897e1da8c313361f700986210f6745",
+          "gamesSha256": "810c1e561fa8f734d2740dd106616d71ed2a9bc87f4b66881dfd1ca4241c6a1d"
+        },
+        {
+          "matchId": "200103",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200103.xlsx",
+          "workbookSha256": "71b8a9f1e4313fc05fdf7f4e086297141c75c087aa2c5ff418d1eaab2b5272e0",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            136,
+            86
+          ],
+          "metadataSha256": "80db5017c67b56dd6e21d2a45b6f65c26c41241b0d7e1a75e69e2c7d694b0209",
+          "gamesSha256": "0ef1cc0b02368ba4cc4833cf887a7d5ab15ad53bbea2e1d608467d18ee3f4710"
+        },
+        {
+          "matchId": "200104",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200104.xlsx",
+          "workbookSha256": "5861343b6a97a62afb2b2af0c845103bf5f0b135dfc607da39d7c0040e84e93a",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            116,
+            132
+          ],
+          "metadataSha256": "13f29c0ff7d04727537031d92f8ab779bf7f28c179402ba27c01938e163089b4",
+          "gamesSha256": "7fc8e3b861c1d4d0c24988986ecaa017d772a3196b476e8ecf124029a7fd9f30"
+        },
+        {
+          "matchId": "200105",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200105.xlsx",
+          "workbookSha256": "795f400af42636570d8903e1e4e73506ee91f3618f5c691bf9f60efe7c53ea32",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            88,
+            127
+          ],
+          "metadataSha256": "dbe58304ad05bb82b1b0bddd8f491456353bdb5fbc35eb68c7562bf50b925b83",
+          "gamesSha256": "a5cadeda021e07c014aa5fd14ad1d53b0f3753a6c1f1636f98cf023ad694f589"
+        },
+        {
+          "matchId": "200106",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200106.xlsx",
+          "workbookSha256": "aa0ea22d3e2dd1d215e59060bd50b6ade4d1bd5292b3126b7d2b12b2ce5c4d53",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            94,
+            126
+          ],
+          "metadataSha256": "14c7a8781b750e4516b96c95dbf11dd5b5d3bb08d32ba28b17de92eb789d0e11",
+          "gamesSha256": "95c8af31690e9dab0e4cfa505b00c7aca242dcd6adeac8fd75556254e28c2077"
+        },
+        {
+          "matchId": "200107",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200107.xlsx",
+          "workbookSha256": "ca43154c373c11e0538736db136508363e71374d18dba8778ccb9ba2bab6f22c",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            131,
+            100
+          ],
+          "metadataSha256": "978801248d27e7c22d1deee62c60c9d0fa0012d80c90008119f2a04223e80cb0",
+          "gamesSha256": "74b23f89106cc00416f51c5ecc9207750612c97435eaf165e057591858071d55"
+        },
+        {
+          "matchId": "200108",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200108.xlsx",
+          "workbookSha256": "b192768e9de561a708c773ac90e898210e9a24c06a9a30cfd13f57a711f1fd3c",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            127,
+            94
+          ],
+          "metadataSha256": "79f37d00afb2eaede671ff1d0c9bd0bc94fb5dc1e2592b0dd65748046c853a82",
+          "gamesSha256": "55847a5765b787e18e85529ecd08057c3e62497c3a0672fe47c0d083b7f1070a"
+        },
+        {
+          "matchId": "200109",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200109.xlsx",
+          "workbookSha256": "06d978a03faf9e25578a7537b8615134bfe4a8ecd419657bdd9a9695776b9fd7",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            131,
+            87
+          ],
+          "metadataSha256": "9b6d5cf32cd40c3054d317dff5b6c7885a1981e9bb031507a0ca50dd196dfc77",
+          "gamesSha256": "6ac445088615adeed9d6a88cdd941c0523e987574209f9c3ec12f59d4ae54a3b"
+        },
+        {
+          "matchId": "200110",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200110.xlsx",
+          "workbookSha256": "1f58a20863de87953518915238e30435a264ab21d92089463921e85f3274951e",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            125,
+            78
+          ],
+          "metadataSha256": "f24c815b933d366d007d65b2813ca19e1b966a01196fcad3cd5c7cad13eab295",
+          "gamesSha256": "4f605e1d29dc37bbd013d33dade86f2f17e5988a97400084cf05403ce281a20b"
+        },
+        {
+          "matchId": "200111",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200111.xlsx",
+          "workbookSha256": "b0866b5622264fb8f87cd8a250bbecb8a9c5fcdf66c605d9370211715fe236c8",
+          "workbookDate": "2026-10-10",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            105,
+            118
+          ],
+          "metadataSha256": "0d96bc55437fdb8698e34c05e57592b47e1df39de95747211965125d2d37f943",
+          "gamesSha256": "50ece8eae626ea52651828d3eb5e9ff09000fca49a0d39dbbc4ba8ae8a57fe84"
+        },
+        {
+          "matchId": "200112",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200112.xlsx",
+          "workbookSha256": "9a80ac652d0df55c90c1de7d930e0145b548a3bb0e0687a923aa2add63d29845",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            120,
+            106
+          ],
+          "metadataSha256": "33d7907a96de8494e66bc0257209c6234865584204f365f36eef5ae7378350aa",
+          "gamesSha256": "2825dd8bc8d6f1bef6176c42444b7606086d1980870b4fd62d2245e23b1798f3"
+        },
+        {
+          "matchId": "200113",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200113.xlsx",
+          "workbookSha256": "017d356ffcbda2e2e2afd4e18f3b8e71bcd0c14f72025f638ab7b71c82382398",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            129,
+            77
+          ],
+          "metadataSha256": "3d52c15eb9e28d00e7bab8b12fb184d5fa5a92055e69c9bc555074c5525e159f",
+          "gamesSha256": "7254c2789a7f5957f68cd87d99d6503db5e4cd03e62573980ace19bd1c47ec19"
+        },
+        {
+          "matchId": "200114",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200114.xlsx",
+          "workbookSha256": "e90b42226a7e5b4f3a5574c4d0031eff22288a4d3f200fabdfd86f8ea616b402",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            133,
+            88
+          ],
+          "metadataSha256": "c5984701714fc6c9a129fbded19996da545e8e8efd6a1477941f3c0a5aba4b46",
+          "gamesSha256": "7238f5f9e5df59406dd63e253118780aa3775030eb8ba06abfd6b046294a0b7b"
+        },
+        {
+          "matchId": "200115",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200115.xlsx",
+          "workbookSha256": "0670ce82915ee638e44e54cfec6974119b188ad52b6cc3e2a4e352c47174f661",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            120,
+            125
+          ],
+          "metadataSha256": "14514f3be93811f341e23be333b13507961405e8bed0c3ed30d66d2305e888f4",
+          "gamesSha256": "a1b258100e4724828c6dcfa48ff347747392fd6fe76c777b7a97004af66dc2e5"
+        },
+        {
+          "matchId": "200116",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200116.xlsx",
+          "workbookSha256": "35f28ee6289edd58dc30395d7d840cfd90548ca04a9a656c1ac433bb77a92b95",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            116,
+            98
+          ],
+          "metadataSha256": "d709888ac93d9ecb7e25aa4efff71f7540470cb09f827337e1811e9ead74e338",
+          "gamesSha256": "d1bd67b4a9828766cfacd1f04c528022b5f3f3cdbbb2c156f59de945ae0d87b0"
+        }
+      ]
+    },
+    "2002": {
+      "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2002/",
+      "pageSha256": "53bfb875faaf168964d14cca18eedb38359a516feb65d42ff671120d0390834b",
+      "coverage": {
+        "publishedCompletedCount": 16,
+        "validatedCount": 16,
+        "excludedCount": 0,
+        "coverageComplete": true
+      },
+      "matches": [
+        {
+          "matchId": "200201",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200201.xlsx",
+          "workbookSha256": "ace097738ed556503170c70e57a6e306bf6bcdb3da22d575e8dedc34b24388e5",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            107,
+            105
+          ],
+          "metadataSha256": "5584a9d8e39fb880538c25023ac8894cf8c62760771e7c418eeea39fe05b3f8b",
+          "gamesSha256": "a71af34eaa09f8cd074f5af378c400151de00e6c9c42d851081d2fb8250497ab"
+        },
+        {
+          "matchId": "200202",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200202.xlsx",
+          "workbookSha256": "6affd158718d30b9981fd69f7005a6dbd540721981968c4dd06f0f6f376bb22e",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            129,
+            85
+          ],
+          "metadataSha256": "f0386eaf790a991d06408a07b14b30d549ff5983e7f6080f08f36c1bc2ca8e80",
+          "gamesSha256": "021e6a939c0777f0b06fa2da142594628bb95b0502a9a307f6f20427540bf6c7"
+        },
+        {
+          "matchId": "200203",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200203.xlsx",
+          "workbookSha256": "5f6562d928a0e9c9b92d79e56df8f0d5eabd049fb21bdaa12179f9ec7f1fd97d",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            122,
+            98
+          ],
+          "metadataSha256": "7ab817d850ebcf823c2b4ec85057e9db53f2274fc5c79ac36732eb0dd62fecb7",
+          "gamesSha256": "9afefb937a5f5c8c83a0bf0ee24c59cd57e370a22f2137014b48e03235973fd6"
+        },
+        {
+          "matchId": "200204",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200204.xlsx",
+          "workbookSha256": "0ce7be16703ef85f323ee90e7357d32979cb96ce6fbe140c0276f2fdefe19870",
+          "workbookDate": "2026-09-19",
+          "preservedResultDate": "2026-09-19T12:00:00.000Z",
+          "rawTotals": [
+            93,
+            129
+          ],
+          "metadataSha256": "d58b09ef68a70ba82f75bae09c327196420627c17a8f3451c109cda069f95fa0",
+          "gamesSha256": "aa95454e8d0c7710b1b13194931c84eceac7c641b93da248051bc7b0417b9918"
+        },
+        {
+          "matchId": "200205",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200205.xlsx",
+          "workbookSha256": "d26bde31ee068da07eb941a55512fd0467d0e146af77c1dc01cb66fe35c12c02",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            125,
+            88
+          ],
+          "metadataSha256": "555b9488aef66bbad5e43d1ebd1373a14d27ddf00e848ee9ca35ad7cc1e0f075",
+          "gamesSha256": "09a5e4cfa7c36ddcae26c54c38202b65190c236ef6791d6d4697f24f10142660"
+        },
+        {
+          "matchId": "200206",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200206.xlsx",
+          "workbookSha256": "09d755edf63300bceef419e0d8dd717d01fd297df4c1546865b6b86acfd43675",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            115,
+            113
+          ],
+          "metadataSha256": "e51447e8cb89e0e1cb10378fa11436ddb896feb8e3fac4065665f39ea428df91",
+          "gamesSha256": "08e89ac084c763fb7f6a4e908ad777fd2684b3aabde718d94c9354ecf3c6fb29"
+        },
+        {
+          "matchId": "200207",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200207.xlsx",
+          "workbookSha256": "df84b2de88363467dfd947375b456695f6ff0ae87a6de66b1ae2412a9c563d93",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            116,
+            114
+          ],
+          "metadataSha256": "bcd565a08adee6e448201a0aca7db6312ffc5c1dfbe64028669ba387a7fb2f53",
+          "gamesSha256": "1c134d6e38184b7966d8dfdb0dd384d12db8dc58d35efe65afbf6966a977a138"
+        },
+        {
+          "matchId": "200208",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200208.xlsx",
+          "workbookSha256": "456aa9749b6a79dd79c2bf5f264e24e171ee06af7c6d4a452b8a974b60c909fd",
+          "workbookDate": "2026-10-03",
+          "preservedResultDate": "2026-10-03T12:00:00.000Z",
+          "rawTotals": [
+            97,
+            115
+          ],
+          "metadataSha256": "d05e051eb3a80410ef622c4dffb5ed78fc253ea7b648c8095d122d9a8e1c94bd",
+          "gamesSha256": "9409cf5f2958f664f12a717418e589184fda2bef82eecca3a1987f60f4f8eabc"
+        },
+        {
+          "matchId": "200209",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200209.xlsx",
+          "workbookSha256": "dc757c4cca095caecb4db321c3262da88588f2504f5aad956604a621ebdf55ee",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            121,
+            123
+          ],
+          "metadataSha256": "8e6ff88614dee99be76c7e9f9543de2a2ad3d35ed946f8f138ed952f69e501aa",
+          "gamesSha256": "1a67c4bced3edaf7cef3d834bf2ce6bc6adef12c857f44cfa50b38e8eaf3fea8"
+        },
+        {
+          "matchId": "200210",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200210.xlsx",
+          "workbookSha256": "aeceaa85d6ec6f48a327dbc603e87e8fa2c721d3506d1567c01c63c65ee38ce1",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            106,
+            118
+          ],
+          "metadataSha256": "0a32e255342ba9ae8a142bba1225af18c1fe927677fa757d05dbed3d59b5ab7b",
+          "gamesSha256": "3a38d9c4db9e92741bea0a09061ac22332463626b0d1b4087e8a2c7a4791789a"
+        },
+        {
+          "matchId": "200211",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200211.xlsx",
+          "workbookSha256": "f7a203f7f97dce2110942695349eb955dbdd6cacd007531d54cf92307ec400be",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            73,
+            133
+          ],
+          "metadataSha256": "f18476d8483f6f4edff412171e2fa4c561de88c57ebabbae0dcf16d12218902e",
+          "gamesSha256": "d9307e0515aa61cca17bdcda574830fcf7720c5bc8387eef1d43d285ffa836ea"
+        },
+        {
+          "matchId": "200212",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200212.xlsx",
+          "workbookSha256": "f32cea4721e9aa10a3592f054d1b61ca02db9e3cb613c67aec554dcbf38a6675",
+          "workbookDate": "2026-10-17",
+          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "rawTotals": [
+            125,
+            102
+          ],
+          "metadataSha256": "a7753f86c9a37817c9e78e40496495000269ed88a46312b7a84cba70e03a4118",
+          "gamesSha256": "a2f3f2b12ff30a98c6fc61950e3f653f82a900ea42c7ef758df617f910a36539"
+        },
+        {
+          "matchId": "200213",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200213.xlsx",
+          "workbookSha256": "a6712d1f5c3b6a2827789758e5759ec8c127a72581265c76d48d548c66b604f4",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            110,
+            122
+          ],
+          "metadataSha256": "9321da912d24e8a8dc59c4c532b0d2d20218ac2212185d747445c15f860a2d55",
+          "gamesSha256": "ae1d6eb43292bebe9a71c56c3dea412f53b1d62f2037a499d9787f8a5bf7fb8a"
+        },
+        {
+          "matchId": "200214",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200214.xlsx",
+          "workbookSha256": "9b94320d6c7312d3ebbb087914ca3456de445ee95b3a422dc5df6ade6e53ed02",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            119,
+            107
+          ],
+          "metadataSha256": "0c1ec7a45219529fc41cb5b9a9d84dd7431c16015a8fe6a8bcfeb768852a2179",
+          "gamesSha256": "194bd20a7ecd55814b82ff81b85c0f050cba504b43fac41a797ddfe6a95dda26"
+        },
+        {
+          "matchId": "200215",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200215.xlsx",
+          "workbookSha256": "c83da4970174446c001202fd45952881f0356d7a326107e2abf20d89444d07d4",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            103,
+            121
+          ],
+          "metadataSha256": "0691b27e54db026064d942a4f2fdc3afa4f86f5ca4fff1e0ccf8c2542593351d",
+          "gamesSha256": "f37f80c6c18208874e1051c52afbd4039401734120aa92af6107bf0b8a516be3"
+        },
+        {
+          "matchId": "200216",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200216.xlsx",
+          "workbookSha256": "e12428bb691f864bb46c1e86cccb3d41d3bd74b4bc5cf69f6f4047da1adb64bf",
+          "workbookDate": "2026-10-31",
+          "preservedResultDate": "2026-10-31T12:00:00.000Z",
+          "rawTotals": [
+            128,
+            74
+          ],
+          "metadataSha256": "3d391c9a2a51915172bbbe113183146636bff12ec6442a84c54769c1dc939437",
+          "gamesSha256": "18e86f3d5e10f494891e0c698f5d60c7c349c116180277b8df08e3602c278330"
+        }
+      ]
+    }
+  }
+}

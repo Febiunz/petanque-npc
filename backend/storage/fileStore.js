@@ -2,10 +2,12 @@ import { promises as fs } from 'node:fs';
 import { dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
-import { readBlobFile, writeBlobFile, blobExists, deleteBlobFile } from './blobStorage.js';
+import { readBlobFile, readBlobFileVersion, writeBlobFile, blobExists, deleteBlobFile } from './blobStorage.js';
+import { validateDetailedScore } from '../domain/scoring.js';
+import { saveResult, updateResultFile } from './resultTransaction.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = `${__dirname}/../data`;
+const dataDir = process.env.RESULTS_DATA_DIR || `${__dirname}/../data`;
 
 // Use blob storage if AZURE_STORAGE_CONNECTION_STRING is set
 const useBlob = !!process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -35,12 +37,14 @@ async function withLock(filePath, fn) {
   const prev = locks.get(filePath) || Promise.resolve();
   let release;
   const p = new Promise((res) => (release = res));
-  locks.set(filePath, prev.then(() => p));
+  const tail = prev.then(() => p);
+  locks.set(filePath, tail);
+  await prev;
   try {
     return await fn();
   } finally {
     release();
-    if (locks.get(filePath) === p) locks.delete(filePath);
+    if (locks.get(filePath) === tail) locks.delete(filePath);
   }
 }
 
@@ -134,7 +138,7 @@ async function migrateLocalFilesToBlob() {
       console.log(`  Migrating ${blob} to blob storage...`);
       const content = await fs.readFile(local, 'utf-8');
       const data = JSON.parse(content);
-      await writeBlobFile(blob, data);
+      await writeBlobFile(blob, data, { ifNoneMatch: '*' });
       console.log(`  ✅ Successfully migrated ${blob}`);
       
       // Delete local file after successful migration
@@ -199,11 +203,15 @@ function splitLegacyMatchesByDivisie(rawMatches) {
 function mergeUniqueById(existing, additions) {
   const result = Array.isArray(existing) ? [...existing] : [];
   const existingIds = new Set(result.map((m) => m?.id).filter(Boolean));
+  const existingFixtures = new Set(result.map((m) => m?.matchId || m?.fixtureId).filter(Boolean));
   let added = 0;
   for (const match of additions) {
     if (match?.id && existingIds.has(match.id)) continue;
+    const fixture = match?.matchId || match?.fixtureId;
+    if (fixture && existingFixtures.has(fixture)) continue;
     result.push(match);
     if (match?.id) existingIds.add(match.id);
+    if (fixture) existingFixtures.add(fixture);
     added++;
   }
   return { merged: result, added };
@@ -218,13 +226,20 @@ async function migrateLegacyMatches() {
       let migrated = 0;
       for (const divisieId of ALL_DIVISIE_IDS) {
         const blobName = `matches-${divisieId}.json`;
-        const blobAlreadyExists = await blobExists(blobName);
-        const existing = blobAlreadyExists ? await readBlobFile(blobName) : [];
-        const { merged, added } = mergeUniqueById(existing, split.get(divisieId) || []);
-        if (added > 0 || !blobAlreadyExists) {
-          await writeBlobFile(blobName, merged);
-        }
-        migrated += added;
+        const additions = split.get(divisieId) || [];
+        const merged = await updateResultFile(
+          async () => {
+            try {
+              return await readBlobFileVersion(blobName);
+            } catch (error) {
+              if (error.statusCode !== 404) throw error;
+              return { data: [] };
+            }
+          },
+          (data, etag) => writeBlobFile(blobName, data, etag ? { ifMatch: etag } : { ifNoneMatch: '*' }),
+          (existing) => mergeUniqueById(existing, additions).merged
+        );
+        migrated += merged.filter((row) => additions.some((addition) => addition.id === row.id)).length;
       }
       try {
         await deleteBlobFile('matches.json');
@@ -271,7 +286,18 @@ async function migrateLegacyMatches() {
   }
 }
 
+let initialization;
 async function ensureFiles() {
+  if (!initialization) {
+    initialization = initializeFiles().catch((error) => {
+      initialization = undefined;
+      throw error;
+    });
+  }
+  await initialization;
+}
+
+async function initializeFiles() {
   if (useBlob) {
     // In blob mode, ensure files exist in blob storage
     await migrateLocalFilesToBlob();
@@ -282,10 +308,13 @@ async function ensureFiles() {
       try {
         const existing = await readBlobFile(blobName);
         if (Array.isArray(existing) && existing.length) continue;
-      } catch {}
+      } catch (error) {
+        if (error.statusCode !== 404) throw error;
+      }
       await writeBlobFile(
         blobName,
-        OFFICIAL_TEAMS.filter((team) => String(team.divisieId) === String(divisieId))
+        OFFICIAL_TEAMS.filter((team) => String(team.divisieId) === String(divisieId)),
+        { ifNoneMatch: '*' }
       );
     }
     
@@ -294,9 +323,10 @@ async function ensureFiles() {
       const blobName = `matches-${divisieId}.json`;
       try {
         await readBlobFile(blobName);
-      } catch {
+      } catch (error) {
+        if (error.statusCode !== 404) throw error;
         console.log(`Creating ${blobName} in blob storage...`);
-        await writeBlobFile(blobName, []);
+        await writeBlobFile(blobName, [], { ifNoneMatch: '*' });
       }
     }
 
@@ -407,26 +437,36 @@ export async function listMatches(options = {}) {
 }
 
 export async function createMatch(input) {
+  const score = validateDetailedScore(input);
+  if (!ALL_DIVISIE_IDS.includes(String(input.divisieId))) throw new Error('Invalid divisieId');
+  if (!input.matchId || (input.fixtureId && input.fixtureId !== input.matchId)) throw new Error('Invalid match identity');
+  const now = new Date().toISOString();
   const match = {
     id: randomUUID(),
-    date: input.date || new Date().toISOString(),
-    fixtureId: input.fixtureId || null,
+    date: input.date || now,
+    fixtureId: input.matchId,
+    matchId: input.matchId,
+    matchNumber: input.matchNumber || input.matchId,
     homeTeamId: input.homeTeamId,
     awayTeamId: input.awayTeamId,
-    homeScore: Number(input.homeScore ?? 0),
-    awayScore: Number(input.awayScore ?? 0),
+    ...score,
     divisieId: String(input.divisieId || POOLS.TOPDIVISIE),
     divisie: input.divisie || (String(input.divisieId || POOLS.TOPDIVISIE) === POOLS.TOPDIVISIE ? DIVISIES.TOPDIVISIE : DIVISIES.SECOND_DIVISION),
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    submittedAt: now,
     submittedBy: input.submittedBy || null,
     submittedByUid: input.submittedByUid || null,
   };
   const file = matchesFileFor(match.divisieId);
   return withLock(file, async () => {
-    const matches = await readJson(file);
-    matches.push(match);
-    await writeJson(file, matches);
-    return match;
+    await ensureFiles();
+    return saveResult(
+      () => useBlob ? readBlobFileVersion(basename(file)) : readJson(file).then((data) => ({ data })),
+      (data, etag) => useBlob ? writeBlobFile(basename(file), data, { ifMatch: etag }) : writeJson(file, data),
+      match,
+      input.date,
+      now
+    );
   });
 }
 
