@@ -238,6 +238,23 @@
     "divisie": "2e-divisie"
   },
   {
+    "id": "official-200215",
+    "date": "2026-10-31T12:00:00.000Z",
+    "fixtureId": "200215",
+    "matchId": "200215",
+    "matchNumber": "200215",
+    "homeTeamId": "amicale-de-petanque-1",
+    "awayTeamId": "de-bouledozers-1",
+    "homeScore": 12,
+    "awayScore": 19,
+    "createdAt": "2026-11-11T11:30:07.077Z",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-10-31",
+    "divisieId": "2002",
+    "divisie": "2e-divisie"
+  },
+  {
     "id": "official-200216",
     "date": "2026-10-31T12:00:00.000Z",
     "fixtureId": "200216",
