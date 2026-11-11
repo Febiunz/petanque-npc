@@ -16,7 +16,7 @@ export async function submitMatchResult(input, user, storage = { createMatch, ge
   if (!scheduled || String(scheduled.divisieId) !== input.divisieId) fail('Unknown match in selected pool');
   return storage.createMatch({
     ...score,
-    date: scheduled.date || new Date().toISOString(),
+    date: scheduled.date,
     fixtureId: input.matchId,
     matchId: input.matchId,
     matchNumber: scheduled.matchNumber || input.matchId,

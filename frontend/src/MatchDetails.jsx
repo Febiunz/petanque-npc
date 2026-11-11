@@ -74,6 +74,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
     } catch (err) {
       setError(`Kon uitslag niet opslaan: ${err.message}`);
       setConflict(err.status === 409);
+      if (closeAfterSave) setDiscardOpen(false);
     } finally {
       setSaving(false);
     }
@@ -108,7 +109,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
         <Typography fontWeight={600}>{homeName} - {awayName}</Typography>
         <Typography variant="body2">{poolLabel} · Speelronde {fixture.round}</Typography>
         <Typography variant="body2">Wedstrijd {fixture.matchNumber || fixture.id} · {new Date(result?.date || fixture.date).toLocaleDateString('nl-NL')}</Typography>
-        {!stored.error && !stored.legacy && <>
+        {(!readOnly || (!stored.error && !stored.legacy)) && <>
           <Typography variant="body2">Afgeronde partijen: {totals.completed} / 11</Typography>
           <Typography variant="h6">Wedstrijdpunten: {totals.homeScore} - {totals.awayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}</Typography>
           <Typography variant="body2" color="text.secondary">Som partijpunten: {totals.rawHomeScore} - {totals.rawAwayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}</Typography>

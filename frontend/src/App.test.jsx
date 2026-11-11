@@ -43,13 +43,17 @@ const fill = () => {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.spyOn(Date, 'now').mockReturnValue(new Date('2026-11-20T12:00:00.000Z').valueOf());
   authState.user = { uid: 'ordinary-test-user' };
   api.getTeams.mockResolvedValue([{ id: 'home', name: 'Home' }, { id: 'away', name: 'Away' }]);
   api.getStandings.mockResolvedValue([]);
   api.getSchedule.mockResolvedValue(fixtures);
   api.getMatches.mockResolvedValue(historical);
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 it('keeps fully completed rounds and every fixture selectable with exact Details and honest result line', async () => {
   render(<App />);

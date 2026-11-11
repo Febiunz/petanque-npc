@@ -305,16 +305,17 @@ async function initializeFiles() {
     
     for (const divisieId of ALL_DIVISIE_IDS) {
       const blobName = `teams-${divisieId}.json`;
+      let existingTeams;
       try {
-        const existing = await readBlobFile(blobName);
-        if (Array.isArray(existing) && existing.length) continue;
+        existingTeams = await readBlobFileVersion(blobName);
+        if (Array.isArray(existingTeams.data) && existingTeams.data.length) continue;
       } catch (error) {
         if (error.statusCode !== 404) throw error;
       }
       await writeBlobFile(
         blobName,
         OFFICIAL_TEAMS.filter((team) => String(team.divisieId) === String(divisieId)),
-        { ifNoneMatch: '*' }
+        existingTeams ? { ifMatch: existingTeams.etag } : { ifNoneMatch: '*' }
       );
     }
     

@@ -1,11 +1,17 @@
 import React from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MatchDetails from './MatchDetails';
 import { GAME_SLOTS, SCORE_FORMAT } from '../../backend/domain/scoring.js';
 
-afterEach(cleanup);
+beforeEach(() => {
+  vi.spyOn(Date, 'now').mockReturnValue(new Date('2026-11-20T12:00:00.000Z').valueOf());
+});
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 const fixture = { id: '100117', matchNumber: '100117', round: 5, date: '2026-11-14T12:00:00.000Z' };
 const props = () => ({
   fixture, poolLabel: 'Topdivisie - 1001', homeName: 'Home', awayName: 'Away', user: { uid: 'test' },
@@ -170,6 +176,19 @@ describe('dedicated detailed score entry', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Opgeslagen uitslag bekijken' }));
     await waitFor(() => expect(p.onRefresh).toHaveBeenCalledOnce());
   });
+
+  it('closes the discard dialog after save failure and exposes conflict recovery', async () => {
+    const p = props();
+    p.onSave.mockRejectedValue(Object.assign(new Error('Result already submitted'), { status: 409 }));
+    render(<MatchDetails {...p} />);
+    complete();
+    await userEvent.click(screen.getAllByRole('button', { name: 'Terug', exact: true })[0]);
+    await userEvent.click(screen.getByRole('button', { name: 'Opslaan en sluiten' }));
+    await screen.findByText(/Result already submitted/);
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(screen.getAllByRole('textbox')[0].value).toBe('3');
+    expect(screen.getByRole('button', { name: 'Opgeslagen uitslag bekijken' })).toBeTruthy();
+  });
 });
 
 describe('completed viewing', () => {
@@ -201,9 +220,16 @@ describe('completed viewing', () => {
     expect(screen.getByText(/Alleen totaaluitslag beschikbaar/)).toBeTruthy();
     expect(screen.getAllByRole('textbox')).toHaveLength(22);
     expect(screen.getAllByRole('textbox').every((input) => input.value === '')).toBe(true);
+    complete();
+    expect(screen.getByText('Afgeronde partijen: 11 / 11')).toBeTruthy();
+    expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+    expect(screen.getByText('Som partijpunten: 43 - 131')).toBeTruthy();
     rendered.rerender(<MatchDetails {...props()} fixture={{ ...fixture, date: '2026-09-19' }} result={{ scoreFormat: SCORE_FORMAT, games: [] }} />);
     expect(screen.getByText(/voer de 11 partijen opnieuw in/)).toBeTruthy();
     expect(screen.getAllByRole('textbox')).toHaveLength(22);
+    complete();
+    expect(screen.getByText('Afgeronde partijen: 11 / 11')).toBeTruthy();
+    expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
   });
 
   it('prefills an existing result while it is within the edit window', () => {
