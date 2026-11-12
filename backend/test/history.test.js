@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { validateDetailedScore, summarizeGames } from '../domain/scoring.js';
-import { enrichResults, metadataHash } from '../../scripts/enrich-historical-results.mjs';
+import { enrichResults, metadataHash, buildProvenance } from '../../scripts/enrich-historical-results.mjs';
 
 const json = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
 
@@ -103,4 +103,46 @@ test('all official game lineups have complete names, mapped substitutions and so
   assert.deepEqual(other.find((row) => row.matchId === '200213').playerLineup.unassignedSubstitutions, [
     { type: 'doublette', side: 'away', out: null, in: 'Elout Visser' },
   ]);
+});
+
+test('rerunning enrichment preserves lineup evidence and dates earlier download and page audits', async () => {
+  const previous = await json('../history/provenance.json');
+  const source = { season: previous.season, generatedAt: '2026-11-13T12:00:00Z', pools: {} };
+  const imports = {};
+  for (const pool of ['1001', '2001', '2002']) {
+    const records = await json(`../data/matches-${pool}.json`);
+    const fixtures = await json(`../data/schedule-${pool}.json`);
+    const prior = previous.pools[pool];
+    const staged = {
+      artifactKind: 'staged-individual-games-import-v1', liveDeployable: false, divisieId: pool,
+      coverage: prior.coverage, matches: records,
+    };
+    source.pools[pool] = {
+      pageUrl: prior.pageUrl, pageSha256: prior.pageSha256,
+      workbooks: prior.matches.map((row) => ({
+        ...row, status: 'validated', resolvedWorkbookUrl: row.workbookUrl, officialRawTotals: row.rawTotals,
+      })),
+    };
+    imports[pool] = { staged, merged: enrichResults(records, staged, fixtures, pool) };
+  }
+  const rebuilt = buildProvenance(source, imports, previous);
+  assert.equal(rebuilt.retrievedAt, source.generatedAt);
+  assert.deepEqual(rebuilt.excelDownloadAudit, { ...previous.excelDownloadAudit, retrievedAt: previous.retrievedAt });
+  for (const pool of ['1001', '2001', '2002']) {
+    assert.deepEqual(rebuilt.pools[pool].matches, previous.pools[pool].matches);
+    assert.deepEqual(rebuilt.pools[pool].unavailableWorkbookMatchIds, previous.pools[pool].unavailableWorkbookMatchIds);
+    assert.equal(rebuilt.pools[pool].standingsVerifiedAt, previous.retrievedAt);
+    assert.equal(rebuilt.pools[pool].workbookAvailabilityCheckedAt, previous.retrievedAt);
+  }
+  assert.deepEqual(buildProvenance(source, imports, rebuilt), rebuilt);
+  const changedLineup = structuredClone(imports);
+  changedLineup['1001'].merged[0].playerLineup.games['tete-1'].home = ['Unverified player'];
+  assert.throws(() => buildProvenance(source, changedLineup, previous), /Player lineup provenance must be reverified/);
+  const changedWorkbook = structuredClone(source);
+  changedWorkbook.pools['1001'].workbooks[0].workbookSha256 = 'changed';
+  assert.throws(() => buildProvenance(changedWorkbook, imports, previous), /Player lineup provenance must be reverified/);
+  const withoutLineups = Object.fromEntries(Object.entries(imports).map(([pool, entry]) => [
+    pool, { ...entry, merged: entry.merged.map(({ playerLineup, ...record }) => record) },
+  ]));
+  assert.ok(buildProvenance(source, withoutLineups).pools['1001'].matches.every((row) => !row.playerLineupSha256));
 });

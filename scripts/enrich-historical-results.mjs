@@ -43,21 +43,19 @@ export function enrichResults(existing, staged, fixtures, pool) {
   });
 }
 
-async function main() {
-  const sourceDir = process.argv[2];
-  if (!sourceDir) throw new Error('Usage: node scripts/enrich-historical-results.mjs <staged-artifact-directory> [--apply]');
-  const sourceProvenance = JSON.parse(await readFile(resolve(sourceDir, 'historical-results-provenance.json'), 'utf8'));
-  const provenance = { season: sourceProvenance.season, retrievedAt: sourceProvenance.generatedAt, pools: {} };
-  const writes = [];
-  for (const pool of ['1001', '2001', '2002']) {
-    const file = resolve(root, 'backend', 'data', `matches-${pool}.json`);
-    const original = await readFile(file, 'utf8');
-    const existing = JSON.parse(original);
-    const fixtures = JSON.parse(await readFile(resolve(root, 'backend', 'data', `schedule-${pool}.json`), 'utf8'));
-    const staged = JSON.parse(await readFile(resolve(sourceDir, `historical-detailed-matches-${pool}.json`), 'utf8'));
-    const merged = enrichResults(existing, staged, fixtures, pool);
+export function buildProvenance(sourceProvenance, imports, previous = {}) {
+  const provenance = { ...previous, season: sourceProvenance.season, retrievedAt: sourceProvenance.generatedAt, pools: {} };
+  if (previous.excelDownloadAudit) {
+    provenance.excelDownloadAudit = {
+      ...previous.excelDownloadAudit,
+      retrievedAt: previous.excelDownloadAudit.retrievedAt || previous.retrievedAt,
+    };
+  }
+  for (const [pool, { staged, merged }] of Object.entries(imports)) {
     const source = sourceProvenance.pools[pool];
+    const priorPool = previous.pools?.[pool];
     provenance.pools[pool] = {
+      ...priorPool,
       pageUrl: source.pageUrl,
       pageSha256: source.pageSha256,
       coverage: staged.coverage,
@@ -69,7 +67,7 @@ async function main() {
           || JSON.stringify([totals.rawHomeScore, totals.rawAwayScore]) !== JSON.stringify(workbook.officialRawTotals)) {
           throw new Error(`Provenance mismatch ${record.matchId}`);
         }
-        return {
+        const evidence = {
           matchId: record.matchId,
           workbookUrl: workbook.resolvedWorkbookUrl,
           workbookSha256: workbook.workbookSha256,
@@ -79,11 +77,52 @@ async function main() {
           metadataSha256: metadataHash(target),
           gamesSha256: createHash('sha256').update(JSON.stringify(target.games)).digest('hex'),
         };
+        if (target.playerLineup) {
+          const priorMatch = priorPool?.matches.find((row) => row.matchId === record.matchId);
+          const lineupHash = createHash('sha256').update(JSON.stringify(target.playerLineup)).digest('hex');
+          if (priorMatch?.workbookSha256 !== workbook.workbookSha256 || priorMatch?.playerLineupSha256 !== lineupHash) {
+            throw new Error(`Player lineup provenance must be reverified ${record.matchId}`);
+          }
+          evidence.playerLineupSha256 = lineupHash;
+          if (priorMatch.playerNameResolutions) evidence.playerNameResolutions = priorMatch.playerNameResolutions;
+          if (priorMatch.notes) evidence.notes = priorMatch.notes;
+        }
+        return evidence;
       }),
     };
+    if (priorPool?.standingsVerified) {
+      provenance.pools[pool].standingsVerifiedAt = priorPool.standingsVerifiedAt || previous.retrievedAt;
+    }
+    if (priorPool?.unavailableWorkbookMatchIds) {
+      provenance.pools[pool].workbookAvailabilityCheckedAt = priorPool.workbookAvailabilityCheckedAt || previous.retrievedAt;
+    }
+  }
+  return provenance;
+}
+
+async function main() {
+  const sourceDir = process.argv[2];
+  if (!sourceDir) throw new Error('Usage: node scripts/enrich-historical-results.mjs <staged-artifact-directory> [--apply]');
+  const sourceProvenance = JSON.parse(await readFile(resolve(sourceDir, 'historical-results-provenance.json'), 'utf8'));
+  const historyFile = resolve(root, 'backend', 'history', 'provenance.json');
+  const previous = await readFile(historyFile, 'utf8').then(JSON.parse).catch((error) => {
+    if (error.code !== 'ENOENT') throw error;
+    return {};
+  });
+  const writes = [];
+  const imports = {};
+  for (const pool of ['1001', '2001', '2002']) {
+    const file = resolve(root, 'backend', 'data', `matches-${pool}.json`);
+    const original = await readFile(file, 'utf8');
+    const existing = JSON.parse(original);
+    const fixtures = JSON.parse(await readFile(resolve(root, 'backend', 'data', `schedule-${pool}.json`), 'utf8'));
+    const staged = JSON.parse(await readFile(resolve(sourceDir, `historical-detailed-matches-${pool}.json`), 'utf8'));
+    const merged = enrichResults(existing, staged, fixtures, pool);
+    imports[pool] = { staged, merged };
     writes.push({ file, original, merged });
     console.log(`${pool}: ${staged.matches.length} detailed results, ${existing.length} original records retained`);
   }
+  const provenance = buildProvenance(sourceProvenance, imports, previous);
   if (!process.argv.includes('--apply')) return;
   // Validate every pool first and refuse a concurrent workspace change before writing.
   for (const { file, original } of writes) {
@@ -92,7 +131,7 @@ async function main() {
   for (const { file, merged } of writes) await writeFile(file, `${JSON.stringify(merged, null, 2)}\n`);
   const historyDir = resolve(root, 'backend', 'history');
   await mkdir(historyDir, { recursive: true });
-  await writeFile(resolve(historyDir, 'provenance.json'), `${JSON.stringify(provenance, null, 2)}\n`);
+  await writeFile(historyFile, `${JSON.stringify(provenance, null, 2)}\n`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
