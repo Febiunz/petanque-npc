@@ -158,7 +158,7 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 
 ### Results Display
 - Single-line rows only
-- Uitslagen columns: Ronde, played Datum (official result date, otherwise fixture date), Thuis, Uitslag, Uit
+- Uitslagen columns: Ronde, played Datum (official result date, otherwise fixture date), Thuis, Uit, Uitslag (last)
 
 ### Development Proxy
 - Vite proxies `/api` requests to `http://localhost:5000`

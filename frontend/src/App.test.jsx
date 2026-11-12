@@ -78,16 +78,16 @@ it('keeps fully completed rounds and every fixture selectable with exact Details
   expect(screen.getByText('Nog geen uitslag')).toBeTruthy();
 });
 
-it('shows the played date as the second Uitslagen column, preferring the official date', async () => {
+it('shows the played date second and the score last in Uitslagen, preferring the official date', async () => {
   api.getMatches.mockResolvedValue([{ ...historical[0], officialDate: '2026-09-12' }, historical[1]]);
   render(<App />);
   const heading = await screen.findByText('Uitslagen');
   const grid = heading.nextElementSibling;
   await waitFor(() => expect(grid.children.length).toBe(15));
   const cells = [...grid.children].map((cell) => cell.textContent);
-  expect(cells.slice(0, 5)).toEqual(['Ronde', 'Datum', 'Thuis', 'Uitslag', 'Uit']);
-  expect(cells.slice(5, 7)).toEqual(['01', '12-09-2026']);
-  expect(cells.slice(10, 12)).toEqual(['01', '19-09-2026']);
+  expect(cells.slice(0, 5)).toEqual(['Ronde', 'Datum', 'Thuis', 'Uit', 'Uitslag']);
+  expect(cells.slice(5, 10)).toEqual(['01', '12-09-2026', 'Home', 'Away', '00 - 31']);
+  expect(cells.slice(10, 15)).toEqual(['01', '19-09-2026', 'Away', 'Home', '31 - 00']);
 });
 
 it('allows editing a result submitted by another user after the scheduled date', async () => {

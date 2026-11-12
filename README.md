@@ -20,7 +20,7 @@ This project provides:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
   - Visual indicators: 1st place (champion) has a light green background; last 2 places (relegation) have a light red background.
-- Compact results list: single-line rows with Ronde, played Datum, Thuis, Uitslag and Uit columns.
+- Compact results list: single-line rows with Ronde, played Datum, Thuis, Uit and Uitslag columns.
 
 ## Tech stack
 
@@ -153,7 +153,7 @@ Rate limiting (subject to tuning; current values from code):
 - Below each of the three game blocks, "Terug" opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing choices. "Opslaan" saves all 11 slots, including blank unplayed slots, while keeping the details open.
 - Google sign-in is required to save; blank scores are allowed, but a partially entered or invalid score pair must be completed or cleared. In-flight saves block navigation and repeat submission; errors retain input. Dirty back navigation asks before discarding and tab close/reload warns where supported.
 - Successful save preserves pool/round/match selection and refreshes standings/results. A failed refresh after confirmed save does not cause another POST.
-- Results list is compact (single-line); its second column shows the played date (official result date, otherwise the fixture date), like "Komende wedstrijden".
+- Results list is compact (single-line); its second column shows the played date and its last column shows the score (official result date, otherwise the fixture date), like "Komende wedstrijden".
 
 ## Continuous integration
 
