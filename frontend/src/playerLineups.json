@@ -1,0 +1,41 @@
+{
+  "100101": {
+    "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100101.xlsx",
+    "games": {
+      "tete-1": { "home": ["Ellen Walrave"], "away": ["Elise Nuijten"] },
+      "tete-2": { "home": ["Ricardo Saarloos"], "away": ["Joey van Doorn"] },
+      "tete-3": { "home": ["Tom van der Voort"], "away": ["Wietse van Keulen"] },
+      "tete-4": { "home": ["Jos van den Broek"], "away": ["Jeroen Bleyen"] },
+      "tete-5": { "home": ["Charles Gelijn"], "away": ["Dennis Mul"] },
+      "tete-6": { "home": ["Stefan Scheltema"], "away": ["Khalid Elyazidi"] },
+      "doublette-1": { "home": ["Ellen Walrave", "Charles Gelijn"], "away": ["Matilda Boström", "Wietse van Keulen"] },
+      "doublette-2": { "home": ["Tom van der Voort", "Irini Kalivianakis"], "away": ["Joey van Doorn", "Dennis Mul"] },
+      "doublette-3": { "home": ["Ricardo Saarloos", "Jos van den Broek"], "away": ["Ad Wagenaars"] },
+      "triplette-1": { "home": ["Ellen Walrave", "Jos van den Broek", "Charles Gelijn"], "away": ["Elise Nuijten", "Joey van Doorn", "Wietse van Keulen"] },
+      "triplette-2": { "home": ["Ricardo Saarloos", "Tom van der Voort", "Stefan Scheltema"], "away": ["Jeroen Bleyen", "Dennis Mul", "Khalid Elyazidi"] }
+    },
+    "substitutions": [
+      { "slotId": "doublette-2", "side": "home", "out": "Irini Kalivianakis", "in": "Stefan Scheltema" }
+    ]
+  },
+  "100116": {
+    "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100116.xlsx",
+    "games": {
+      "tete-1": { "home": ["Chantal Brinks-Kamphuis"], "away": ["Maaike Rosier"] },
+      "tete-2": { "home": ["Niels Saurel"], "away": ["Romulo van Stockum"] },
+      "tete-3": { "home": ["Jeroen Brinks"], "away": ["Loc Le Van"] },
+      "tete-4": { "home": ["Christian Saurel"], "away": ["Rick van Lier"] },
+      "tete-5": { "home": ["Vince Exalto"], "away": ["Rens de Roos"] },
+      "tete-6": { "home": ["Ferdinand Wiese"], "away": ["Jakob Huitsing"] },
+      "doublette-1": { "home": ["Eva Knoppersen", "Christian Saurel"], "away": ["Loc Le Van", "Maaike Rosier"] },
+      "doublette-2": { "home": ["Jeroen Brinks", "Niels Saurel"], "away": ["Daniël Adriaan van Dam", "Rick van Lier"] },
+      "doublette-3": { "home": ["Ferdinand Wiese", "Vince Exalto"], "away": ["Romulo van Stockum", "Rens de Roos"] },
+      "triplette-1": { "home": ["Chantal Brinks-Kamphuis", "Christian Saurel", "Vince Exalto"], "away": ["Loc Le Van", "Maaike Rosier", "Rens de Roos"] },
+      "triplette-2": { "home": ["Ferdinand Wiese", "Wim Boluijt", "Niels Saurel"], "away": ["Daniël Adriaan van Dam", "Jakob Huitsing", "Rick van Lier"] }
+    },
+    "substitutions": [
+      { "slotId": "doublette-2", "side": "home", "out": "Jeroen Brinks", "in": "Chantal Brinks-Kamphuis" },
+      { "slotId": "doublette-3", "side": "away", "out": "Romulo van Stockum", "in": "Jakob Huitsing" }
+    ]
+  }
+}

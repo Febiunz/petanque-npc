@@ -151,6 +151,7 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - Dedicated Details screen locks fixture identity; signed-in users can save partial games and revise results without a timing restriction. Legacy totals never invent games.
 - Two independent raw inputs per game; no auto-complement, clamping or truncation
 - Show left-aligned, single-line cumulative weighted subtotals beside each group's navigation/save controls: tete; tete+doublette; final "Totaal" for all three groups. Do not append a provisional label; omit per-win explanatory labels.
+- When an official match Excel sheet is available, show each game's home-away player pairs on one line between the game number and score inputs; list substitutions below the original pairing as `out → in`.
 - Below each game block, Terug opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing actions. Opslaan saves all 11 slots, including blank unplayed slots, and stays on the details screen.
 - Require sign-in to save; a score pair must be either blank or valid. Guard dirty back/close and in-flight navigation.
 - Preserve selection after save, refresh results/standings, and retain input on save failure
