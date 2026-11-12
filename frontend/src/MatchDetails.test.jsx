@@ -35,6 +35,7 @@ describe('dedicated detailed score entry', () => {
     expect(inputs).toHaveLength(22);
     inputs.forEach((input) => expect(input.value).toBe(''));
     screen.getAllByRole('button', { name: 'Opslaan' }).forEach(enabled);
+    expect(screen.getByText('Home - Away · 0 - 0 (voorlopig)')).toBeTruthy();
     fireEvent.change(inputs[0], { target: { value: '13' } });
     expect(inputs[1].value).toBe('');
     expect(screen.getByText('Afgeronde partijen: 0 / 11')).toBeTruthy();
@@ -92,7 +93,8 @@ describe('dedicated detailed score entry', () => {
     const p = props();
     render(<MatchDetails {...p} />);
     complete();
-    expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+    expect(screen.getByText('Home - Away · 3 - 28')).toBeTruthy();
+    expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
     expect(screen.getByText('Subtotaal: 0-12')).toBeTruthy();
     expect(screen.getByText('Subtotaal: 3-18')).toBeTruthy();
     expect(screen.getByText('Totaal: 3-28')).toBeTruthy();
@@ -241,9 +243,9 @@ describe('completed viewing', () => {
     expect(screen.getAllByRole('button', { name: 'Terug', exact: true })).toHaveLength(3);
     const header = screen.getByText(/Wedstrijd 100117/).parentElement.parentElement;
     expect(header.textContent).toContain('Afgeronde partijen: 11 / 11');
-    expect(header.textContent).toContain('Wedstrijdpunten: 8 - 23');
+    expect(header.textContent).toContain('Home - Away · 8 - 23');
     expect(header.textContent).toContain('Som partijpunten: 89 - 127');
-    expect(screen.getAllByText('Wedstrijdpunten: 8 - 23')).toHaveLength(1);
+    expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
     expect(screen.getAllByText('Som partijpunten: 89 - 127')).toHaveLength(1);
     expect(screen.getByText('Subtotaal: 2-10')).toBeTruthy();
     expect(screen.getByText('Subtotaal: 8-13')).toBeTruthy();
@@ -261,14 +263,15 @@ describe('completed viewing', () => {
     expect(screen.getAllByRole('textbox').every((input) => input.value === '')).toBe(true);
     complete();
     expect(screen.getByText('Afgeronde partijen: 11 / 11')).toBeTruthy();
-    expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+    expect(screen.getByText('Home - Away · 3 - 28')).toBeTruthy();
     expect(screen.getByText('Som partijpunten: 43 - 131')).toBeTruthy();
+    expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
     rendered.rerender(<MatchDetails {...props()} fixture={{ ...fixture, date: '2026-09-19' }} result={{ scoreFormat: SCORE_FORMAT, games: [] }} />);
     expect(screen.getByText(/voer de 11 partijen opnieuw in/)).toBeTruthy();
     expect(screen.getAllByRole('textbox')).toHaveLength(22);
     complete();
     expect(screen.getByText('Afgeronde partijen: 11 / 11')).toBeTruthy();
-    expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+    expect(screen.getByText('Home - Away · 3 - 28')).toBeTruthy();
   });
 
   it('prefills an existing result for editing', () => {

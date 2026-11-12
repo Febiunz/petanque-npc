@@ -125,7 +125,7 @@ it('saves in details, keeps the result editable during its window, and preserves
   fill();
   await userEvent.click(screen.getAllByRole('button', { name: 'Opslaan' })[0]);
   expect(await screen.findByText('Uitslag wijzigen')).toBeTruthy();
-  expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+  expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
   expect(screen.getAllByRole('button', { name: 'Opslaan' })).toHaveLength(3);
   expect(screen.getAllByRole('textbox')).toHaveLength(22);
   expect(await screen.findAllByRole('button', { name: 'Terug', exact: true })).toHaveLength(3);
@@ -138,7 +138,7 @@ it('saves in details, keeps the result editable during its window, and preserves
   await userEvent.click(screen.getByRole('button', { name: 'Details' }));
   expect(await screen.findByText('Uitslag wijzigen')).toBeTruthy();
   expect(screen.getAllByRole('textbox')).toHaveLength(22);
-  expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+  expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
 });
 
 it('reports failed refresh after confirmed save without a second POST or loss of the saved result', async () => {
@@ -154,7 +154,7 @@ it('reports failed refresh after confirmed save without a second POST or loss of
   await userEvent.click(screen.getAllByRole('button', { name: 'Opslaan' })[2]);
   expect(await screen.findByText('Uitslag wijzigen')).toBeTruthy();
   expect(await screen.findByText(/Uitslag opgeslagen. Vernieuwen/)).toBeTruthy();
-  expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
+  expect(screen.queryByText(/Wedstrijdpunten:/)).toBeNull();
   expect(api.submitResult).toHaveBeenCalledOnce();
 });
 
