@@ -1,8 +1,10 @@
 import React from 'react';
 import { Container, Typography, Button, Box, Stack, TextField, MenuItem, Paper, Avatar, Tooltip } from '@mui/material';
 import { api } from './api';
-import { auth, googleProvider } from './firebase';
+import { auth, googleProvider, authAvailable } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
+import MatchDetails from './MatchDetails';
+import { resultSummary } from '../../backend/domain/scoring.js';
 
 const POOL_OPTIONS = [
   { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
@@ -14,16 +16,26 @@ function App() {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
+    const unsubscribe = auth?.onAuthStateChanged((u) => setUser(u));
     return unsubscribe;
   }, []);
 
-  const handleSignIn = (provider) => {
-    signInWithPopup(auth, provider);
+  const handleSignIn = async (provider) => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      setErrorMsg(`Kon niet inloggen: ${error.message}`);
+      setErrorOpen(true);
+    }
   };
 
-  const handleSignOut = () => {
-    signOut(auth);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      setErrorMsg(`Kon niet uitloggen: ${error.message}`);
+      setErrorOpen(true);
+    }
   };
 
   // Teams state
@@ -37,68 +49,39 @@ function App() {
   const [completedSet, setCompletedSet] = React.useState(new Set());
   const [availableRounds, setAvailableRounds] = React.useState([]);
   const [matchId, setMatchId] = React.useState('');
-  const [scores, setScores] = React.useState({ homeScore: '', awayScore: '' });
+  const [details, setDetails] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [loaded, setLoaded] = React.useState(false);
+  const [opening, setOpening] = React.useState(false);
+  const detailsButtonRef = React.useRef(null);
   const [errorMsg, setErrorMsg] = React.useState('');
   const [errorOpen, setErrorOpen] = React.useState(false);
   const loadRequestRef = React.useRef(0);
-  const disallowedScores = new Set([1, 3, 28, 30]);
-  const homeScoreNum = parseInt(scores.homeScore, 10);
-  const awayScoreNum = parseInt(scores.awayScore, 10);
-  const homeInvalid = scores.homeScore === '' || isNaN(homeScoreNum) || disallowedScores.has(homeScoreNum);
-  const awayInvalid = scores.awayScore === '' || isNaN(awayScoreNum) || disallowedScores.has(awayScoreNum);
-  // Only show error message for disallowed scores when a score has been entered
-  const homeShowError = scores.homeScore !== '' && !isNaN(homeScoreNum) && disallowedScores.has(homeScoreNum);
-  const awayShowError = scores.awayScore !== '' && !isNaN(awayScoreNum) && disallowedScores.has(awayScoreNum);
-  const invalidScore = homeInvalid || awayInvalid;
   const [results, setResults] = React.useState([]);
 
-  // derive round matches from cached full schedule while hiding completed ones
+  // Selection includes completed fixtures; only the upcoming list filters them out.
   React.useEffect(() => {
     if (!round) { setSchedule([]); return; }
     const rows = scheduleAll
-      .filter(m => String(m.round) === String(round))
-  .filter(m => !completedSet.has(m.id));
+      .filter(m => String(m.round) === String(round));
     setSchedule(rows);
-  }, [round, scheduleAll, completedSet]);
+  }, [round, scheduleAll]);
 
-  // compute available rounds that still have open matches; if current round closes, clear selection
   React.useEffect(() => {
-  const openMatches = scheduleAll.filter(m => !completedSet.has(m.id));
-    const rounds = Array.from(new Set(openMatches.map(m => String(m.round)))).sort((a, b) => Number(a) - Number(b));
+    const rounds = Array.from(new Set(scheduleAll.map(m => String(m.round)))).sort((a, b) => Number(a) - Number(b));
     setAvailableRounds(rounds);
     if (round && !rounds.includes(String(round))) {
       setRound('');
       setMatchId('');
       setSchedule([]);
     }
-  }, [scheduleAll, completedSet]);
-  const submitResult = async (e) => {
-    e.preventDefault();
-    if (!matchId || !user || !selectedDivisieId) return;
-    try {
-      await api.submitResult({
-        matchId,
-        homeScore: scores.homeScore,
-        awayScore: scores.awayScore,
-        divisieId: selectedDivisieId,
-      });
-      setMatchId('');
-      setScores({ homeScore: '', awayScore: '' });
-        const pool = POOL_OPTIONS.find((p) => p.divisieId === selectedDivisieId);
-        await loadPoolData(selectedDivisieId, pool?.divisie || '');
-      setErrorOpen(false);
-      setErrorMsg('');
-    } catch (err) {
-      setErrorMsg(`Kon uitslag niet opslaan: ${err?.message || err}`);
-      setErrorOpen(true);
-    }
-  };
-
+  }, [scheduleAll, round]);
   // Standings state
   const [standings, setStandings] = React.useState([]);
 
   const loadPoolData = React.useCallback(async (divisieId, divisie) => {
     const requestId = ++loadRequestRef.current;
+    setLoading(true);
     if (!divisieId) {
       if (requestId !== loadRequestRef.current) return;
       setTeams([]);
@@ -106,20 +89,28 @@ function App() {
       setCompletedSet(new Set());
       setStandings([]);
       setResults([]);
+      setLoading(false);
+      setLoaded(false);
       return;
     }
-    const [teamRows, standingsRows, scheduleRows, submittedRows] = await Promise.all([
-      api.getTeams({ divisieId, divisie }),
-      api.getStandings({ divisieId, divisie }),
-      api.getSchedule({ divisieId, divisie }),
-      api.getMatches({ divisieId }),
-    ]);
-    if (requestId !== loadRequestRef.current) return;
-    setTeams(teamRows);
-    setStandings(standingsRows);
-    setScheduleAll(scheduleRows);
-    setCompletedSet(new Set(submittedRows.map((row) => row.matchId || row.fixtureId).filter(Boolean)));
-    setResults(submittedRows);
+    try {
+      const [teamRows, standingsRows, scheduleRows, submittedRows] = await Promise.all([
+        api.getTeams({ divisieId, divisie }),
+        api.getStandings({ divisieId, divisie }),
+        api.getSchedule({ divisieId, divisie }),
+        api.getMatches({ divisieId }),
+      ]);
+      if (requestId !== loadRequestRef.current) return;
+      setTeams(teamRows);
+      setStandings(standingsRows);
+      setScheduleAll(scheduleRows);
+      setCompletedSet(new Set(submittedRows.map((row) => row.matchId || row.fixtureId).filter(Boolean)));
+      setResults(submittedRows);
+      setLoaded(true);
+      setErrorOpen(false);
+    } finally {
+      if (requestId === loadRequestRef.current) setLoading(false);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -139,6 +130,64 @@ function App() {
     };
   }, [selectedDivisieId, loadPoolData]);
 
+  React.useEffect(() => {
+    if (loaded && !loading && matchId && !scheduleAll.some((row) => row.id === matchId)) {
+      setMatchId('');
+      setErrorMsg('De geselecteerde wedstrijd staat niet meer in het schema.');
+      setErrorOpen(true);
+    }
+  }, [loaded, loading, matchId, scheduleAll]);
+
+  const selectedFixture = scheduleAll.find((fixture) => fixture.id === matchId);
+  const selectedResult = results.find((result) => (result.matchId || result.fixtureId) === matchId);
+  const summary = resultSummary(selectedResult);
+  const back = () => {
+    setDetails(null);
+    requestAnimationFrame(() => detailsButtonRef.current?.focus());
+  };
+  const openDetails = async () => {
+    if (!selectedFixture || !loaded || loading || opening) return;
+    setOpening(true);
+    try {
+      const rows = await api.getMatches({ divisieId: selectedDivisieId });
+      setResults(rows);
+      setCompletedSet(new Set(rows.map((row) => row.matchId || row.fixtureId)));
+      setDetails({
+        fixture: selectedFixture,
+        divisieId: selectedDivisieId,
+        poolLabel: POOL_OPTIONS.find((pool) => pool.divisieId === selectedDivisieId)?.label,
+        homeName: teams.find((team) => team.id === selectedFixture.homeTeamId)?.name || selectedFixture.homeTeamId,
+        awayName: teams.find((team) => team.id === selectedFixture.awayTeamId)?.name || selectedFixture.awayTeamId,
+        result: rows.find((row) => (row.matchId || row.fixtureId) === matchId),
+      });
+      setErrorOpen(false);
+    } catch (error) {
+      setErrorMsg(`Kon wedstrijddetails niet laden: ${error.message}`);
+      setErrorOpen(true);
+    } finally {
+      setOpening(false);
+    }
+  };
+  const saveDetails = async (score) => {
+    const saved = await api.submitResult({ ...score, matchId: details.fixture.id, divisieId: details.divisieId });
+    setResults((rows) => [saved, ...rows.filter((row) => (row.matchId || row.fixtureId) !== saved.matchId)]);
+    setCompletedSet((ids) => new Set([...ids, saved.matchId]));
+    setDetails((current) => ({ ...current, result: saved }));
+    const pool = POOL_OPTIONS.find((row) => row.divisieId === details.divisieId);
+    try {
+      await loadPoolData(details.divisieId, pool.divisie);
+    } catch (error) {
+      setErrorMsg(`Uitslag opgeslagen. Vernieuwen van stand en uitslagen mislukt: ${error.message}`);
+      setErrorOpen(true);
+    }
+  };
+  const refreshDetails = async () => {
+    const rows = await api.getMatches({ divisieId: details.divisieId });
+    setResults(rows);
+    setCompletedSet(new Set(rows.map((row) => row.matchId || row.fixtureId)));
+    setDetails((current) => ({ ...current, result: rows.find((row) => (row.matchId || row.fixtureId) === current.fixture.id) }));
+  };
+
   return (
     <Container maxWidth="xs">
       <Box sx={{ textAlign: 'left', mt: 2 }}>
@@ -155,10 +204,13 @@ function App() {
                 <Button variant="outlined" color="secondary" size="small" onClick={handleSignOut}>Sign Out</Button>
               </>
             ) : (
-              <Button variant="contained" size="small" onClick={() => handleSignIn(googleProvider)}>Inloggen met Google</Button>
+              <Button variant="contained" size="small" disabled={!authAvailable} onClick={() => handleSignIn(googleProvider)}>Inloggen met Google</Button>
             )}
           </Box>
         </Box>
+        {details && errorOpen && <Typography color="error">{errorMsg}</Typography>}
+        {details ? <MatchDetails key={`${details.divisieId}:${details.fixture.id}`} {...details} user={user} authAvailable={authAvailable} onBack={back} onSave={saveDetails} onRefresh={refreshDetails} /> : <>
+        {!authAvailable && <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Lokale preview: Firebase niet geconfigureerd. Opslaan vereist aanmelding.</Typography>}
 
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
 
@@ -167,6 +219,7 @@ function App() {
           <TextField
             label="Divisie"
             size="small"
+            disabled={opening || loading}
             value={selectedDivisieId}
             onChange={(e) => {
               setStandings([]);
@@ -179,7 +232,7 @@ function App() {
               setSelectedDivisieId(e.target.value);
               setRound('');
               setMatchId('');
-              setScores({ homeScore: '', awayScore: '' });
+              setLoaded(false);
               setErrorOpen(false);
               setErrorMsg('');
             }}
@@ -237,8 +290,9 @@ function App() {
           {errorOpen && (
             <Typography variant="body2" color="error" sx={{ mb: 1 }}>{errorMsg}</Typography>
           )}
-          <Stack spacing={1} component="form" onSubmit={submitResult}>
-            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={!selectedDivisieId || !availableRounds.length}>
+          {errorOpen && <Button onClick={() => loadPoolData(selectedDivisieId, POOL_OPTIONS.find((pool) => pool.divisieId === selectedDivisieId).divisie).catch((error) => { setErrorMsg(`Kon gegevens niet vernieuwen: ${error.message}`); setErrorOpen(true); })}>Opnieuw laden</Button>}
+          <Stack spacing={1}>
+            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={opening || loading || !selectedDivisieId || !availableRounds.length}>
               {availableRounds.map((r) => {
                 const dateForRound = (() => {
                   const rows = scheduleAll.filter(m => String(m.round) === String(r));
@@ -248,7 +302,7 @@ function App() {
                 return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
               })}
             </TextField>
-            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={!selectedDivisieId || !schedule.length}>
+            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={opening || loading || !selectedDivisieId || !schedule.length}>
               {schedule.map(m => {
                 const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
                 const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
@@ -257,44 +311,10 @@ function App() {
               })}
             </TextField>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField
-                label="Thuis punten"
-                size="small"
-                type="number"
-                value={scores.homeScore}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  if (text === '') {
-                    setScores({ homeScore: '', awayScore: '' });
-                    return;
-                  }
-                  const raw = parseInt(text, 10);
-                  if (!Number.isFinite(raw)) {
-                    setScores({ homeScore: '', awayScore: '' });
-                    return;
-                  }
-                  const home = Math.max(0, Math.min(31, raw));
-                  const away = 31 - home;
-                  setScores({ homeScore: home, awayScore: away });
-                }}
-                inputProps={{ min: 0, max: 31, step: 1 }}
-                error={homeShowError}
-                helperText={homeShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
-                sx={{ width: 120 }}
-              />
-              <TextField
-                label="Uit punten"
-                size="small"
-                type="number"
-                value={scores.awayScore}
-                disabled
-                inputProps={{ min: 0, max: 31, step: 1 }}
-                error={awayShowError}
-                helperText={awayShowError ? 'Score 1, 3, 28 of 30 is niet toegestaan' : ''}
-                sx={{ width: 120 }}
-              />
-              <Button type="submit" variant="contained" size="small" disabled={!selectedDivisieId || !user || !matchId || scores.homeScore === '' || scores.awayScore === '' || invalidScore} sx={{ ml: 'auto' }}>Opslaan</Button>
+              <Typography variant="body2" aria-live="polite">{loading || opening ? 'Uitslag laden…' : !loaded ? 'Uitslag niet beschikbaar' : !matchId ? 'Selecteer een wedstrijd' : summary.label}</Typography>
+              <Button ref={detailsButtonRef} variant="contained" size="small" disabled={!selectedFixture || !loaded || loading || opening} onClick={openDetails} sx={{ ml: 'auto', textTransform: 'none' }}>Details</Button>
             </Box>
+            {selectedFixture && summary.error && <Typography color="error" variant="body2">{summary.error}</Typography>}
           </Stack>
         </Paper>
 
@@ -398,6 +418,7 @@ function App() {
             );
           })()}
         </Paper>
+        </>}
       </Box>
     </Container>
   );

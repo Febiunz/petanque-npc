@@ -57,18 +57,29 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./backend-deploy.zip
 
-      # Overwrites existing blobs, so results submitted in production are replaced by the repo data.
+      # Results are seed-only: deployments must never replace live submissions.
       - name: Upload backend data files to Azure Blob Storage
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
           az storage container create --name data --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
-          az storage blob upload-batch \
-            --destination data \
-            --source data \
-            --pattern "*.json" \
-            --overwrite true \
-            --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+          for file in data/*.json; do
+            name=$(basename "$file")
+            overwrite=true
+            case "$name" in
+              matches*.json)
+                overwrite=false
+                exists=$(az storage blob exists --container-name data --name "$name" \
+                  --connection-string "$AZURE_STORAGE_CONNECTION_STRING" --query exists --output tsv)
+                if [ "$exists" = "true" ]; then
+                  echo "Preserving live results: $name"
+                  continue
+                fi
+                ;;
+            esac
+            az storage blob upload --container-name data --name "$name" --file "$file" \
+              --overwrite "$overwrite" --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+          done
 
       - name: Post-deploy note
         run: |

@@ -22,6 +22,10 @@ function getBlobServiceClient() {
 }
 
 export async function readBlobFile(fileName) {
+  return (await readBlobFileVersion(fileName)).data;
+}
+
+export async function readBlobFileVersion(fileName) {
   const client = getBlobServiceClient();
   const containerClient = client.getContainerClient(containerName);
   const blobClient = containerClient.getBlobClient(fileName);
@@ -29,16 +33,16 @@ export async function readBlobFile(fileName) {
   try {
     const downloadResponse = await blobClient.download();
     const downloaded = await streamToBuffer(downloadResponse.readableStreamBody);
-    return JSON.parse(downloaded.toString());
+    return { data: JSON.parse(downloaded.toString()), etag: downloadResponse.etag };
   } catch (err) {
     if (err.statusCode === 404) {
-      throw new Error(`${fileName} not found in Azure Blob Storage`);
+      err.message = `${fileName} not found in Azure Blob Storage`;
     }
     throw err;
   }
 }
 
-export async function writeBlobFile(fileName, data) {
+export async function writeBlobFile(fileName, data, conditions) {
   const client = getBlobServiceClient();
   const containerClient = client.getContainerClient(containerName);
   
@@ -49,6 +53,7 @@ export async function writeBlobFile(fileName, data) {
   const content = JSON.stringify(data, null, 2);
   
   await blobClient.upload(content, Buffer.byteLength(content), {
+    conditions,
     blobHTTPHeaders: { blobContentType: 'application/json' }
   });
 }
