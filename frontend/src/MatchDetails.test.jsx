@@ -61,11 +61,16 @@ describe('dedicated detailed score entry', () => {
     render(<MatchDetails {...props()} playerLineup={officialResults.find((row) => row.matchId === '100116').playerLineup} />);
     const homeSubstitutionPair = screen.getByText('Jeroen Brinks-Daniël Adriaan van Dam');
     const awaySubstitutionPair = screen.getByText('Ferdinand Wiese-Romulo van Stockum');
-    const homeSubstitution = screen.getByText('Wissel thuis: Jeroen Brinks → Chantal Brinks-Kamphuis');
-    const awaySubstitution = screen.getByText('Wissel uit: Romulo van Stockum → Jakob Huitsing');
+    const homeSubstitution = screen.getByText('Jeroen Brinks → Chantal Brinks-Kamphuis');
+    const awaySubstitution = screen.getByText('Romulo van Stockum → Jakob Huitsing');
 
+    expect(screen.queryByText(/Wissel (thuis|uit):/)).toBeNull();
     expect(getComputedStyle(homeSubstitutionPair).whiteSpace).toBe('nowrap');
     expect(getComputedStyle(awaySubstitutionPair).whiteSpace).toBe('nowrap');
+    expect(parseFloat(getComputedStyle(homeSubstitutionPair).fontSize)).toBeLessThan(12);
+    expect(parseFloat(getComputedStyle(homeSubstitution).fontSize)).toBeLessThan(12);
+    expect(getComputedStyle(homeSubstitution).color).not.toBe(getComputedStyle(homeSubstitutionPair).color);
+    expect(getComputedStyle(homeSubstitution).color).not.toBe('');
     expect(homeSubstitutionPair.parentElement.textContent.indexOf(homeSubstitutionPair.textContent))
       .toBeLessThan(homeSubstitutionPair.parentElement.textContent.indexOf(homeSubstitution.textContent));
     expect(awaySubstitutionPair.parentElement.textContent.indexOf(awaySubstitutionPair.textContent))

@@ -32,17 +32,17 @@ function GamePlayers({ slotId, playerLineup }) {
         return (
           <Typography key={index} component="div" variant="caption" title={label}
             aria-label={label}
-            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
+            sx={{ fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
             {label}
           </Typography>
         );
       })}
       {substitutions.map(({ side, out, in: incoming }) => {
-        const label = `Wissel ${side === 'home' ? 'thuis' : 'uit'}: ${out} → ${incoming}`;
+        const label = `${out} → ${incoming}`;
         return (
           <Typography key={`${side}-${out}`} component="div" variant="caption" title={label}
             aria-label={label}
-            sx={{ color: 'text.secondary', fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
+            sx={{ color: 'text.secondary', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
             {label}
           </Typography>
         );
@@ -146,12 +146,12 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
           const subtotal = summarizeGames(games.filter((game) =>
             GAME_SLOTS.findIndex((slot) => slot.slotId === game.slotId) <= lastSlotIndex));
           return (
-            <Paper key={group.type} sx={{ p: 1.5, mb: 2 }}>
+            <Paper key={group.type} sx={{ p: { xs: 1, sm: 1.5 }, mb: 2 }}>
               <Typography variant="h6">{group.label}</Typography>
               <Box sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '24px minmax(0, 1fr) 36px 36px 36px', sm: '32px minmax(0, 1fr) 44px 44px 44px' },
-                gap: { xs: 0.5, sm: 1 },
+                gridTemplateColumns: { xs: '22px minmax(0, 1fr) 32px 32px 36px', sm: '28px minmax(0, 1fr) 40px 40px 44px' },
+                gap: { xs: 0.25, sm: 0.5 },
                 alignItems: 'start',
                 mt: 1,
               }}>
