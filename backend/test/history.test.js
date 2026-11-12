@@ -36,7 +36,7 @@ test('all 46 historical records and 506 games retain metadata and independently 
   assert.equal(count, 46);
   assert.equal(games, 506);
   const second = await json('../data/matches-2001.json');
-  assert.equal(second.find((row) => row.matchId === '200111').date, '2026-10-17T12:00:00.000Z');
+  assert.equal(second.find((row) => row.matchId === '200111').date, '2026-10-10T12:00:00.000Z');
   const top = await json('../data/matches-1001.json');
   for (const [id, home, away] of [['100101', 8, 23], ['100105', 29, 2], ['100109', 12, 19], ['100116', 24, 7]]) {
     const score = validateDetailedScore(top.find((row) => row.matchId === id));

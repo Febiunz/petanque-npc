@@ -20,7 +20,7 @@ This project provides:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
   - Visual indicators: 1st place (champion) has a light green background; last 2 places (relegation) have a light red background.
-- Compact results list: single-line rows.
+- Compact results list: single-line rows with Ronde, played Datum, Thuis, Uitslag and Uit columns.
 
 ## Tech stack
 
@@ -110,7 +110,7 @@ Run each app separately (optional):
     - 2027: `9-jan`, `23-jan`, `6-feb`, `20-feb`, `6-mrt`, `20-mrt`, `3-apr`
   - Individual fixtures use adjusted dates when published by NLpetanque; match `100107` is scheduled for `2026-12-13`.
   - Published results: 14 in `1001`, 16 in `2001`, and 16 in `2002`, including all published round-four results (31 October 2026). Fixtures without published scores remain without a result entry.
-  - These 46 results now include 506 validated individual games from official score sheets. Every original ID, date, author field and aggregate is preserved; match `200111` retains its stored 17 October date despite the workbook's 10 October date.
+  - These 46 results now include 506 validated individual games from official score sheets. Every original ID, author field and aggregate is preserved; match `200111` uses its official workbook date, 10 October, in both schedule and result.
   - Source URLs, workbook hashes, raw totals and preservation checks are in `backend/history/provenance.json` (not an uploaded result blob).
 - Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.
 - Each saved result stores:
@@ -153,7 +153,7 @@ Rate limiting (subject to tuning; current values from code):
 - Below each of the three game blocks, "Terug" opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing choices. "Opslaan" saves all 11 slots, including blank unplayed slots, while keeping the details open.
 - Google sign-in is required to save; blank scores are allowed, but a partially entered or invalid score pair must be completed or cleared. In-flight saves block navigation and repeat submission; errors retain input. Dirty back navigation asks before discarding and tab close/reload warns where supported.
 - Successful save preserves pool/round/match selection and refreshes standings/results. A failed refresh after confirmed save does not cause another POST.
-- Results list is compact (single-line).
+- Results list is compact (single-line); its second column shows the played date (official result date, otherwise the fixture date), like "Komende wedstrijden".
 
 ## Continuous integration
 
