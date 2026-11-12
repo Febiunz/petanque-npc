@@ -103,7 +103,7 @@ Run each app separately (optional):
 - Committed teams, schedules, and results are synchronized with the official NLpetanque pages listed below. A generated round-robin schedule is only a fallback when stored schedule data is unavailable.
 - Schedule is stored per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule-1001.json`, `schedule-2001.json`, `schedule-2002.json`) in production. Falls back to local `backend/data/schedule-<divisieId>.json` files in development.
 - Results are persisted per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches-1001.json`, `matches-2001.json`, `matches-2002.json`) in production, or local `backend/data/matches-<divisieId>.json` in development. Local writes are atomic and serialized; duplicate detection occurs inside the transaction. Blob result writes use ETag conditions and bounded retries so concurrent writers cannot replace one another's submissions.
-- Current official season data is prepared for **2026–2027**, last checked on **11 November 2026**:
+- Current official season data is prepared for **2026–2027**, last checked on **12 November 2026**:
   - 3 divisions (`1001`, `2001`, `2002`) with 8 official teams and 56 fixtures each
   - Sources: [Topdivisie 1001](https://nlpetanque.nl/topdivisie-2026-2027-1001/), [2e divisie 2001](https://nlpetanque.nl/2e-divisie-2026-2027-2001/), [2e divisie 2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/)
   - Round dates mapped to:
@@ -112,6 +112,9 @@ Run each app separately (optional):
   - Individual fixtures use adjusted dates when published by NLpetanque; match `100107` is scheduled for `2026-12-13`.
   - Published results: 14 in `1001`, 16 in `2001`, and 16 in `2002`, including all published round-four results (31 October 2026). Fixtures without published scores remain without a result entry.
   - These 46 results now include 506 validated individual games from official score sheets. Every original ID, author field and aggregate is preserved; match `200111` uses its official workbook date, 10 October, in both schedule and result.
+  - All 171 linked Excel URLs were checked: 46 match sheets and 3 shared forms downloaded; 122 unpublished match sheets returned 404. All individual scores, weighted/raw totals, teams and standings agree with the official data.
+  - Each official result stores `playerLineup` with source URL, home/away names keyed by game slot, and substitutions. Details reads these names from the result API rather than a separate frontend list. Four `#N/A` name cells were resolved by matching the same player identifiers in other official match sheets, with source cells recorded in provenance.
+  - Match `200213` has an incomplete away doublette substitution: Elout Visser is listed as incoming but the outgoing player is blank. It is retained under `playerLineup.unassignedSubstitutions`, without guessing a game or replacing an original pairing.
   - Source URLs, workbook hashes, raw totals and preservation checks are in `backend/history/provenance.json` (not an uploaded result blob).
 - Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.
 - Each saved result stores:

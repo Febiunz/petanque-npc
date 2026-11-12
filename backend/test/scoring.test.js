@@ -116,6 +116,7 @@ test('results can be revised indefinitely while preserving creation metadata', a
   const fixtureDate = '2026-09-19';
   const now = '2026-11-11T12:00:00.000Z';
   const legacy = { id: 'legacy-id', fixtureId: '1', matchId: '1', date: fixtureDate, createdAt: '2026-10-01T12:00:00.000Z', homeScore: 8, awayScore: 23 };
+  legacy.playerLineup = { source: 'official.xlsx', games: { 'tete-1': { home: ['Home player'], away: ['Away player'] } }, substitutions: [] };
   const late = mockBlob([legacy]);
   const match = { matchId: '1', fixtureId: '1', date: fixtureDate, createdAt: now, submittedAt: now, ...validateDetailedScore(sheet(64)) };
   const saved = await saveResult(late.read, late.write, match, now);
@@ -124,6 +125,7 @@ test('results can be revised indefinitely while preserving creation metadata', a
   assert.equal(saved.match.createdAt, legacy.createdAt);
   assert.equal(saved.match.submittedAt, now);
   assert.equal(saved.match.updatedAt, now);
+  assert.deepEqual(saved.match.playerLineup, legacy.playerLineup);
 
   const expiredResult = { ...saved.match, submittedAt: '2026-10-10T12:00:00.000Z' };
   const expired = mockBlob([expiredResult]);
@@ -132,6 +134,7 @@ test('results can be revised indefinitely while preserving creation metadata', a
   assert.equal(revised.created, false);
   assert.deepEqual(revised.match.games, replacement.games);
   assert.equal(revised.match.submittedAt, expiredResult.submittedAt);
+  assert.deepEqual(revised.match.playerLineup, legacy.playerLineup);
   assert.deepEqual(expired.get(), [revised.match]);
 });
 

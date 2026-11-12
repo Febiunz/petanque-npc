@@ -6,7 +6,7 @@ import { validateDetailedScore, summarizeGames } from '../backend/domain/scoring
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const metadataHash = (record) => {
-  const { games, scoreFormat, ...metadata } = record;
+  const { games, scoreFormat, playerLineup, ...metadata } = record;
   return createHash('sha256').update(JSON.stringify(metadata)).digest('hex');
 };
 

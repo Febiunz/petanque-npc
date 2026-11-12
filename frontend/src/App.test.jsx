@@ -90,6 +90,27 @@ it('shows the played date second and the score last in Uitslagen, preferring the
   expect(cells.slice(10, 15)).toEqual(['01', '19-09-2026', 'Away', 'Home', '31 - 00']);
 });
 
+it('loads official game players from the result API and updates them on refresh', async () => {
+  const withLineup = (home) => [{
+    ...historical[0],
+    playerLineup: { games: { 'tete-1': { home: [home], away: ['Away player'] } }, substitutions: [] },
+  }];
+  api.getMatches.mockResolvedValue(withLineup('Original player'));
+  render(<App />);
+  await selectMatch(1, '100101');
+  await userEvent.click(screen.getByRole('button', { name: 'Details' }));
+  expect(await screen.findByText('Original player-Away player')).toBeTruthy();
+  api.submitResult.mockRejectedValue(Object.assign(new Error('Conflict'), { status: 409 }));
+  const inputs = screen.getAllByRole('textbox');
+  fireEvent.change(inputs[0], { target: { value: '13' } });
+  fireEvent.change(inputs[1], { target: { value: '1' } });
+  await userEvent.click(screen.getAllByRole('button', { name: 'Opslaan' })[0]);
+  api.getMatches.mockResolvedValue(withLineup('Updated player'));
+  await userEvent.click(await screen.findByRole('button', { name: 'Opgeslagen uitslag bekijken' }));
+  expect(await screen.findByText('Updated player-Away player')).toBeTruthy();
+  expect(screen.queryByText('Original player-Away player')).toBeNull();
+});
+
 it('allows editing a result submitted by another user after the scheduled date', async () => {
   api.getSchedule.mockResolvedValue(fixtures.map((fixture) =>
     fixture.id === '100117' ? { ...fixture, date: '2026-09-19' } : fixture));

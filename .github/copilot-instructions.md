@@ -100,6 +100,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - No duplicate submissions for same match allowed
 - Duplicate detection is inside the write transaction; blob writes use ETag conditions with bounded retry
 - Historical enrichment preserves every original record field in repository data; provenance is in backend/history/provenance.json. Deployment replaces live blobs with repository data.
+- Official results store player names per slot in `playerLineup.games` and mapped substitutions in `playerLineup.substitutions`; Details reads them from the result API. Incomplete substitutions remain in `unassignedSubstitutions`, without guessing a game. Cross-sheet name resolutions and lineup hashes are recorded in provenance separately from preserved result metadata.
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
