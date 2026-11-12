@@ -25,7 +25,7 @@ Legacy aggregate-only records remain readable and retain their standings meaning
 Signed-in users may create or revise results at any time. Edits preserve fixture identity, original date, creation metadata and the original submission timestamp.
 
 Duplicate checks occur within serialized atomic local writes or ETag-conditional blob transactions. New results return 201 and revisions return 200. Conditional conflicts retry against fresh data; storage failures never report success.
-Deployment seeds missing result blobs only, preserving existing live results. Repository historical enrichment does not modify production blobs.
+Deployment uploads every `data/*.json` file with `--overwrite true`, including result blobs. Repository data replaces the corresponding production blobs, so live results and edits not present in the repository are lost on deployment.
 
 `RESULTS_DATA_DIR` and `SCHEDULE_DATA_DIR` isolate local development/test data; `AZURE_STORAGE_CONNECTION_STRING` must be unset for local file mode.
 Run `npm test` in this directory for domain, API, concurrent storage and historical preservation checks. Synthetic authentication and blob operations exist only inside tests, not runtime routes.

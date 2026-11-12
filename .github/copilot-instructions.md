@@ -99,7 +99,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - All file writes are serialized with in-process mutex
 - No duplicate submissions for same match allowed
 - Duplicate detection is inside the write transaction; blob writes use ETag conditions with bounded retry
-- Historical enrichment preserves every original record field and never replaces live blobs; provenance is in backend/history/provenance.json
+- Historical enrichment preserves every original record field in repository data; provenance is in backend/history/provenance.json. Deployment replaces live blobs with repository data.
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
@@ -208,7 +208,7 @@ cd frontend && npm run preview
 - Frontend deploys to Azure Static Web Apps
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
-- Workflow uploads `backend/data/*.json` to container `data`; result blobs (`matches*.json`) are seed-only, skipping existing blobs and creating with --overwrite false. Teams/schedules retain overwrite behavior.
+- Workflow uploads every `backend/data/*.json` file to container `data` with `--overwrite true`, including results, teams and schedules. Live results and edits not present in the repository are replaced on deployment.
 
 ## Common Tasks and Commands
 
