@@ -72,7 +72,140 @@
         "homeScore": 9,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200101.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Isabella de Lange-Verschuren"
+          ],
+          "away": [
+            "Hannah Warringa"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Erik Kluijtmans"
+          ],
+          "away": [
+            "Brian Schampers"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Marco van Steenbrugge"
+          ],
+          "away": [
+            "Mitch Schampers"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Peter van den Ouweland"
+          ],
+          "away": [
+            "Marco Zeitzen"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Lies Borburgh"
+          ],
+          "away": [
+            "Maik Broekmeijer"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Frans de Nijs"
+          ],
+          "away": [
+            "Rick Bongaerts"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Erik Kluijtmans",
+            "Isabella de Lange-Verschuren"
+          ],
+          "away": [
+            "Mitch Schampers",
+            "Mascha Broekmeijer-Derks"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Peter van den Ouweland",
+            "Frans de Nijs"
+          ],
+          "away": [
+            "Brian Schampers",
+            "Ben Broekmeijer"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Monique Steijn",
+            "Marco van Steenbrugge"
+          ],
+          "away": [
+            "Rick Bongaerts",
+            "Marco Zeitzen"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Erik Kluijtmans",
+            "Isabella de Lange-Verschuren",
+            "Peter van den Ouweland"
+          ],
+          "away": [
+            "Mitch Schampers",
+            "Hannah Warringa",
+            "Maik Broekmeijer"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Monique Steijn",
+            "Marco van Steenbrugge",
+            "Frans de Nijs"
+          ],
+          "away": [
+            "Brian Schampers",
+            "Rick Bongaerts",
+            "Marco Zeitzen"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "away",
+          "out": "Mascha Broekmeijer-Derks",
+          "in": "Hannah Warringa"
+        },
+        {
+          "slotId": "doublette-2",
+          "side": "away",
+          "out": "Ben Broekmeijer",
+          "in": "Maik Broekmeijer"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "away",
+          "out": "Maik Broekmeijer",
+          "in": "Ben Broekmeijer"
+        },
+        {
+          "slotId": "triplette-2",
+          "side": "home",
+          "out": "Monique Steijn",
+          "in": "Lies Borburgh"
+        }
+      ]
+    }
   },
   {
     "id": "official-200102",
@@ -147,7 +280,128 @@
         "homeScore": 2,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200102.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Monique Bakker"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Herman Soppe"
+          ],
+          "away": [
+            "Febian Bakens"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Rob Torremans"
+          ],
+          "away": [
+            "Jeroen Cortooms"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Arnold Steiger"
+          ],
+          "away": [
+            "Maarten Hout"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Tom van Maanen"
+          ],
+          "away": [
+            "Bart van Lieshout"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Frits Bijsterveld"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Chantal de Vries",
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen",
+            "Bart van Lieshout"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Rob Torremans",
+            "Sander Beukers"
+          ],
+          "away": [
+            "Frits Bijsterveld",
+            "Jeroen Cortooms"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Arnold Steiger",
+            "Tom van Maanen"
+          ],
+          "away": [
+            "Febian Bakens",
+            "Maarten Hout"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Monique Bakker",
+            "Rob Torremans",
+            "Sander Beukers"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen",
+            "Bart van Lieshout",
+            "Jeroen Cortooms"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Chantal de Vries",
+            "Herman Soppe",
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Frits Bijsterveld",
+            "Maarten Hout",
+            "Raymond Tonen"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-3",
+          "side": "home",
+          "out": "Arnold Steiger",
+          "in": "Herman Soppe"
+        },
+        {
+          "slotId": "doublette-3",
+          "side": "away",
+          "out": "Febian Bakens",
+          "in": "Raymond Tonen"
+        }
+      ]
+    }
   },
   {
     "id": "official-200103",
@@ -222,7 +476,115 @@
         "homeScore": 13,
         "awayScore": 4
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200103.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen"
+          ],
+          "away": [
+            "Ada Wouters"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Osman Jibril"
+          ],
+          "away": [
+            "Jeroen Adriaanse"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Cas Schellekens"
+          ],
+          "away": [
+            "Ronald Adriaanse"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Didier Viguurs"
+          ],
+          "away": [
+            "Patrick Bruggeman"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Ria van der Heijden-Dekker"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Patrick Lautenslager"
+          ],
+          "away": [
+            "Marco Wouters"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Ada Wouters",
+            "Marco Wouters"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Didier Viguurs",
+            "Osman Jibril"
+          ],
+          "away": [
+            "Jeroen Adriaanse",
+            "Ria van der Heijden-Dekker"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Patrick Lautenslager",
+            "Cas Schellekens"
+          ],
+          "away": [
+            "Ronald Adriaanse",
+            "Patrick Bruggeman"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Cas Schellekens",
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Ada Wouters",
+            "Ria van der Heijden-Dekker",
+            "Marco Wouters"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Patrick Lautenslager",
+            "Didier Viguurs",
+            "Osman Jibril"
+          ],
+          "away": [
+            "Jeroen Adriaanse",
+            "Ronald Adriaanse",
+            "Patrick Bruggeman"
+          ]
+        }
+      },
+      "substitutions": []
+    }
   },
   {
     "id": "official-200104",
@@ -297,7 +659,140 @@
         "homeScore": 8,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200104.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Noelle Viguurs"
+          ],
+          "away": [
+            "Roby van Rooijen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Maaike Hooijmaijers"
+          ],
+          "away": [
+            "Ruud Vork"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Johan Mol"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Jordie van Hoorn"
+          ],
+          "away": [
+            "Edwin Segers"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Simon Vogelaar"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Nino Naso"
+          ],
+          "away": [
+            "Joey Dijkstra"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Dyonne van der Meijden",
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Roby van Rooijen",
+            "Edwin Segers"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Daniël van Mourik",
+            "Joop van Eijndhoven"
+          ],
+          "away": [
+            "Joey Dijkstra",
+            "Simon Vogelaar"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Jordie van Hoorn",
+            "Nino Naso"
+          ],
+          "away": [
+            "Johan Mol",
+            "Ruud Vork"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Dyonne van der Meijden",
+            "Jordie van Hoorn",
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Roby van Rooijen",
+            "Simon Vogelaar",
+            "Edwin Segers"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Maaike Hooijmaijers",
+            "Marcel Hazenberg",
+            "Nino Naso"
+          ],
+          "away": [
+            "Johan Mol",
+            "Ruud Vork",
+            "Joey Dijkstra"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "home",
+          "out": "Dyonne van der Meijden",
+          "in": "Noelle Viguurs"
+        },
+        {
+          "slotId": "doublette-3",
+          "side": "home",
+          "out": "Nino Naso",
+          "in": "Maaike Hooijmaijers"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Dyonne van der Meijden",
+          "in": "Noelle Viguurs"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "away",
+          "out": "Simon Vogelaar",
+          "in": "Wolter Verhoeven"
+        }
+      ]
+    }
   },
   {
     "id": "official-200105",
@@ -372,7 +867,115 @@
         "homeScore": 13,
         "awayScore": 9
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200105.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Yannieke Baks"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Simon Vogelaar"
+          ],
+          "away": [
+            "Osman Jibril"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Johan Mol"
+          ],
+          "away": [
+            "Stan Visser"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Celine Stritzko"
+          ],
+          "away": [
+            "Karel Copier"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Laurent Bonafé"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Joey Dijkstra"
+          ],
+          "away": [
+            "Patrick Lautenslager"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Yannieke Baks",
+            "Simon Vogelaar"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen",
+            "Karel Copier"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Celine Stritzko",
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Osman Jibril",
+            "Patrick Lautenslager"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Joey Dijkstra",
+            "Johan Mol"
+          ],
+          "away": [
+            "Stan Visser",
+            "Laurent Bonafé"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Yannieke Baks",
+            "Simon Vogelaar",
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen",
+            "Karel Copier",
+            "Laurent Bonafé"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Celine Stritzko",
+            "Joey Dijkstra",
+            "Johan Mol"
+          ],
+          "away": [
+            "Osman Jibril",
+            "Stan Visser",
+            "Patrick Lautenslager"
+          ]
+        }
+      },
+      "substitutions": []
+    }
   },
   {
     "id": "official-200106",
@@ -447,7 +1050,115 @@
         "homeScore": 9,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200106.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Monique Bakker"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Marco Wouters"
+          ],
+          "away": [
+            "Herman Soppe"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Rinus Zwigtman"
+          ],
+          "away": [
+            "Cees Wubben"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Jeroen Adriaanse"
+          ],
+          "away": [
+            "Sander Beukers"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Ronald Adriaanse"
+          ],
+          "away": [
+            "Rob Torremans"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Tom van Maanen"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Marco Wouters",
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Monique Bakker",
+            "Sander Beukers"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Rinus Zwigtman",
+            "Jeroen Adriaanse"
+          ],
+          "away": [
+            "Jesper Eersel",
+            "Rob Torremans"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Ronald Adriaanse",
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Cees Wubben",
+            "Herman Soppe"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Marco Wouters",
+            "Rinus Zwigtman",
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Monique Bakker",
+            "Cees Wubben",
+            "Sander Beukers"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Jeroen Adriaanse",
+            "Ronald Adriaanse",
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Herman Soppe",
+            "Jesper Eersel",
+            "Tom van Maanen"
+          ]
+        }
+      },
+      "substitutions": []
+    }
   },
   {
     "id": "official-200107",
@@ -522,7 +1233,134 @@
         "homeScore": 13,
         "awayScore": 10
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200107.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen"
+          ],
+          "away": [
+            "Isabella de Lange-Verschuren"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Patrick Bakens"
+          ],
+          "away": [
+            "Erik Kluijtmans"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Richard Peeters"
+          ],
+          "away": [
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Joey Ras"
+          ],
+          "away": [
+            "Peter van den Ouweland"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Maarten Hout"
+          ],
+          "away": [
+            "Jolanda Steijn"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Rob Kalisvaart"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen",
+            "Joey Ras"
+          ],
+          "away": [
+            "Erik Kluijtmans",
+            "Isabella de Lange-Verschuren"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Jeroen Cortooms",
+            "Patrick Bakens"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Frans de Nijs"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Frits Bijsterveld",
+            "Maarten Hout"
+          ],
+          "away": [
+            "Rob Kalisvaart",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Jolanda Madou",
+            "Willie Lieshout",
+            "Joey Ras"
+          ],
+          "away": [
+            "Erik Kluijtmans",
+            "Isabella de Lange-Verschuren",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Jeroen Cortooms",
+            "Frits Bijsterveld",
+            "Richard Peeters"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Monique Steijn",
+            "Rob Kalisvaart"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-3",
+          "side": "home",
+          "out": "Maarten Hout",
+          "in": "Willie Lieshout"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Willie Lieshout",
+          "in": "Patrick Bakens"
+        },
+        {
+          "slotId": "triplette-2",
+          "side": "home",
+          "out": "Jeroen Cortooms",
+          "in": "Maarten Hout"
+        }
+      ]
+    }
   },
   {
     "id": "official-200108",
@@ -597,7 +1435,128 @@
         "homeScore": 11,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200108.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Hannah Warringa"
+          ],
+          "away": [
+            "Dyonne van der Meijden"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Mitch Schampers"
+          ],
+          "away": [
+            "Nino Naso"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Maik Broekmeijer"
+          ],
+          "away": [
+            "Joop van Eijndhoven"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Rick Bongaerts"
+          ],
+          "away": [
+            "Marcel Hazenberg"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Daniël van Mourik"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Ben Broekmeijer"
+          ],
+          "away": [
+            "Frank Veenstra"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Mascha Broekmeijer-Derks",
+            "Rick Bongaerts"
+          ],
+          "away": [
+            "Daniël van Mourik",
+            "Dyonne van der Meijden"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Mitch Schampers",
+            "Ben Broekmeijer"
+          ],
+          "away": [
+            "Nino Naso",
+            "Frank Veenstra"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Alex van der Meer",
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Marcel Hazenberg",
+            "Joop van Eijndhoven"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Mascha Broekmeijer-Derks",
+            "Maik Broekmeijer",
+            "Rick Bongaerts"
+          ],
+          "away": [
+            "Daniël van Mourik",
+            "Dyonne van der Meijden",
+            "Joop van Eijndhoven"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Alex van der Meer",
+            "Hannah Warringa",
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Marcel Hazenberg",
+            "Nino Naso",
+            "Frank Veenstra"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-2",
+          "side": "home",
+          "out": "Ben Broekmeijer",
+          "in": "Maik Broekmeijer"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Maik Broekmeijer",
+          "in": "Mitch Schampers"
+        }
+      ]
+    }
   },
   {
     "id": "official-200109",
@@ -672,7 +1631,128 @@
         "homeScore": 13,
         "awayScore": 6
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200109.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Maaike Hooijmaijers"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Nino Naso"
+          ],
+          "away": [
+            "Osman Jibril"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Noelle Viguurs"
+          ],
+          "away": [
+            "Cas Schellekens"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Frank Veenstra"
+          ],
+          "away": [
+            "Jos te Boekhorst"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Laurent Bonafé"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Patrick Lautenslager"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Daniël van Mourik",
+            "Dyonne van der Meijden"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen",
+            "Laurent Bonafé"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Nino Naso",
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Cas Schellekens",
+            "Patrick Lautenslager"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Joop van Eijndhoven",
+            "Noelle Viguurs"
+          ],
+          "away": [
+            "Osman Jibril",
+            "Didier Viguurs"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Maaike Hooijmaijers",
+            "Nino Naso",
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Jolanda Visser-Verbruggen",
+            "Laurent Bonafé",
+            "Jos te Boekhorst"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Daniël van Mourik",
+            "Dyonne van der Meijden",
+            "Frank Veenstra"
+          ],
+          "away": [
+            "Osman Jibril",
+            "Cas Schellekens",
+            "Didier Viguurs"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "home",
+          "out": "Dyonne van der Meijden",
+          "in": "Maaike Hooijmaijers"
+        },
+        {
+          "slotId": "triplette-2",
+          "side": "away",
+          "out": "Didier Viguurs",
+          "in": "Patrick Lautenslager"
+        }
+      ]
+    }
   },
   {
     "id": "official-200110",
@@ -747,7 +1827,115 @@
         "homeScore": 8,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200110.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Chantal de Vries"
+          ],
+          "away": [
+            "Yannieke Baks"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Herman Soppe"
+          ],
+          "away": [
+            "Ruud Vork"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Arnold Steiger"
+          ],
+          "away": [
+            "Simon Vogelaar"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Edwin Segers"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Sander Beukers"
+          ],
+          "away": [
+            "Wolter Verhoeven"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Cees Wubben"
+          ],
+          "away": [
+            "Joey Dijkstra"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Monique Bakker",
+            "Sander Beukers"
+          ],
+          "away": [
+            "Yannieke Baks",
+            "Simon Vogelaar"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Arnold Steiger",
+            "Herman Soppe"
+          ],
+          "away": [
+            "Joey Dijkstra",
+            "Edwin Segers"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Jesper Eersel",
+            "Rob Torremans"
+          ],
+          "away": [
+            "Ruud Vork",
+            "Johan Mol"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Monique Bakker",
+            "Jesper Eersel",
+            "Rob Torremans"
+          ],
+          "away": [
+            "Simon Vogelaar",
+            "Edwin Segers",
+            "Celine Stritzko"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Chantal de Vries",
+            "Arnold Steiger",
+            "Cees Wubben"
+          ],
+          "away": [
+            "Ruud Vork",
+            "Joey Dijkstra",
+            "Wolter Verhoeven"
+          ]
+        }
+      },
+      "substitutions": []
+    }
   },
   {
     "id": "official-200111",
@@ -822,7 +2010,128 @@
         "homeScore": 9,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200111.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Ada Wouters"
+          ],
+          "away": [
+            "Isabella de Lange-Verschuren"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Marco Wouters"
+          ],
+          "away": [
+            "Peter van den Ouweland"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Monique Steijn"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Ronald Adriaanse"
+          ],
+          "away": [
+            "Jolanda Steijn"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Jeroen Adriaanse"
+          ],
+          "away": [
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Jaco Elve"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Marco Wouters",
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Isabella de Lange-Verschuren",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Ada Wouters",
+            "Ronald Adriaanse"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Frans de Nijs"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Jeroen Adriaanse",
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Jolanda Steijn",
+            "Jaco Elve"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Ada Wouters",
+            "Myrthe Adriaanse",
+            "Ronald Adriaanse"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Monique Steijn",
+            "Frans de Nijs"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Marco Wouters",
+            "Jeroen Adriaanse",
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Isabella de Lange-Verschuren",
+            "Nelio Rodrigues Marques",
+            "Jaco Elve"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-3",
+          "side": "away",
+          "out": "Jolanda Steijn",
+          "in": "Monique Steijn"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "away",
+          "out": "Frans de Nijs",
+          "in": "Jolanda Steijn"
+        }
+      ]
+    }
   },
   {
     "id": "official-200112",
@@ -897,7 +2206,122 @@
         "homeScore": 13,
         "awayScore": 4
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200112.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Hannah Warringa"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Brian Schampers"
+          ],
+          "away": [
+            "Richard Peeters"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Bart van Lieshout"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Alex van der Meer"
+          ],
+          "away": [
+            "Maarten Hout"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Rick Bongaerts"
+          ],
+          "away": [
+            "Patrick Bakens"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Ben Broekmeijer"
+          ],
+          "away": [
+            "Jeroen Cortooms"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Mascha Broekmeijer-Derks",
+            "Rick Bongaerts"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen",
+            "Maarten Hout"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Brian Schampers",
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Frits Bijsterveld",
+            "Bart van Lieshout"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Mitch Schampers",
+            "Ben Broekmeijer"
+          ],
+          "away": [
+            "Patrick Bakens",
+            "Richard Peeters"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Mascha Broekmeijer-Derks",
+            "Rick Bongaerts",
+            "Marco Zeitzen"
+          ],
+          "away": [
+            "Natascha Bijsterveld - Ceelen",
+            "Patrick Bakens",
+            "Richard Peeters"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Mitch Schampers",
+            "Brian Schampers",
+            "Alex van der Meer"
+          ],
+          "away": [
+            "Maarten Hout",
+            "Jeroen Cortooms",
+            "Bart van Lieshout"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "triplette-2",
+          "side": "away",
+          "out": "Maarten Hout",
+          "in": "Frits Bijsterveld"
+        }
+      ]
+    }
   },
   {
     "id": "official-200113",
@@ -972,7 +2396,122 @@
         "homeScore": 13,
         "awayScore": 7
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200113.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Roby van Rooijen"
+          ],
+          "away": [
+            "Monique Steijn"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Johan Mol"
+          ],
+          "away": [
+            "Marco van Steenbrugge"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Ruud Vork"
+          ],
+          "away": [
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Simon Vogelaar"
+          ],
+          "away": [
+            "Rob Kalisvaart"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Peter van den Ouweland"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Joey Dijkstra"
+          ],
+          "away": [
+            "Paul Plasmeijer"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Roby van Rooijen",
+            "Simon Vogelaar"
+          ],
+          "away": [
+            "Monique Steijn",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Joey Dijkstra",
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Marco van Steenbrugge",
+            "Rob Kalisvaart"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Johan Mol",
+            "Ruud Vork"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Frans de Nijs"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Roby van Rooijen",
+            "Simon Vogelaar",
+            "Wolter Verhoeven"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Monique Steijn",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Johan Mol",
+            "Ruud Vork",
+            "Joey Dijkstra"
+          ],
+          "away": [
+            "Paul Plasmeijer",
+            "Marco van Steenbrugge",
+            "Rob Kalisvaart"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Roby van Rooijen",
+          "in": "Celine Stritzko"
+        }
+      ]
+    }
   },
   {
     "id": "official-200114",
@@ -1047,7 +2586,128 @@
         "homeScore": 13,
         "awayScore": 8
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200114.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Monique Bakker"
+          ],
+          "away": [
+            "Maaike Hooijmaijers"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Sander Beukers"
+          ],
+          "away": [
+            "Nino Naso"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Herman Soppe"
+          ],
+          "away": [
+            "Noelle Viguurs"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Tom van Maanen"
+          ],
+          "away": [
+            "Marcel Hazenberg"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Frank Veenstra"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Cees Wubben"
+          ],
+          "away": [
+            "Daniël van Mourik"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Chantal de Vries",
+            "Jesper Eersel"
+          ],
+          "away": [
+            "Dyonne van der Meijden",
+            "Daniël van Mourik"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Arnold Steiger",
+            "Tom van Maanen"
+          ],
+          "away": [
+            "Noelle Viguurs",
+            "Joop van Eijndhoven"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Monique Bakker",
+            "Sander Beukers"
+          ],
+          "away": [
+            "Marcel Hazenberg",
+            "Nino Naso"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Chantal de Vries",
+            "Cees Wubben",
+            "Herman Soppe"
+          ],
+          "away": [
+            "Maaike Hooijmaijers",
+            "Daniël van Mourik",
+            "Nino Naso"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Arnold Steiger",
+            "Sander Beukers",
+            "Tom van Maanen"
+          ],
+          "away": [
+            "Marcel Hazenberg",
+            "Frank Veenstra",
+            "Joop van Eijndhoven"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Herman Soppe",
+          "in": "Jesper Eersel"
+        },
+        {
+          "slotId": "triplette-2",
+          "side": "away",
+          "out": "Frank Veenstra",
+          "in": "Dyonne van der Meijden"
+        }
+      ]
+    }
   },
   {
     "id": "official-200115",
@@ -1122,7 +2782,122 @@
         "homeScore": 8,
         "awayScore": 13
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200115.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen"
+          ],
+          "away": [
+            "Hannah Warringa"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Osman Jibril"
+          ],
+          "away": [
+            "Brian Schampers"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Cas Schellekens"
+          ],
+          "away": [
+            "Ben Broekmeijer"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Xander Steijns"
+          ],
+          "away": [
+            "Mitch Schampers"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Marco Zeitzen"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Patrick Lautenslager"
+          ],
+          "away": [
+            "Rick Bongaerts"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Hannah Warringa",
+            "Rick Bongaerts"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Osman Jibril",
+            "Patrick Lautenslager"
+          ],
+          "away": [
+            "Mitch Schampers",
+            "Brian Schampers"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Cas Schellekens",
+            "Xander Steijns"
+          ],
+          "away": [
+            "Alex van der Meer",
+            "Marco Zeitzen"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Osman Jibril",
+            "Xander Steijns"
+          ],
+          "away": [
+            "Hannah Warringa",
+            "Rick Bongaerts",
+            "Marco Zeitzen"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Cas Schellekens",
+            "Didier Viguurs",
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Mitch Schampers",
+            "Brian Schampers",
+            "Ben Broekmeijer"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "away",
+          "out": "Hannah Warringa",
+          "in": "Mascha Broekmeijer-Derks"
+        }
+      ]
+    }
   },
   {
     "id": "official-200116",
@@ -1197,6 +2972,121 @@
         "homeScore": 13,
         "awayScore": 8
       }
-    ]
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200116.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen"
+          ],
+          "away": [
+            "Ria van der Heijden-Dekker"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Maarten Hout"
+          ],
+          "away": [
+            "Marco Wouters"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Frits Bijsterveld"
+          ],
+          "away": [
+            "Myrthe Adriaanse"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Patrick Bakens"
+          ],
+          "away": [
+            "Piet Robijn"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Joey Ras"
+          ],
+          "away": [
+            "Ronald Adriaanse"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Jeroen Adriaanse"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen",
+            "Joey Ras"
+          ],
+          "away": [
+            "Marco Wouters",
+            "Ria van der Heijden-Dekker"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Richard Peeters",
+            "Jeroen Cortooms"
+          ],
+          "away": [
+            "Piet Robijn",
+            "Myrthe Adriaanse"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Patrick Bakens",
+            "Frits Bijsterveld"
+          ],
+          "away": [
+            "Jeroen Adriaanse",
+            "Ronald Adriaanse"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen",
+            "Maarten Hout",
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Marco Wouters",
+            "Piet Robijn",
+            "Myrthe Adriaanse"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Patrick Bakens",
+            "Jeroen Cortooms",
+            "Joey Ras"
+          ],
+          "away": [
+            "Ria van der Heijden-Dekker",
+            "Jeroen Adriaanse",
+            "Ronald Adriaanse"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-2",
+          "side": "home",
+          "out": "Jeroen Cortooms",
+          "in": "Willie Lieshout"
+        }
+      ]
+    }
   }
 ]

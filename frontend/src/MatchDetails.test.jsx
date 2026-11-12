@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MatchDetails from './MatchDetails';
-import playerLineups from './playerLineups.json';
+import officialResults from '../../backend/data/matches-1001.json';
 import { GAME_SLOTS, SCORE_FORMAT } from '../../backend/domain/scoring.js';
 
 beforeEach(() => {
@@ -58,7 +58,7 @@ describe('dedicated detailed score entry', () => {
   });
 
   it('shows Excel player pairs on one line and substitutions below their original pairing', () => {
-    render(<MatchDetails {...props()} playerLineup={playerLineups['100116']} />);
+    render(<MatchDetails {...props()} playerLineup={officialResults.find((row) => row.matchId === '100116').playerLineup} />);
     const homeSubstitutionPair = screen.getByText('Jeroen Brinks-Daniël Adriaan van Dam');
     const awaySubstitutionPair = screen.getByText('Ferdinand Wiese-Romulo van Stockum');
     const homeSubstitution = screen.getByText('Wissel thuis: Jeroen Brinks → Chantal Brinks-Kamphuis');

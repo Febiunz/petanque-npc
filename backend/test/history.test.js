@@ -64,3 +64,43 @@ test('safe enrichment retains extra records, metadata, dates and already-detaile
   const differentGames = games.map((game) => ({ ...game, homeScore: game.homeScore === 13 ? 13 : 0, awayScore: game.awayScore === 13 ? 13 : 0 }));
   assert.throws(() => enrichResults([{ ...detailed, games: differentGames }], staged, fixtures, '1001'), /Detailed conflict/);
 });
+
+test('all official game lineups have complete names, mapped substitutions and source hashes', async () => {
+  const provenance = await json('../history/provenance.json');
+  let count = 0;
+  for (const pool of ['1001', '2001', '2002']) {
+    const records = await json(`../data/matches-${pool}.json`);
+    for (const record of records) {
+      const lineup = record.playerLineup;
+      const source = provenance.pools[pool].matches.find((row) => row.matchId === record.matchId);
+      assert.equal(lineup.source, source.workbookUrl);
+      assert.equal(createHash('sha256').update(JSON.stringify(lineup)).digest('hex'), source.playerLineupSha256);
+      assert.deepEqual(Object.keys(lineup.games), record.games.map((game) => game.slotId));
+      for (const { slotId } of record.games) {
+        const size = slotId.startsWith('tete-') ? 1 : slotId.startsWith('doublette-') ? 2 : 3;
+        for (const side of ['home', 'away']) {
+          const names = lineup.games[slotId][side];
+          assert.equal(names.length, size, `${record.matchId} ${slotId} ${side}`);
+          assert.ok(names.every((name) => typeof name === 'string' && name.trim() && !name.startsWith('#')));
+        }
+        count++;
+      }
+      for (const substitution of lineup.substitutions) {
+        assert.ok(lineup.games[substitution.slotId][substitution.side].includes(substitution.out));
+        assert.ok(substitution.in);
+      }
+    }
+  }
+  assert.equal(count, 506);
+  const top = await json('../data/matches-1001.json');
+  assert.deepEqual(top.find((row) => row.matchId === '100101').playerLineup.games['doublette-3'].away, ['Ad Wagenaars', 'Dennis Bakker']);
+  const second = await json('../data/matches-2001.json');
+  const corrected = second.find((row) => row.matchId === '200103').playerLineup;
+  assert.deepEqual(corrected.games['tete-2'].home, ['Osman Jibril']);
+  assert.ok(corrected.games['doublette-2'].home.includes('Osman Jibril'));
+  assert.ok(corrected.games['triplette-2'].home.includes('Osman Jibril'));
+  const other = await json('../data/matches-2002.json');
+  assert.deepEqual(other.find((row) => row.matchId === '200213').playerLineup.unassignedSubstitutions, [
+    { type: 'doublette', side: 'away', out: null, in: 'Elout Visser' },
+  ]);
+});

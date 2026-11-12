@@ -1,10 +1,10 @@
 {
   "season": "2026-2027",
-  "retrievedAt": "2026-11-11T12:40:11.216474+00:00",
+  "retrievedAt": "2026-11-12T11:34:09.242056+00:00",
   "pools": {
     "1001": {
       "pageUrl": "https://nlpetanque.nl/topdivisie-2026-2027-1001/",
-      "pageSha256": "a750a19c5c2ced0e104205a665b424d67aa7968d4ac5585b3c01bff6aed983d1",
+      "pageSha256": "f4e22525eb1bd39d300cb9656e65d34cf58a01065e5ae5b229d9b561d0efa2cc",
       "coverage": {
         "publishedCompletedCount": 14,
         "validatedCount": 14,
@@ -23,7 +23,18 @@
             127
           ],
           "metadataSha256": "3f721edb5655280e7361dcbf698e2052427df5509dcee12e6f1d54d757eec3b2",
-          "gamesSha256": "ac61dcba95e9f642c6997004c438d7ff6ecc1418afe077a48591e283b06e9992"
+          "gamesSha256": "ac61dcba95e9f642c6997004c438d7ff6ecc1418afe077a48591e283b06e9992",
+          "playerLineupSha256": "40820242b6281e73c66e5df947c0b0adf5044410fa89afbeacf012adb270141f",
+          "playerNameResolutions": [
+            {
+              "slotId": "doublette-3",
+              "side": "away",
+              "cell": "I48",
+              "name": "Dennis Bakker",
+              "sourceCell": "C30",
+              "sourceWorkbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100112.xlsx"
+            }
+          ]
         },
         {
           "matchId": "100102",
@@ -36,7 +47,8 @@
             112
           ],
           "metadataSha256": "956057629754511c11fa276a49c2e18917940a2cc0a6684e0dd92051db9c6d32",
-          "gamesSha256": "d81aa3335f5251d64c56d874f57ecd727a15a3374e546786889950dbae8fb667"
+          "gamesSha256": "d81aa3335f5251d64c56d874f57ecd727a15a3374e546786889950dbae8fb667",
+          "playerLineupSha256": "b3062f59d20b18be80772c3ec73b4cee0137ca772937cee8dc8e651c27442222"
         },
         {
           "matchId": "100103",
@@ -49,7 +61,8 @@
             96
           ],
           "metadataSha256": "1b4615806ae707856ef511d857b594fb26fadfe58f2dd393809a530db2f315fd",
-          "gamesSha256": "6a921f39eb39bede7bbde57e487a6149356bf4cb06d8bfd589be4bead27f1850"
+          "gamesSha256": "6a921f39eb39bede7bbde57e487a6149356bf4cb06d8bfd589be4bead27f1850",
+          "playerLineupSha256": "084ac383fd37a625dd082a08421bf46866401618d0bf288f5ecc2037c0db2d15"
         },
         {
           "matchId": "100104",
@@ -62,7 +75,8 @@
             129
           ],
           "metadataSha256": "af7dc377b5d0c9d1d514db6194e9449f6b07b1497715d50ce63ef17c06ac232d",
-          "gamesSha256": "30d6fb231c510bcfca35c562fb57e73e4fa5e519b3c9092e0599a247a29d2f03"
+          "gamesSha256": "30d6fb231c510bcfca35c562fb57e73e4fa5e519b3c9092e0599a247a29d2f03",
+          "playerLineupSha256": "a29da64d5285a65aad539be20dd97a8267db7e8edadf415f05041efa4bb0bfd1"
         },
         {
           "matchId": "100105",
@@ -75,7 +89,8 @@
             60
           ],
           "metadataSha256": "c6fc9541013aa0580ecb50659e8410ec7a3bb6e31b3f073d89d9c277bc789dd2",
-          "gamesSha256": "c5b684835632cc210e60c9fdf6512c7a6437856979abdcf65bc676f436c5706b"
+          "gamesSha256": "c5b684835632cc210e60c9fdf6512c7a6437856979abdcf65bc676f436c5706b",
+          "playerLineupSha256": "0b4202f5581b22c1b1896520e1a9c69a228f5eb579b3a5f8341f49c1ede28f56"
         },
         {
           "matchId": "100108",
@@ -88,7 +103,8 @@
             103
           ],
           "metadataSha256": "9966524f20a85584593df259b64dd66a215d74a79f4860332bc5df964211d0cf",
-          "gamesSha256": "490c9a888c421cddff9456544eb38dd755eff70566f2925eec4f0ead5fb96ae1"
+          "gamesSha256": "490c9a888c421cddff9456544eb38dd755eff70566f2925eec4f0ead5fb96ae1",
+          "playerLineupSha256": "c6cab72ec11f54b98ae1e409a4f5fb7c5ec2bd5901926c866d85c11cc6fd1b0a"
         },
         {
           "matchId": "100109",
@@ -101,7 +117,8 @@
             101
           ],
           "metadataSha256": "112263e44a2974d8d0c366d5df02b9f62a462f8762d44bc65bbc785b979acd51",
-          "gamesSha256": "f6d80504bf1eca24d8cd644f649e7bb3ad5292212221d630edbf0faad61fe541"
+          "gamesSha256": "f6d80504bf1eca24d8cd644f649e7bb3ad5292212221d630edbf0faad61fe541",
+          "playerLineupSha256": "e322bfb8cac235df65f0b162ed3a38ed44d9a439f52388e8723a03303052e689"
         },
         {
           "matchId": "100110",
@@ -114,7 +131,8 @@
             124
           ],
           "metadataSha256": "d06e95a826dcdb2ed2633f2ea83b7935710ab90a639c3ea868b9de9b928a0cf8",
-          "gamesSha256": "cd3fbc696312117a7ddadbad2027ac8fefa78531770792b7f9807145590a6c57"
+          "gamesSha256": "cd3fbc696312117a7ddadbad2027ac8fefa78531770792b7f9807145590a6c57",
+          "playerLineupSha256": "4d31748a22bebd01d7afb5e9a9784e3663132699bf82da733bd96d2ecb1c2315"
         },
         {
           "matchId": "100111",
@@ -127,7 +145,8 @@
             122
           ],
           "metadataSha256": "4abe3a03a6151ee495ce20c3580d327ca6a701f073c837e6619519b0096f9912",
-          "gamesSha256": "a39b7c47d3aafe47d3c6bc720a9b3c78885472186cd03721d1088e311a48b63f"
+          "gamesSha256": "a39b7c47d3aafe47d3c6bc720a9b3c78885472186cd03721d1088e311a48b63f",
+          "playerLineupSha256": "cc2048ef20b0e66b3956a7f35e903b83cf6227619670d8fe0f021cad9f1e1148"
         },
         {
           "matchId": "100112",
@@ -140,7 +159,8 @@
             91
           ],
           "metadataSha256": "bcd3bf7527644f9725c945367d32ab65517452f6f9f94a9217f4d5641a4e0ec7",
-          "gamesSha256": "f2ea70820225f3b7089591b8168dfc4664bd07d1c2b3939b0e85f22c5e38b8f2"
+          "gamesSha256": "f2ea70820225f3b7089591b8168dfc4664bd07d1c2b3939b0e85f22c5e38b8f2",
+          "playerLineupSha256": "d6601b1550ac4937c9caa01c7591bce75143147bf397d789321b0ad54d1be05d"
         },
         {
           "matchId": "100113",
@@ -153,7 +173,8 @@
             137
           ],
           "metadataSha256": "876ea40cf1d32392253b653372a939ecf1717a45b928928550f79312c5e42a20",
-          "gamesSha256": "4217a6890d7c1bcfe485844593382875b0c226a644120cbc00e96717914cc6c8"
+          "gamesSha256": "4217a6890d7c1bcfe485844593382875b0c226a644120cbc00e96717914cc6c8",
+          "playerLineupSha256": "15ed80517b67c8c3bf0e944fbd5babb2175319a96cb7d7e7ab60838aec7f4746"
         },
         {
           "matchId": "100114",
@@ -166,7 +187,8 @@
             106
           ],
           "metadataSha256": "c4a67fff7342141482b740caae151afd8ad1a9da9a81aac7af3d3fd030f4399f",
-          "gamesSha256": "1ca35a3fe17442bb058d2c042851be34a23643f5baff0b83ceecf69916d150e4"
+          "gamesSha256": "1ca35a3fe17442bb058d2c042851be34a23643f5baff0b83ceecf69916d150e4",
+          "playerLineupSha256": "b95d5cdd6fec662aab50c6267d2cb097012c593860c628298712b80f0ea2c52f"
         },
         {
           "matchId": "100115",
@@ -179,7 +201,8 @@
             143
           ],
           "metadataSha256": "db44783d0ad9e131cfb9a7446fc335c21a87ce9fe2f7897f357c2d9861363e5b",
-          "gamesSha256": "93bc3bb31854c4b43f61cacb4716a9c2b94c3068faf0f8f10506af6fd78abead"
+          "gamesSha256": "93bc3bb31854c4b43f61cacb4716a9c2b94c3068faf0f8f10506af6fd78abead",
+          "playerLineupSha256": "6a2513a43d1ad4171d3870f66a833d3d0ab217f8f19e8e860bf6d382203c9eb1"
         },
         {
           "matchId": "100116",
@@ -192,13 +215,59 @@
             102
           ],
           "metadataSha256": "9e62c6d16e17672acf566518eb30b58b5504146da738761492d8df7a07282782",
-          "gamesSha256": "e412e7635cbbfc649dada62fb2c078a285b0a63de414c1300abd6dd49fd2807c"
+          "gamesSha256": "e412e7635cbbfc649dada62fb2c078a285b0a63de414c1300abd6dd49fd2807c",
+          "playerLineupSha256": "69855f87fdf809724b1ce99971300784617459dc3b674ffbf2feb704c2b2363c"
         }
+      ],
+      "standingsVerified": true,
+      "unavailableWorkbookMatchIds": [
+        "100106",
+        "100107",
+        "100117",
+        "100118",
+        "100119",
+        "100120",
+        "100121",
+        "100122",
+        "100123",
+        "100124",
+        "100125",
+        "100126",
+        "100127",
+        "100128",
+        "100129",
+        "100130",
+        "100131",
+        "100132",
+        "100133",
+        "100134",
+        "100135",
+        "100136",
+        "100137",
+        "100138",
+        "100139",
+        "100140",
+        "100141",
+        "100142",
+        "100143",
+        "100144",
+        "100145",
+        "100146",
+        "100147",
+        "100148",
+        "100149",
+        "100150",
+        "100151",
+        "100152",
+        "100153",
+        "100154",
+        "100155",
+        "100156"
       ]
     },
     "2001": {
       "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2001/",
-      "pageSha256": "81604c43906f275f81f80bd04fac0ee0ab68781fbb28369982aae14cccd63659",
+      "pageSha256": "39dc0aa0470c5d8ec0722ec8ed74031b241f7ccbeda75bc0a3267d0cd88df8dd",
       "coverage": {
         "publishedCompletedCount": 16,
         "validatedCount": 16,
@@ -217,7 +286,8 @@
             123
           ],
           "metadataSha256": "f16777ef408e9a2291334dd28dab50b8aeb429aee09039e90c09503c25684335",
-          "gamesSha256": "f3270a287932bcf2cc17f57edc22d37646914576f506b7e868c5894f1a59a1aa"
+          "gamesSha256": "f3270a287932bcf2cc17f57edc22d37646914576f506b7e868c5894f1a59a1aa",
+          "playerLineupSha256": "c6b1ae635460a317efd50cee3c582efca0538591583000addbfe5f6929982229"
         },
         {
           "matchId": "200102",
@@ -230,7 +300,8 @@
             98
           ],
           "metadataSha256": "dfb007d9a50a9c024d509ca7b5522171c2897e1da8c313361f700986210f6745",
-          "gamesSha256": "810c1e561fa8f734d2740dd106616d71ed2a9bc87f4b66881dfd1ca4241c6a1d"
+          "gamesSha256": "810c1e561fa8f734d2740dd106616d71ed2a9bc87f4b66881dfd1ca4241c6a1d",
+          "playerLineupSha256": "9f5ba943085dec8e013f639f5d4912a3924b594aaa981c80a273ffcdcba42406"
         },
         {
           "matchId": "200103",
@@ -243,7 +314,34 @@
             86
           ],
           "metadataSha256": "80db5017c67b56dd6e21d2a45b6f65c26c41241b0d7e1a75e69e2c7d694b0209",
-          "gamesSha256": "0ef1cc0b02368ba4cc4833cf887a7d5ab15ad53bbea2e1d608467d18ee3f4710"
+          "gamesSha256": "0ef1cc0b02368ba4cc4833cf887a7d5ab15ad53bbea2e1d608467d18ee3f4710",
+          "playerLineupSha256": "cdd65f71832734999a5092bec0f0c6350486e977df1f48ff98c4a22992fd50e8",
+          "playerNameResolutions": [
+            {
+              "slotId": "tete-2",
+              "side": "home",
+              "cell": "C21",
+              "name": "Osman Jibril",
+              "sourceCell": "I21",
+              "sourceWorkbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200105.xlsx"
+            },
+            {
+              "slotId": "doublette-2",
+              "side": "home",
+              "cell": "C44",
+              "name": "Osman Jibril",
+              "sourceCell": "I21",
+              "sourceWorkbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200105.xlsx"
+            },
+            {
+              "slotId": "triplette-2",
+              "side": "home",
+              "cell": "C70",
+              "name": "Osman Jibril",
+              "sourceCell": "I21",
+              "sourceWorkbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200105.xlsx"
+            }
+          ]
         },
         {
           "matchId": "200104",
@@ -256,7 +354,8 @@
             132
           ],
           "metadataSha256": "13f29c0ff7d04727537031d92f8ab779bf7f28c179402ba27c01938e163089b4",
-          "gamesSha256": "7fc8e3b861c1d4d0c24988986ecaa017d772a3196b476e8ecf124029a7fd9f30"
+          "gamesSha256": "7fc8e3b861c1d4d0c24988986ecaa017d772a3196b476e8ecf124029a7fd9f30",
+          "playerLineupSha256": "385e1db755ee383d02ca820d8fa7679ae3a991f90773352c34d9dd0a97c98a3d"
         },
         {
           "matchId": "200105",
@@ -269,7 +368,8 @@
             127
           ],
           "metadataSha256": "dbe58304ad05bb82b1b0bddd8f491456353bdb5fbc35eb68c7562bf50b925b83",
-          "gamesSha256": "a5cadeda021e07c014aa5fd14ad1d53b0f3753a6c1f1636f98cf023ad694f589"
+          "gamesSha256": "a5cadeda021e07c014aa5fd14ad1d53b0f3753a6c1f1636f98cf023ad694f589",
+          "playerLineupSha256": "6f90b9006c4e490aa4eec37e63f00b7be91c9ed95f166df0c7b659e8fed82140"
         },
         {
           "matchId": "200106",
@@ -282,7 +382,8 @@
             126
           ],
           "metadataSha256": "14c7a8781b750e4516b96c95dbf11dd5b5d3bb08d32ba28b17de92eb789d0e11",
-          "gamesSha256": "95c8af31690e9dab0e4cfa505b00c7aca242dcd6adeac8fd75556254e28c2077"
+          "gamesSha256": "95c8af31690e9dab0e4cfa505b00c7aca242dcd6adeac8fd75556254e28c2077",
+          "playerLineupSha256": "a8e4ed57a75bda4317b7ba3bb058537037a3f9e6a3718c9c470dc944c06ffb1b"
         },
         {
           "matchId": "200107",
@@ -295,7 +396,8 @@
             100
           ],
           "metadataSha256": "978801248d27e7c22d1deee62c60c9d0fa0012d80c90008119f2a04223e80cb0",
-          "gamesSha256": "74b23f89106cc00416f51c5ecc9207750612c97435eaf165e057591858071d55"
+          "gamesSha256": "74b23f89106cc00416f51c5ecc9207750612c97435eaf165e057591858071d55",
+          "playerLineupSha256": "e75f2f79af4577f003807196e02d845965cbd87de2adebabbe8ed2306d76b6ec"
         },
         {
           "matchId": "200108",
@@ -308,7 +410,8 @@
             94
           ],
           "metadataSha256": "79f37d00afb2eaede671ff1d0c9bd0bc94fb5dc1e2592b0dd65748046c853a82",
-          "gamesSha256": "55847a5765b787e18e85529ecd08057c3e62497c3a0672fe47c0d083b7f1070a"
+          "gamesSha256": "55847a5765b787e18e85529ecd08057c3e62497c3a0672fe47c0d083b7f1070a",
+          "playerLineupSha256": "1723579d482467875d0b9e05a82fb0c49c30544f981d519efab674409c0372bc"
         },
         {
           "matchId": "200109",
@@ -321,7 +424,8 @@
             87
           ],
           "metadataSha256": "9b6d5cf32cd40c3054d317dff5b6c7885a1981e9bb031507a0ca50dd196dfc77",
-          "gamesSha256": "6ac445088615adeed9d6a88cdd941c0523e987574209f9c3ec12f59d4ae54a3b"
+          "gamesSha256": "6ac445088615adeed9d6a88cdd941c0523e987574209f9c3ec12f59d4ae54a3b",
+          "playerLineupSha256": "b4ebdb57ff04ec78201eae84b3b26a1ee1fba866293bd2ad4f9c2652e5a7442a"
         },
         {
           "matchId": "200110",
@@ -334,7 +438,8 @@
             78
           ],
           "metadataSha256": "f24c815b933d366d007d65b2813ca19e1b966a01196fcad3cd5c7cad13eab295",
-          "gamesSha256": "4f605e1d29dc37bbd013d33dade86f2f17e5988a97400084cf05403ce281a20b"
+          "gamesSha256": "4f605e1d29dc37bbd013d33dade86f2f17e5988a97400084cf05403ce281a20b",
+          "playerLineupSha256": "b97e5cb7ab04663df66d009132181f1112e3ca1e722a421f0bd10a9b37565bb5"
         },
         {
           "matchId": "200111",
@@ -347,7 +452,8 @@
             118
           ],
           "metadataSha256": "281a6739e711c17c5194716bd9e2c8706aa93217a82420be1e717cdb4e82da00",
-          "gamesSha256": "50ece8eae626ea52651828d3eb5e9ff09000fca49a0d39dbbc4ba8ae8a57fe84"
+          "gamesSha256": "50ece8eae626ea52651828d3eb5e9ff09000fca49a0d39dbbc4ba8ae8a57fe84",
+          "playerLineupSha256": "f0bbfc1e18b04df84fb583633c71afef1f3618e4a286142e770e1b713a65e450"
         },
         {
           "matchId": "200112",
@@ -360,7 +466,8 @@
             106
           ],
           "metadataSha256": "33d7907a96de8494e66bc0257209c6234865584204f365f36eef5ae7378350aa",
-          "gamesSha256": "2825dd8bc8d6f1bef6176c42444b7606086d1980870b4fd62d2245e23b1798f3"
+          "gamesSha256": "2825dd8bc8d6f1bef6176c42444b7606086d1980870b4fd62d2245e23b1798f3",
+          "playerLineupSha256": "eebb9672a3ce6797e7a1f3b6be3f30f72436a41b1e59336d43c026115df5b8b2"
         },
         {
           "matchId": "200113",
@@ -373,7 +480,8 @@
             77
           ],
           "metadataSha256": "3d52c15eb9e28d00e7bab8b12fb184d5fa5a92055e69c9bc555074c5525e159f",
-          "gamesSha256": "7254c2789a7f5957f68cd87d99d6503db5e4cd03e62573980ace19bd1c47ec19"
+          "gamesSha256": "7254c2789a7f5957f68cd87d99d6503db5e4cd03e62573980ace19bd1c47ec19",
+          "playerLineupSha256": "4fbb06c864b31fd71d2b2039d52c55f2601b513944aab5454a8b6189cd6d2596"
         },
         {
           "matchId": "200114",
@@ -386,7 +494,8 @@
             88
           ],
           "metadataSha256": "c5984701714fc6c9a129fbded19996da545e8e8efd6a1477941f3c0a5aba4b46",
-          "gamesSha256": "7238f5f9e5df59406dd63e253118780aa3775030eb8ba06abfd6b046294a0b7b"
+          "gamesSha256": "7238f5f9e5df59406dd63e253118780aa3775030eb8ba06abfd6b046294a0b7b",
+          "playerLineupSha256": "70cc262b75b496a7dca98a328b111dec048c66d24a469a6b66c55cfc5830652b"
         },
         {
           "matchId": "200115",
@@ -399,7 +508,8 @@
             125
           ],
           "metadataSha256": "14514f3be93811f341e23be333b13507961405e8bed0c3ed30d66d2305e888f4",
-          "gamesSha256": "a1b258100e4724828c6dcfa48ff347747392fd6fe76c777b7a97004af66dc2e5"
+          "gamesSha256": "a1b258100e4724828c6dcfa48ff347747392fd6fe76c777b7a97004af66dc2e5",
+          "playerLineupSha256": "405c2d3b9f237166b37e96f4d46fc38bc851340242e6f9945e678e9b764406cd"
         },
         {
           "matchId": "200116",
@@ -412,13 +522,57 @@
             98
           ],
           "metadataSha256": "d709888ac93d9ecb7e25aa4efff71f7540470cb09f827337e1811e9ead74e338",
-          "gamesSha256": "d1bd67b4a9828766cfacd1f04c528022b5f3f3cdbbb2c156f59de945ae0d87b0"
+          "gamesSha256": "d1bd67b4a9828766cfacd1f04c528022b5f3f3cdbbb2c156f59de945ae0d87b0",
+          "playerLineupSha256": "c1c11f69d89949ce1c5a039bef6fb950c7e07ef8737ef5704ddfdac8c3c98dae"
         }
+      ],
+      "standingsVerified": true,
+      "unavailableWorkbookMatchIds": [
+        "200117",
+        "200118",
+        "200119",
+        "200120",
+        "200121",
+        "200122",
+        "200123",
+        "200124",
+        "200125",
+        "200126",
+        "200127",
+        "200128",
+        "200129",
+        "200130",
+        "200131",
+        "200132",
+        "200133",
+        "200134",
+        "200135",
+        "200136",
+        "200137",
+        "200138",
+        "200139",
+        "200140",
+        "200141",
+        "200142",
+        "200143",
+        "200144",
+        "200145",
+        "200146",
+        "200147",
+        "200148",
+        "200149",
+        "200150",
+        "200151",
+        "200152",
+        "200153",
+        "200154",
+        "200155",
+        "200156"
       ]
     },
     "2002": {
       "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2002/",
-      "pageSha256": "53bfb875faaf168964d14cca18eedb38359a516feb65d42ff671120d0390834b",
+      "pageSha256": "20e947c2e19a5ed3264fc57b1fe4ef49c5e823af8f317aae1a805749309f1e0d",
       "coverage": {
         "publishedCompletedCount": 16,
         "validatedCount": 16,
@@ -437,7 +591,8 @@
             105
           ],
           "metadataSha256": "5584a9d8e39fb880538c25023ac8894cf8c62760771e7c418eeea39fe05b3f8b",
-          "gamesSha256": "a71af34eaa09f8cd074f5af378c400151de00e6c9c42d851081d2fb8250497ab"
+          "gamesSha256": "a71af34eaa09f8cd074f5af378c400151de00e6c9c42d851081d2fb8250497ab",
+          "playerLineupSha256": "552747b03ebc7a2eef386cb16169fbc4212c8649a1d2fd51e10ec2ea8bf5b94a"
         },
         {
           "matchId": "200202",
@@ -450,7 +605,8 @@
             85
           ],
           "metadataSha256": "f0386eaf790a991d06408a07b14b30d549ff5983e7f6080f08f36c1bc2ca8e80",
-          "gamesSha256": "021e6a939c0777f0b06fa2da142594628bb95b0502a9a307f6f20427540bf6c7"
+          "gamesSha256": "021e6a939c0777f0b06fa2da142594628bb95b0502a9a307f6f20427540bf6c7",
+          "playerLineupSha256": "2b3443253141d4c5f8825fbbf2a17920cf20929032da05f99696fd47dbc77e5e"
         },
         {
           "matchId": "200203",
@@ -463,7 +619,8 @@
             98
           ],
           "metadataSha256": "7ab817d850ebcf823c2b4ec85057e9db53f2274fc5c79ac36732eb0dd62fecb7",
-          "gamesSha256": "9afefb937a5f5c8c83a0bf0ee24c59cd57e370a22f2137014b48e03235973fd6"
+          "gamesSha256": "9afefb937a5f5c8c83a0bf0ee24c59cd57e370a22f2137014b48e03235973fd6",
+          "playerLineupSha256": "06ae2ee491902060a97ea7b6daf4c1c4e196bc9c68bcc8d91b9961effa52e679"
         },
         {
           "matchId": "200204",
@@ -476,7 +633,8 @@
             129
           ],
           "metadataSha256": "d58b09ef68a70ba82f75bae09c327196420627c17a8f3451c109cda069f95fa0",
-          "gamesSha256": "aa95454e8d0c7710b1b13194931c84eceac7c641b93da248051bc7b0417b9918"
+          "gamesSha256": "aa95454e8d0c7710b1b13194931c84eceac7c641b93da248051bc7b0417b9918",
+          "playerLineupSha256": "625fc0336b7323b129b85bc11335fa9d671f66b01449fb2828275d2c9fd4cf17"
         },
         {
           "matchId": "200205",
@@ -489,7 +647,8 @@
             88
           ],
           "metadataSha256": "555b9488aef66bbad5e43d1ebd1373a14d27ddf00e848ee9ca35ad7cc1e0f075",
-          "gamesSha256": "09a5e4cfa7c36ddcae26c54c38202b65190c236ef6791d6d4697f24f10142660"
+          "gamesSha256": "09a5e4cfa7c36ddcae26c54c38202b65190c236ef6791d6d4697f24f10142660",
+          "playerLineupSha256": "d0c3dc17bdcbb7309fbc6427b798739dcf7bc66efed57ce06adb2b2a66ac997e"
         },
         {
           "matchId": "200206",
@@ -502,7 +661,8 @@
             113
           ],
           "metadataSha256": "e51447e8cb89e0e1cb10378fa11436ddb896feb8e3fac4065665f39ea428df91",
-          "gamesSha256": "08e89ac084c763fb7f6a4e908ad777fd2684b3aabde718d94c9354ecf3c6fb29"
+          "gamesSha256": "08e89ac084c763fb7f6a4e908ad777fd2684b3aabde718d94c9354ecf3c6fb29",
+          "playerLineupSha256": "43c60a339679685867b0f099be3b496270193f053200928fdff58d635f4e7609"
         },
         {
           "matchId": "200207",
@@ -515,7 +675,8 @@
             114
           ],
           "metadataSha256": "bcd565a08adee6e448201a0aca7db6312ffc5c1dfbe64028669ba387a7fb2f53",
-          "gamesSha256": "1c134d6e38184b7966d8dfdb0dd384d12db8dc58d35efe65afbf6966a977a138"
+          "gamesSha256": "1c134d6e38184b7966d8dfdb0dd384d12db8dc58d35efe65afbf6966a977a138",
+          "playerLineupSha256": "1cbb48f60de007940e9c408e408ff219f190c8b5e1297cac73323ec154067552"
         },
         {
           "matchId": "200208",
@@ -528,7 +689,8 @@
             115
           ],
           "metadataSha256": "d05e051eb3a80410ef622c4dffb5ed78fc253ea7b648c8095d122d9a8e1c94bd",
-          "gamesSha256": "9409cf5f2958f664f12a717418e589184fda2bef82eecca3a1987f60f4f8eabc"
+          "gamesSha256": "9409cf5f2958f664f12a717418e589184fda2bef82eecca3a1987f60f4f8eabc",
+          "playerLineupSha256": "3f388f4d8999a5774a2f8a23da7899be827253bcbe3e717e7f4b36ebc5b691be"
         },
         {
           "matchId": "200209",
@@ -541,7 +703,8 @@
             123
           ],
           "metadataSha256": "8e6ff88614dee99be76c7e9f9543de2a2ad3d35ed946f8f138ed952f69e501aa",
-          "gamesSha256": "1a67c4bced3edaf7cef3d834bf2ce6bc6adef12c857f44cfa50b38e8eaf3fea8"
+          "gamesSha256": "1a67c4bced3edaf7cef3d834bf2ce6bc6adef12c857f44cfa50b38e8eaf3fea8",
+          "playerLineupSha256": "8d818b928a3fa48ef901708c72147c1586e7ca0d3811bd2da9025feecc04f1f5"
         },
         {
           "matchId": "200210",
@@ -554,7 +717,8 @@
             118
           ],
           "metadataSha256": "0a32e255342ba9ae8a142bba1225af18c1fe927677fa757d05dbed3d59b5ab7b",
-          "gamesSha256": "3a38d9c4db9e92741bea0a09061ac22332463626b0d1b4087e8a2c7a4791789a"
+          "gamesSha256": "3a38d9c4db9e92741bea0a09061ac22332463626b0d1b4087e8a2c7a4791789a",
+          "playerLineupSha256": "a5ee230a85f98798db2ca82bb8318a92c28e999a117245c29904515b0721df45"
         },
         {
           "matchId": "200211",
@@ -567,7 +731,8 @@
             133
           ],
           "metadataSha256": "f18476d8483f6f4edff412171e2fa4c561de88c57ebabbae0dcf16d12218902e",
-          "gamesSha256": "d9307e0515aa61cca17bdcda574830fcf7720c5bc8387eef1d43d285ffa836ea"
+          "gamesSha256": "d9307e0515aa61cca17bdcda574830fcf7720c5bc8387eef1d43d285ffa836ea",
+          "playerLineupSha256": "ea836e8180f2d153fcf2faa738b2bbf15bdef404dba75a56fd2651143fb8ecc0"
         },
         {
           "matchId": "200212",
@@ -580,7 +745,8 @@
             102
           ],
           "metadataSha256": "a7753f86c9a37817c9e78e40496495000269ed88a46312b7a84cba70e03a4118",
-          "gamesSha256": "a2f3f2b12ff30a98c6fc61950e3f653f82a900ea42c7ef758df617f910a36539"
+          "gamesSha256": "a2f3f2b12ff30a98c6fc61950e3f653f82a900ea42c7ef758df617f910a36539",
+          "playerLineupSha256": "bf7bfb41cefeb2987a52ac269463bee7cb98f910ecfdcc7105d699b4b4db17c2"
         },
         {
           "matchId": "200213",
@@ -593,7 +759,11 @@
             122
           ],
           "metadataSha256": "9321da912d24e8a8dc59c4c532b0d2d20218ac2212185d747445c15f860a2d55",
-          "gamesSha256": "ae1d6eb43292bebe9a71c56c3dea412f53b1d62f2037a499d9787f8a5bf7fb8a"
+          "gamesSha256": "ae1d6eb43292bebe9a71c56c3dea412f53b1d62f2037a499d9787f8a5bf7fb8a",
+          "playerLineupSha256": "22fac9ad557f79b990c0108bc010c2a4bbb4ebbd4eea9a51609f19bdb3852e11",
+          "notes": [
+            "Away doublette substitution lists Elout Visser as incoming but leaves outgoing blank (I51/I52); retained without assigning a game."
+          ]
         },
         {
           "matchId": "200214",
@@ -606,7 +776,8 @@
             107
           ],
           "metadataSha256": "0c1ec7a45219529fc41cb5b9a9d84dd7431c16015a8fe6a8bcfeb768852a2179",
-          "gamesSha256": "194bd20a7ecd55814b82ff81b85c0f050cba504b43fac41a797ddfe6a95dda26"
+          "gamesSha256": "194bd20a7ecd55814b82ff81b85c0f050cba504b43fac41a797ddfe6a95dda26",
+          "playerLineupSha256": "1f94bef548df74a3382b2d788808fe89d0f1673b1dfddd1bfcaa144acc6a724e"
         },
         {
           "matchId": "200215",
@@ -619,7 +790,8 @@
             121
           ],
           "metadataSha256": "0691b27e54db026064d942a4f2fdc3afa4f86f5ca4fff1e0ccf8c2542593351d",
-          "gamesSha256": "f37f80c6c18208874e1051c52afbd4039401734120aa92af6107bf0b8a516be3"
+          "gamesSha256": "f37f80c6c18208874e1051c52afbd4039401734120aa92af6107bf0b8a516be3",
+          "playerLineupSha256": "30c527283b38c7e7be8ef46515a277d47a07cb2e2e9904b3a4fdbfa92b90f08f"
         },
         {
           "matchId": "200216",
@@ -632,9 +804,72 @@
             74
           ],
           "metadataSha256": "3d391c9a2a51915172bbbe113183146636bff12ec6442a84c54769c1dc939437",
-          "gamesSha256": "18e86f3d5e10f494891e0c698f5d60c7c349c116180277b8df08e3602c278330"
+          "gamesSha256": "18e86f3d5e10f494891e0c698f5d60c7c349c116180277b8df08e3602c278330",
+          "playerLineupSha256": "e78e6fa1196c34611724c0e557bcca8bfea2437be3f4ab66ca0cf7048caba3c3"
         }
+      ],
+      "standingsVerified": true,
+      "unavailableWorkbookMatchIds": [
+        "200217",
+        "200218",
+        "200219",
+        "200220",
+        "200221",
+        "200222",
+        "200223",
+        "200224",
+        "200225",
+        "200226",
+        "200227",
+        "200228",
+        "200229",
+        "200230",
+        "200231",
+        "200232",
+        "200233",
+        "200234",
+        "200235",
+        "200236",
+        "200237",
+        "200238",
+        "200239",
+        "200240",
+        "200241",
+        "200242",
+        "200243",
+        "200244",
+        "200245",
+        "200246",
+        "200247",
+        "200248",
+        "200249",
+        "200250",
+        "200251",
+        "200252",
+        "200253",
+        "200254",
+        "200255",
+        "200256"
       ]
     }
+  },
+  "excelDownloadAudit": {
+    "linkedCount": 171,
+    "downloadedCount": 49,
+    "notFoundCount": 122,
+    "additionalWorkbooks": [
+      {
+        "url": "https://www.nlpetanque.nl/NPC/2025-2026/Rapportage/Rapportageformulier%20NPC.xlsx",
+        "sha256": "5c5deb619fd28993fef48aa1760305d21e49b7bc3f70107cc98e2fd206e900dc"
+      },
+      {
+        "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Divisie%203%20tm%206.xlsx",
+        "sha256": "5131ba3182bde4641212573af069720b849db9e086cd226b670487c8fc3b943d"
+      },
+      {
+        "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Topdivisie%20en%202e%20divisie.xlsx",
+        "sha256": "126a5a505c474edfcf7ae42cd35b8988ed071445ddb4e9a5055837bf61175363"
+      }
+    ]
   }
 }

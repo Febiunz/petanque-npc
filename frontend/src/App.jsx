@@ -5,7 +5,6 @@ import { auth, googleProvider, authAvailable } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import MatchDetails from './MatchDetails';
 import { GAME_SLOTS, isFinishedGame, resultSummary } from '../../backend/domain/scoring.js';
-import playerLineups from './playerLineups.json';
 
 const POOL_OPTIONS = [
   { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
@@ -163,7 +162,6 @@ function App() {
         homeName: teams.find((team) => team.id === selectedFixture.homeTeamId)?.name || selectedFixture.homeTeamId,
         awayName: teams.find((team) => team.id === selectedFixture.awayTeamId)?.name || selectedFixture.awayTeamId,
         result: rows.find((row) => (row.matchId || row.fixtureId) === matchId),
-        playerLineup: playerLineups[matchId] || null,
       });
       setErrorOpen(false);
     } catch (error) {
@@ -214,7 +212,7 @@ function App() {
           </Box>
         </Box>
         {details && errorOpen && <Typography color="error">{errorMsg}</Typography>}
-        {details ? <MatchDetails key={`${details.divisieId}:${details.fixture.id}`} {...details} user={user} authAvailable={authAvailable} onBack={back} onSave={saveDetails} onRefresh={refreshDetails} /> : <>
+        {details ? <MatchDetails key={`${details.divisieId}:${details.fixture.id}`} {...details} playerLineup={details.result?.playerLineup} user={user} authAvailable={authAvailable} onBack={back} onSave={saveDetails} onRefresh={refreshDetails} /> : <>
         {!authAvailable && <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Lokale preview: Firebase niet geconfigureerd. Opslaan vereist aanmelding.</Typography>}
 
   {/* Teams list removed per request; team data is still loaded to show names in match dropdown */}
