@@ -167,7 +167,7 @@ This validates Dependabot dependency updates before anything is deployed to Azur
 
 GitHub Actions workflow is provided at `.github/workflows/azure-deploy.yml`:
 - Backend → Azure App Service via `azure/webapps-deploy` using `AZURE_WEBAPP_PUBLISH_PROFILE`.
-- Backend data → `backend/data/*.json` files are uploaded to container `data` using `AZURE_STORAGE_CONNECTION_STRING`. Result blobs (`matches*.json`) are seed-only: existing live blobs are skipped, and creation uses `--overwrite false`. Teams/schedules retain their existing overwrite policy. Deployments do not erase user results or downgrade detailed sheets to aggregate-only records.
+- Backend data → Every `backend/data/*.json` file is uploaded to container `data` using `AZURE_STORAGE_CONNECTION_STRING` and `--overwrite true`, including results, teams and schedules. Repository data is authoritative during deployment: live results and edits not present in the repository are replaced.
 - Frontend → Azure Static Web Apps via `Azure/static-web-apps-deploy` using `AZURE_STATIC_WEB_APPS_API_TOKEN`.
 
 Secrets to configure (repository or environment secrets):
