@@ -150,12 +150,12 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
               <Typography variant="h6">{group.label}</Typography>
               <Box sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '24px minmax(0, 1fr) 50px 50px 40px', sm: '32px minmax(0, 1fr) 64px 64px 52px' },
+                gridTemplateColumns: { xs: '24px minmax(0, 1fr) 36px 36px 36px', sm: '32px minmax(0, 1fr) 44px 44px 44px' },
                 gap: { xs: 0.5, sm: 1 },
                 alignItems: 'start',
                 mt: 1,
               }}>
-                {['Partij', 'Spelers', 'Thuis', 'Uit', 'Punten'].map((label) => <Typography key={label} variant="caption" fontWeight={600} sx={{ whiteSpace: 'nowrap' }}>{label}</Typography>)}
+                {['Nr.', 'Spelers', 'Thuis', 'Uit', 'Punten'].map((label) => <Typography key={label} variant="caption" fontWeight={600} sx={{ whiteSpace: 'nowrap', textAlign: label === 'Punten' ? 'right' : undefined }}>{label}</Typography>)}
                 {slots.map((slot) => {
                   const game = games.find((row) => row.slotId === slot.slotId);
                   const entered = draft.find((row) => row.slotId === slot.slotId);
@@ -170,13 +170,13 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
                       </Box>
                       {['homeScore', 'awayScore'].map((side) => (
                         <TextField key={side} size="small" value={entered[side]} disabled={saving}
-                          sx={{ minWidth: 0, '& .MuiInputBase-input': { px: 0.75 } }}
+                          sx={{ minWidth: 0, '& .MuiInputBase-input': { px: 0.25 } }}
                           onChange={(event) => changeScore(slot.slotId, side, event.target.value)}
                           inputProps={{ inputMode: 'numeric', 'aria-label': `Partij ${number} ${group.label}, ${side === 'homeScore' ? 'thuis' : 'uit'} score` }}
                           error={invalid}
                           helperText={invalid ? '13 tegen 0-12' : ''} />
                       ))}
-                      <Typography variant="body2" sx={{ pt: 1 }}>{valid ? `${game.homeScore === 13 ? slot.weight : 0} - ${game.awayScore === 13 ? slot.weight : 0}` : '—'}</Typography>
+                      <Typography variant="body2" sx={{ pt: 1, textAlign: 'right' }}>{valid ? `${game.homeScore === 13 ? slot.weight : 0} - ${game.awayScore === 13 ? slot.weight : 0}` : '—'}</Typography>
                     </React.Fragment>
                   );
                 })}
