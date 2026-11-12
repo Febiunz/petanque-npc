@@ -54,6 +54,10 @@ export function buildProvenance(sourceProvenance, imports, previous = {}) {
   for (const [pool, { staged, merged }] of Object.entries(imports)) {
     const source = sourceProvenance.pools[pool];
     const priorPool = previous.pools?.[pool];
+    const stagedIds = new Set(staged.matches.map((record) => record.matchId));
+    if (priorPool?.matches.some((record) => !stagedIds.has(record.matchId))) {
+      throw new Error(`Incomplete staging would discard provenance ${pool}`);
+    }
     provenance.pools[pool] = {
       ...priorPool,
       pageUrl: source.pageUrl,
@@ -62,6 +66,10 @@ export function buildProvenance(sourceProvenance, imports, previous = {}) {
       matches: staged.matches.map((record) => {
         const workbook = source.workbooks.find((row) => row.matchId === record.matchId);
         const target = merged.find((row) => (row.matchId || row.fixtureId) === record.matchId);
+        const priorMatch = priorPool?.matches.find((row) => row.matchId === record.matchId);
+        if (priorMatch?.playerLineupSha256 && !target.playerLineup) {
+          throw new Error(`Previously verified player lineup is missing ${record.matchId}`);
+        }
         const totals = summarizeGames(target.games);
         if (!workbook || workbook.status !== 'validated'
           || JSON.stringify([totals.rawHomeScore, totals.rawAwayScore]) !== JSON.stringify(workbook.officialRawTotals)) {
@@ -78,7 +86,6 @@ export function buildProvenance(sourceProvenance, imports, previous = {}) {
           gamesSha256: createHash('sha256').update(JSON.stringify(target.games)).digest('hex'),
         };
         if (target.playerLineup) {
-          const priorMatch = priorPool?.matches.find((row) => row.matchId === record.matchId);
           const lineupHash = createHash('sha256').update(JSON.stringify(target.playerLineup)).digest('hex');
           if (priorMatch?.workbookSha256 !== workbook.workbookSha256 || priorMatch?.playerLineupSha256 !== lineupHash) {
             throw new Error(`Player lineup provenance must be reverified ${record.matchId}`);
