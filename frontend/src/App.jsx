@@ -4,7 +4,7 @@ import { api } from './api';
 import { auth, googleProvider, authAvailable } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import MatchDetails from './MatchDetails';
-import { resultSummary } from '../../backend/domain/scoring.js';
+import { GAME_SLOTS, isFinishedGame, resultSummary } from '../../backend/domain/scoring.js';
 
 const POOL_OPTIONS = [
   { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
@@ -104,7 +104,10 @@ function App() {
       setTeams(teamRows);
       setStandings(standingsRows);
       setScheduleAll(scheduleRows);
-      setCompletedSet(new Set(submittedRows.map((row) => row.matchId || row.fixtureId).filter(Boolean)));
+      setCompletedSet(new Set(submittedRows
+        .filter((row) => !Array.isArray(row.games) || row.games.length === GAME_SLOTS.length && row.games.every(isFinishedGame))
+        .map((row) => row.matchId || row.fixtureId)
+        .filter(Boolean)));
       setResults(submittedRows);
       setLoaded(true);
       setErrorOpen(false);

@@ -81,16 +81,16 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - `POST /api/matches` - Submit result
   - Body: `{ matchId, divisieId, scoreFormat: "individual-games-v1", games: [{ slotId, homeScore, awayScore }, ...] }`
   - Exactly 11 canonical slots: tete-1..6 (2 points), doublette-1..3 (3 points), triplette-1..2 (5 points)
-  - Raw pairs: exactly one numeric integer 13 and the other integer 0-12; both independently entered
-  - Server derives weighted totals summing to 31 and scheduled fixture identity/date; no aggregate-only submissions
+  - Unplayed pairs have null scores; entered raw pairs have exactly one numeric integer 13 and the other integer 0-12; both are independently entered
+  - Server derives weighted totals and scheduled fixture identity/date; partial results remain provisional and do not affect standings
   - `divisieId` is required and must match the selected pool in the UI
 
 ## Key Business Rules
 
 ### Score Validation
 - Six tete-a-tete, three doublette and two triplette games award 2/3/5 weighted points per win
-- Each raw pair: exactly one 13 and one integer 0-12; raw 1 and 3 are allowed
-- Derive weighted totals from all 11 valid games; 3-28 and 28-3 are valid, only 1/30 are unreachable
+- Each played raw pair: exactly one 13 and one integer 0-12; blank slots use null scores; raw 1 and 3 are allowed
+- Derive weighted totals from entered valid games; partial totals are provisional, and complete totals sum to 31 (3-28 and 28-3 are valid)
 - Preserve distinct raw sums and weighted totals; standings award 2 league points per match win and use weighted saldo
 
 ### Data Integrity
@@ -148,11 +148,11 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - Score inputs start empty
 - All scheduled past/completed/unplayed rounds and fixtures remain selectable
 - Show selected weighted result or explicit unplayed/loading/error status below Wedstrijd beside exact "Details"
-- Dedicated Details screen locks fixture identity; complete results are editable for 14 days after the scheduled date. If still incomplete at that cutoff, the first complete submission starts a fresh 14-day edit window. Expired results are read-only; legacy totals never invent games.
+- Dedicated Details screen locks fixture identity; signed-in users can save partial games and revise results without a timing restriction. Legacy totals never invent games.
 - Two independent raw inputs per game; no auto-complement, clamping or truncation
 - Show left-aligned, single-line cumulative weighted subtotals beside each group's navigation/save controls: tete; tete+doublette; final "Totaal" for all three groups. Do not append a provisional label; omit per-win explanatory labels.
-- Below each game block, Terug opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing actions. Opslaan saves all games and stays on the details screen; completed results remain editable through their applicable deadline, and expired read-only sheets have only Terug.
-- Disable submit until signed in and all 11 pairs valid; guard dirty back/close and in-flight navigation
+- Below each game block, Terug opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing actions. Opslaan saves all 11 slots, including blank unplayed slots, and stays on the details screen.
+- Require sign-in to save; a score pair must be either blank or valid. Guard dirty back/close and in-flight navigation.
 - Preserve selection after save, refresh results/standings, and retain input on save failure
 - Keep upcoming-only filtering separate in Komende wedstrijden
 

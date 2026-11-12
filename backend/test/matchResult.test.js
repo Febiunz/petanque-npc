@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { GAME_SLOTS, SCORE_FORMAT } from '../domain/scoring.js';
 import { submitMatchResult } from '../matchResult.js';
 
-test('preserves an unset scheduled date for result revision checks', async () => {
+test('preserves an unset scheduled date when creating a result', async () => {
   let created;
   const input = {
     matchId: '100117',

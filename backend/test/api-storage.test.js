@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import express from 'express';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { GAME_SLOTS, SCORE_FORMAT } from '../domain/scoring.js';
+import { GAME_SLOTS, SCORE_FORMAT, isFinishedGame } from '../domain/scoring.js';
 
 let dir;
 let server;
@@ -105,15 +105,30 @@ test('HTTP persists and returns server-derived 3-28/28-3 with locked fixture ide
   }
 });
 
+test('HTTP persists partial games without counting the fixture in standings', async () => {
+  const before = await store.computeStandings({ divisieId: '1001' });
+  const body = valid('100123');
+  body.games = body.games.map((game, index) => index === 0
+    ? { ...game, homeScore: 13, awayScore: 1 }
+    : { ...game, homeScore: null, awayScore: null });
+  const response = await post(body);
+  assert.equal(response.status, 201);
+  const saved = await response.json();
+  assert.deepEqual([saved.homeScore, saved.awayScore], [2, 0]);
+  assert.deepEqual(saved.games[0], body.games[0]);
+  assert.ok(saved.games.slice(1).every((game) => game.homeScore === null && game.awayScore === null));
+  assert.deepEqual(await store.computeStandings({ divisieId: '1001' }), before);
+});
+
 test('local write serialization retains different fixtures and updates the same fixture once', async () => {
   const responses = await Promise.all([post(valid('100119')), post(valid('100120')), post(valid('100121')), post(valid('100121'))]);
   assert.deepEqual(responses.map((response) => response.status).sort(), [200, 201, 201, 201]);
   const records = JSON.parse(await fs.readFile(join(dir, 'matches-1001.json'), 'utf8'));
-  assert.equal(records.length, 5);
+  assert.equal(records.length, 6);
   for (const id of ['100119', '100120', '100121']) assert.equal(records.filter((row) => row.matchId === id).length, 1);
 });
 
-test('late submissions can be revised for 14 days, then the server rejects further edits', async () => {
+test('complete results remain editable long after their scheduled date', async () => {
   const first = await post(valid('100101'));
   assert.equal(first.status, 201);
   const created = await first.json();
@@ -133,10 +148,12 @@ test('late submissions can be revised for 14 days, then the server rejects furth
   rows[index].submittedAt = '2026-10-10T12:00:00.000Z';
   await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf8');
   const before = JSON.parse(await fs.readFile(file, 'utf8'));
-  const locked = await post(valid('100101'));
-  assert.equal(locked.status, 409);
-  assert.match((await locked.json()).error, /niet meer worden aangepast/);
-  assert.deepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
+  const revised = await post(valid('100101'));
+  assert.equal(revised.status, 200);
+  const revisedResult = await revised.json();
+  assert.equal(revisedResult.submittedAt, '2026-10-10T12:00:00.000Z');
+  assert.deepEqual(revisedResult.games, valid('100101').games);
+  assert.notDeepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
 });
 
 test('weighted standings retain 2 league points per win, not raw-score or per-game awards', async () => {
@@ -144,7 +161,9 @@ test('weighted standings retain 2 league points per win, not raw-score or per-ga
   const teams = await store.listTeams({ divisieId: '1001' });
   const records = await store.listMatches({ divisieId: '1001' });
   for (const team of teams) {
-    const matches = records.filter((row) => row.homeTeamId === team.id || row.awayTeamId === team.id);
+    const matches = records
+      .filter((row) => row.homeTeamId === team.id || row.awayTeamId === team.id)
+      .filter((row) => !Array.isArray(row.games) || row.games.length === GAME_SLOTS.length && row.games.every(isFinishedGame));
     if (!matches.length) continue;
     const points = matches.reduce((sum, row) => sum + ((row.homeTeamId === team.id ? row.homeScore > row.awayScore : row.awayScore > row.homeScore) ? 2 : 0), 0);
     const saldo = matches.reduce((sum, row) => sum + (row.homeTeamId === team.id ? row.homeScore - row.awayScore : row.awayScore - row.homeScore), 0);

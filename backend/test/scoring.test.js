@@ -49,6 +49,25 @@ test('complete canonical slots, schema and derived totals are mandatory', () => 
   assert.deepEqual(reversed.games, score.games);
 });
 
+test('partial sheets save blank slots and derive provisional totals', () => {
+  const score = sheet();
+  score.games[1].homeScore = null;
+  score.games[1].awayScore = null;
+  score.games[2].homeScore = null;
+  score.games[2].awayScore = null;
+  const partial = validateDetailedScore(score);
+  assert.equal(partial.homeScore + partial.awayScore, 27);
+  assert.deepEqual(partial.games.slice(1, 3), score.games.slice(1, 3));
+  assert.match(resultSummary(partial).label, /voorlopig/);
+  const halfEntered = [...score.games];
+  halfEntered[1] = { ...halfEntered[1], homeScore: 13 };
+  assert.throws(() => validateDetailedScore({ ...score, games: halfEntered }));
+  assert.equal(validateDetailedScore({
+    ...sheet(),
+    games: GAME_SLOTS.map(({ slotId }) => ({ slotId, homeScore: null, awayScore: null })),
+  }).homeScore, 0);
+});
+
 test('unknown, legacy and inconsistent results are distinct; raw totals are secondary', () => {
   assert.equal(resultSummary(null).label, 'Nog geen uitslag');
   assert.equal(resultSummary({ homeScore: 12, awayScore: 19 }).legacy, true);
@@ -80,26 +99,26 @@ test('conditional blob retries retain concurrent different fixtures and edit sam
   const first = { matchId: '1', date: fixtureDate, createdAt: now, submittedAt: now, ...validateDetailedScore(sheet(64)) };
   const second = { matchId: '2', date: fixtureDate, createdAt: now, submittedAt: now, ...validateDetailedScore(sheet(1983)) };
   await Promise.all([
-    saveResult(blob.read, blob.write, first, fixtureDate, now),
-    saveResult(blob.read, blob.write, second, fixtureDate, now),
+    saveResult(blob.read, blob.write, first, now),
+    saveResult(blob.read, blob.write, second, now),
   ]);
   assert.deepEqual(blob.get().map((row) => row.matchId), ['1', '2']);
 
   const update = { ...first, ...validateDetailedScore(sheet(128)) };
-  const saved = await saveResult(blob.read, blob.write, update, fixtureDate, now);
+  const saved = await saveResult(blob.read, blob.write, update, now);
   assert.equal(saved.created, false);
   assert.deepEqual(saved.match.games, update.games);
   assert.equal(blob.get().length, 2);
 });
 
-test('late completion resets the edit window, while expired complete results are protected', async () => {
+test('results can be revised indefinitely while preserving creation metadata', async () => {
   const blob = mockBlob();
   const fixtureDate = '2026-09-19';
   const now = '2026-11-11T12:00:00.000Z';
   const legacy = { id: 'legacy-id', fixtureId: '1', matchId: '1', date: fixtureDate, createdAt: '2026-10-01T12:00:00.000Z', homeScore: 8, awayScore: 23 };
   const late = mockBlob([legacy]);
   const match = { matchId: '1', fixtureId: '1', date: fixtureDate, createdAt: now, submittedAt: now, ...validateDetailedScore(sheet(64)) };
-  const saved = await saveResult(late.read, late.write, match, fixtureDate, now);
+  const saved = await saveResult(late.read, late.write, match, now);
   assert.equal(saved.created, false);
   assert.equal(saved.match.id, 'legacy-id');
   assert.equal(saved.match.createdAt, legacy.createdAt);
@@ -109,14 +128,17 @@ test('late completion resets the edit window, while expired complete results are
   const expiredResult = { ...saved.match, submittedAt: '2026-10-10T12:00:00.000Z' };
   const expired = mockBlob([expiredResult]);
   const replacement = { ...match, ...validateDetailedScore(sheet(1983)) };
-  await assert.rejects(saveResult(expired.read, expired.write, replacement, fixtureDate, now), { status: 409 });
-  assert.deepEqual(expired.get(), [expiredResult]);
+  const revised = await saveResult(expired.read, expired.write, replacement, now);
+  assert.equal(revised.created, false);
+  assert.deepEqual(revised.match.games, replacement.games);
+  assert.equal(revised.match.submittedAt, expiredResult.submittedAt);
+  assert.deepEqual(expired.get(), [revised.match]);
 });
 
 test('blob failures never masquerade as successful saves', async () => {
   const read = async () => ({ data: [], etag: '0' });
   const now = '2026-10-01T12:00:00.000Z';
   const match = { matchId: '1', submittedAt: now, ...validateDetailedScore(sheet()) };
-  await assert.rejects(saveResult(read, async () => { throw new Error('Storage unavailable'); }, match, '2026-09-19', now), /Storage unavailable/);
-  await assert.rejects(saveResult(read, async () => { throw Object.assign(new Error('Changed'), { statusCode: 412 }); }, match, '2026-09-19', now), { status: 503 });
+  await assert.rejects(saveResult(read, async () => { throw new Error('Storage unavailable'); }, match, now), /Storage unavailable/);
+  await assert.rejects(saveResult(read, async () => { throw Object.assign(new Error('Changed'), { statusCode: 412 }); }, match, now), { status: 503 });
 });

@@ -33,6 +33,7 @@ describe('dedicated detailed score entry', () => {
     const inputs = screen.getAllByRole('textbox');
     expect(inputs).toHaveLength(22);
     inputs.forEach((input) => expect(input.value).toBe(''));
+    screen.getAllByRole('button', { name: 'Opslaan' }).forEach(enabled);
     fireEvent.change(inputs[0], { target: { value: '13' } });
     expect(inputs[1].value).toBe('');
     expect(screen.getByText('Afgeronde partijen: 0 / 11')).toBeTruthy();
@@ -49,7 +50,26 @@ describe('dedicated detailed score entry', () => {
     expect(screen.queryByRole('button', { name: 'Terug naar wedstrijdselectie' })).toBeNull();
   });
 
-  it('accepts raw 1/3 and calculated 3-28, with all 11 games mandatory', async () => {
+  it('saves partial games with blank slots while keeping one-sided entries invalid', async () => {
+    const p = props();
+    render(<MatchDetails {...p} />);
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: '13' } });
+    fireEvent.change(inputs[1], { target: { value: '1' } });
+    await userEvent.click(screen.getAllByRole('button', { name: 'Opslaan' })[0]);
+    expect(p.onSave).toHaveBeenCalledWith({
+      scoreFormat: SCORE_FORMAT,
+      games: GAME_SLOTS.map(({ slotId }, index) => ({
+        slotId,
+        homeScore: index === 0 ? 13 : null,
+        awayScore: index === 0 ? 1 : null,
+      })),
+    });
+    fireEvent.change(inputs[2], { target: { value: '13' } });
+    screen.getAllByRole('button', { name: 'Opslaan' }).forEach(disabled);
+  });
+
+  it('accepts raw 1/3 and calculates 3-28 for complete results', async () => {
     const p = props();
     render(<MatchDetails {...p} />);
     complete();
@@ -192,13 +212,13 @@ describe('dedicated detailed score entry', () => {
 });
 
 describe('completed viewing', () => {
-  it('displays stored scores read-only, with cumulative subtotals and no save controls', () => {
+  it('keeps stored scores editable after the scheduled date, with cumulative subtotals', () => {
     const rawPairs = [[5, 13], [11, 13], [13, 6], [9, 13], [6, 13], [5, 13], [13, 10], [13, 7], [3, 13], [5, 13], [6, 13]];
     const games = GAME_SLOTS.map(({ slotId }, index) => ({ slotId, homeScore: rawPairs[index][0], awayScore: rawPairs[index][1] }));
     render(<MatchDetails {...props()} fixture={{ ...fixture, date: '2026-09-19' }} result={{ scoreFormat: SCORE_FORMAT, games, homeScore: 8, awayScore: 23 }} />);
-    expect(screen.getByText('Wedstrijddetails')).toBeTruthy();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Opslaan' })).toBeNull();
+    expect(screen.getByText('Uitslag wijzigen')).toBeTruthy();
+    expect(screen.getAllByRole('textbox')).toHaveLength(22);
+    expect(screen.getAllByRole('button', { name: 'Opslaan' })).toHaveLength(3);
     expect(screen.getAllByRole('button', { name: 'Terug', exact: true })).toHaveLength(3);
     const header = screen.getByText(/Wedstrijd 100117/).parentElement.parentElement;
     expect(header.textContent).toContain('Afgeronde partijen: 11 / 11');
@@ -210,7 +230,7 @@ describe('completed viewing', () => {
     expect(screen.getByText('Subtotaal: 8-13')).toBeTruthy();
     expect(screen.getByText('Totaal: 8-23')).toBeTruthy();
     for (const label of ['Subtotaal: 2-10', 'Subtotaal: 8-13', 'Totaal: 8-23']) {
-      expect(screen.getByText(label).parentElement.querySelectorAll('button')).toHaveLength(1);
+      expect(screen.getByText(label).parentElement.querySelectorAll('button')).toHaveLength(2);
     }
     expect(screen.queryByRole('button', { name: 'Terug naar wedstrijdselectie' })).toBeNull();
   });
@@ -232,7 +252,7 @@ describe('completed viewing', () => {
     expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
   });
 
-  it('prefills an existing result while it is within the edit window', () => {
+  it('prefills an existing result for editing', () => {
     const games = GAME_SLOTS.map(({ slotId }, index) => ({ slotId, homeScore: index === 6 ? 13 : 3, awayScore: index === 6 ? 1 : 13 }));
     render(<MatchDetails {...props()} result={{ scoreFormat: SCORE_FORMAT, games, homeScore: 3, awayScore: 28 }} />);
     expect(screen.getByText('Uitslag wijzigen')).toBeTruthy();
