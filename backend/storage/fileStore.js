@@ -3,7 +3,7 @@ import { dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { readBlobFile, readBlobFileVersion, writeBlobFile, blobExists, deleteBlobFile } from './blobStorage.js';
-import { validateDetailedScore } from '../domain/scoring.js';
+import { GAME_SLOTS, summarizeGames, validateDetailedScore } from '../domain/scoring.js';
 import { saveResult, updateResultFile } from './resultTransaction.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -465,7 +465,6 @@ export async function createMatch(input) {
       () => useBlob ? readBlobFileVersion(basename(file)) : readJson(file).then((data) => ({ data })),
       (data, etag) => useBlob ? writeBlobFile(basename(file), data, { ifMatch: etag }) : writeJson(file, data),
       match,
-      input.date,
       now
     );
   });
@@ -482,8 +481,8 @@ export async function computeStandings(options = {}) {
     const parts = await Promise.all(ALL_DIVISIE_IDS.map(id => readJson(matchesFileFor(id))));
     rawMatches = parts.flat();
   }
-  // All stored matches are considered completed
-  const completed = normalizeMatches(rawMatches);
+  const completed = normalizeMatches(rawMatches).filter((match) =>
+    !Array.isArray(match.games) || summarizeGames(match.games).completed === GAME_SLOTS.length);
   const byId = new Map(teams.map((t) => [t.id, t]));
   const table = new Map();
 

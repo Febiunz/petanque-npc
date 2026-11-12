@@ -15,7 +15,7 @@ This project provides:
 - The selected weighted result (or "Nog geen uitslag") appears beside the exact "Details" button below Wedstrijd.
 - Details opens a dedicated screen: 6 tete-a-tete, 3 doublette and 2 triplette games, with two independent blank scores per new game.
 - Each finished game has exactly one side at 13 and the other an integer 0-12. Wins award 2/3/5 weighted match points, distributing 31 points. Calculated 3-28 and 28-3 results are allowed; only 1 and 30 are unreachable.
-- Signed-in users can complete or revise a result until 14 days after its scheduled date. If it is still incomplete then, it remains editable; the first complete submission starts a fresh 14-day edit window. After that, detailed results are read-only. Legacy aggregate-only results remain viewable without invented games.
+- Signed-in users can save and revise game results at any time. Partial sheets remain provisional and do not affect standings until all 11 games are complete. Legacy aggregate-only results remain viewable without invented games.
 - Standings calculation:
   - Winner = 2 points, loser = 0 points.
   - Ranking by points desc, then points difference (Saldo) desc, then team name.
@@ -132,7 +132,7 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `GET /api/matches` — Submitted matches (most recent first); supports `?divisieId=1001|2001|2002`
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, divisieId, scoreFormat: "individual-games-v1", games: [{ slotId, homeScore, awayScore }, ...] }`
-  - Validation: requires a fixture in the selected pool and exactly 11 unique canonical slots with numeric integer scores (exactly one 13, the other 0-12). Aggregate-only submissions are no longer accepted.
+  - Validation: requires a fixture in the selected pool and exactly 11 unique canonical slots. Each unplayed game uses `null` for both scores; each entered pair must have numeric integer scores (exactly one 13, the other 0-12). Aggregate-only submissions are no longer accepted.
   - Server derives weighted totals and scheduled identity/date; client totals cannot override them. Conflicting supplied totals return 400, duplicate submissions return 409, and storage failures are explicit errors.
 - `GET /api/standings` — Current standings; supports `?divisieId=1001|2001|2002` and optional `?divisie=...`
 
@@ -147,11 +147,11 @@ Rate limiting (subject to tuning; current values from code):
 - User must select divisie and pool before rounds/matches become selectable.
 - Every scheduled round and match stays selectable, with a date hint. Upcoming-only filtering remains separate in "Komende wedstrijden".
 - Below Wedstrijd, "Details" shares a row with the selected weighted result or explicit unavailable/loading/unplayed status.
-- Details locks the fixture identity and displays all 11 games. Complete results are editable for 14 days after the scheduled date; if still incomplete then, they remain editable until first completed, with a fresh 14-day window from that submission.
+- Details locks the fixture identity and displays all 11 games. Signed-in users can save partial games and revise results without a timing restriction.
 - New raw inputs start empty and are independently editable: no auto-complement, clamping or truncation. Each valid game contributes its weighted points; incomplete totals are labeled provisional.
 - Each game section shows a left-aligned, single-line cumulative weighted subtotal beside its navigation/save controls: tete-a-tete after six games, doublette including tete-a-tete, then "Totaal" including all three sections. Per-win explanatory labels are omitted. The header's separately labeled raw sum remains.
-- Below each of the three game blocks, "Terug" opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing choices. "Opslaan" saves all 11 games while keeping the details open. After the edit window expires, completed results are read-only; those sheets show only "Terug", never a save control.
-- All 11 games and Google sign-in are required to save. In-flight saves block navigation and repeat submission; errors retain input. Dirty back navigation asks before discarding and tab close/reload warns where supported.
+- Below each of the three game blocks, "Terug" opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing choices. "Opslaan" saves all 11 slots, including blank unplayed slots, while keeping the details open.
+- Google sign-in is required to save; blank scores are allowed, but a partially entered or invalid score pair must be completed or cleared. In-flight saves block navigation and repeat submission; errors retain input. Dirty back navigation asks before discarding and tab close/reload warns where supported.
 - Successful save preserves pool/round/match selection and refreshes standings/results. A failed refresh after confirmed save does not cause another POST.
 - Results list is compact (single-line).
 

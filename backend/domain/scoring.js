@@ -22,6 +22,10 @@ export function isFinishedGame(game) {
     && ((game.homeScore === 13) !== (game.awayScore === 13));
 }
 
+export function isUnplayedGame(game) {
+  return !!game && game.homeScore === null && game.awayScore === null;
+}
+
 export function summarizeGames(games) {
   const summary = { homeScore: 0, awayScore: 0, rawHomeScore: 0, rawAwayScore: 0, completed: 0 };
   for (const slot of GAME_SLOTS) {
@@ -47,7 +51,9 @@ export function validateDetailedScore(input) {
       || !GAME_SLOTS.some((slot) => slot.slotId === game.slotId) || ids.has(game.slotId)) {
       throw new Error('Ongeldige of dubbele partij');
     }
-    if (!isFinishedGame(game)) throw new Error(`${game.slotId}: een team 13, het andere een geheel getal van 0 t/m 12`);
+    if (!isUnplayedGame(game) && !isFinishedGame(game)) {
+      throw new Error(`${game.slotId}: vul beide scores in, met een team 13 en het andere een geheel getal van 0 t/m 12`);
+    }
     ids.add(game.slotId);
   }
   const games = GAME_SLOTS.map(({ slotId }) => {
@@ -68,7 +74,8 @@ export function resultSummary(result) {
   if (result.games !== undefined || result.scoreFormat !== undefined) {
     try {
       const score = validateDetailedScore(result);
-      return { label: `Uitslag: ${score.homeScore} - ${score.awayScore}`, score };
+      const provisional = summarizeGames(score.games).completed !== GAME_SLOTS.length;
+      return { label: `Uitslag: ${score.homeScore} - ${score.awayScore}${provisional ? ' (voorlopig)' : ''}`, score };
     } catch (error) {
       return { label: 'Inconsistente uitslag', error: error.message };
     }
