@@ -1,12 +1,3 @@
-import { canEditResult, isCompleteDetailedResult } from '../domain/resultEditWindow.js';
-
-export class ResultEditWindowClosedError extends Error {
-  constructor() {
-    super('Deze uitslag kan niet meer worden aangepast');
-    this.status = 409;
-  }
-}
-
 export async function updateResultFile(read, write, update) {
   for (let attempt = 0; attempt < 5; attempt++) {
     const { data, etag } = await read();
@@ -27,7 +18,7 @@ export async function updateResultFile(read, write, update) {
   }
 }
 
-export async function saveResult(read, write, match, fixtureDate, now = match.submittedAt || new Date().toISOString()) {
+export async function saveResult(read, write, match, now = match.submittedAt || new Date().toISOString()) {
   let savedMatch;
   let created;
   await updateResultFile(read, write, (data) => {
@@ -42,20 +33,13 @@ export async function saveResult(read, write, match, fixtureDate, now = match.su
 
     created = false;
     const existing = data[index];
-    if (!canEditResult(fixtureDate, existing, Date.parse(now))) {
-      throw new ResultEditWindowClosedError();
-    }
-
-    const existingComplete = isCompleteDetailedResult(existing);
     savedMatch = {
       ...existing,
       ...match,
       id: existing.id || match.id,
       date: existing.date || match.date,
       createdAt: existing.createdAt || match.createdAt,
-      submittedAt: existingComplete
-        ? (existing.submittedAt || match.submittedAt || now)
-        : now,
+      submittedAt: existing.submittedAt || match.submittedAt || now,
       updatedAt: now,
       submittedBy: existing.submittedBy || match.submittedBy || null,
       submittedByUid: existing.submittedByUid || match.submittedByUid || null,
