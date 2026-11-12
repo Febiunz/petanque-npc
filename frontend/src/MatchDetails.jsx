@@ -14,7 +14,44 @@ function draftFromResult(result) {
   });
 }
 
-export default function MatchDetails({ fixture, poolLabel, homeName, awayName, result, user, authAvailable, onBack, onSave, onRefresh }) {
+function GamePlayers({ slotId, playerLineup }) {
+  const game = playerLineup?.games?.[slotId];
+  const homePlayers = Array.isArray(game?.home) ? game.home : [];
+  const awayPlayers = Array.isArray(game?.away) ? game.away : [];
+  const rowCount = Math.max(homePlayers.length, awayPlayers.length);
+  const substitutions = (playerLineup?.substitutions || []).filter((row) => row.slotId === slotId);
+
+  if (!rowCount && !substitutions.length) return null;
+
+  return (
+    <Box sx={{ minWidth: 0 }}>
+      {Array.from({ length: rowCount }, (_, index) => {
+        const home = homePlayers[index] || '';
+        const away = awayPlayers[index] || '';
+        const label = `${home}-${away}`;
+        return (
+          <Typography key={index} component="div" variant="caption" title={label}
+            aria-label={label}
+            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
+            {label}
+          </Typography>
+        );
+      })}
+      {substitutions.map(({ side, out, in: incoming }) => {
+        const label = `Wissel ${side === 'home' ? 'thuis' : 'uit'}: ${out} → ${incoming}`;
+        return (
+          <Typography key={`${side}-${out}`} component="div" variant="caption" title={label}
+            aria-label={label}
+            sx={{ color: 'text.secondary', fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.35 }}>
+            {label}
+          </Typography>
+        );
+      })}
+    </Box>
+  );
+}
+
+export default function MatchDetails({ fixture, poolLabel, homeName, awayName, result, playerLineup, user, authAvailable, onBack, onSave, onRefresh }) {
   const [draft, setDraft] = React.useState(() => draftFromResult(result));
   const initialDraft = React.useRef(draftFromResult(result));
   const [discardOpen, setDiscardOpen] = React.useState(false);
@@ -111,8 +148,14 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
           return (
             <Paper key={group.type} sx={{ p: 1.5, mb: 2 }}>
               <Typography variant="h6">{group.label}</Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(45px, 1fr) minmax(65px, 1fr) minmax(65px, 1fr) 65px', gap: 1, alignItems: 'start', mt: 1 }}>
-                {['Partij', 'Thuis', 'Uit', 'Punten'].map((label) => <Typography key={label} variant="caption" fontWeight={600}>{label}</Typography>)}
+              <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '24px minmax(0, 1fr) 50px 50px 40px', sm: '32px minmax(0, 1fr) 64px 64px 52px' },
+                gap: { xs: 0.5, sm: 1 },
+                alignItems: 'start',
+                mt: 1,
+              }}>
+                {['Partij', 'Spelers', 'Thuis', 'Uit', 'Punten'].map((label) => <Typography key={label} variant="caption" fontWeight={600} sx={{ whiteSpace: 'nowrap' }}>{label}</Typography>)}
                 {slots.map((slot) => {
                   const game = games.find((row) => row.slotId === slot.slotId);
                   const entered = draft.find((row) => row.slotId === slot.slotId);
@@ -122,8 +165,12 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
                   return (
                     <React.Fragment key={slot.slotId}>
                       <Typography variant="body2" sx={{ pt: 1 }}>{number}</Typography>
+                      <Box sx={{ minWidth: 0, pt: 0.75 }}>
+                        <GamePlayers slotId={slot.slotId} playerLineup={playerLineup} />
+                      </Box>
                       {['homeScore', 'awayScore'].map((side) => (
                         <TextField key={side} size="small" value={entered[side]} disabled={saving}
+                          sx={{ minWidth: 0, '& .MuiInputBase-input': { px: 0.75 } }}
                           onChange={(event) => changeScore(slot.slotId, side, event.target.value)}
                           inputProps={{ inputMode: 'numeric', 'aria-label': `Partij ${number} ${group.label}, ${side === 'homeScore' ? 'thuis' : 'uit'} score` }}
                           error={invalid}

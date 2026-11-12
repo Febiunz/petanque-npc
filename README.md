@@ -14,6 +14,7 @@ This project provides:
 - Speelronde and Wedstrijd selectors include every scheduled fixture, including completed/past matches.
 - The selected weighted result (or "Nog geen uitslag") appears beside the exact "Details" button below Wedstrijd.
 - Details opens a dedicated screen: 6 tete-a-tete, 3 doublette and 2 triplette games, with two independent blank scores per new game.
+- When a match's official Excel sheet is available, Details shows home-away player pairs on one line; substitutions are listed below the original pairing as `out → in`.
 - Each finished game has exactly one side at 13 and the other an integer 0-12. Wins award 2/3/5 weighted match points, distributing 31 points. Calculated 3-28 and 28-3 results are allowed; only 1 and 30 are unreachable.
 - Signed-in users can save and revise game results at any time. Partial sheets remain provisional and do not affect standings until all 11 games are complete. Legacy aggregate-only results remain viewable without invented games.
 - Standings calculation:

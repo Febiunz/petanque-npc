@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MatchDetails from './MatchDetails';
+import playerLineups from './playerLineups.json';
 import { GAME_SLOTS, SCORE_FORMAT } from '../../backend/domain/scoring.js';
 
 beforeEach(() => {
@@ -49,6 +50,24 @@ describe('dedicated detailed score entry', () => {
     expect(screen.getAllByRole('button', { name: 'Opslaan' })).toHaveLength(3);
     screen.getAllByRole('button', { name: 'Opslaan' }).forEach(disabled);
     expect(screen.queryByRole('button', { name: 'Terug naar wedstrijdselectie' })).toBeNull();
+  });
+
+  it('shows Excel player pairs on one line and substitutions below their original pairing', () => {
+    render(<MatchDetails {...props()} playerLineup={playerLineups['100116']} />);
+    const homeSubstitutionPair = screen.getByText('Jeroen Brinks-Daniël Adriaan van Dam');
+    const awaySubstitutionPair = screen.getByText('Ferdinand Wiese-Romulo van Stockum');
+    const homeSubstitution = screen.getByText('Wissel thuis: Jeroen Brinks → Chantal Brinks-Kamphuis');
+    const awaySubstitution = screen.getByText('Wissel uit: Romulo van Stockum → Jakob Huitsing');
+
+    expect(getComputedStyle(homeSubstitutionPair).whiteSpace).toBe('nowrap');
+    expect(getComputedStyle(awaySubstitutionPair).whiteSpace).toBe('nowrap');
+    expect(homeSubstitutionPair.parentElement.textContent.indexOf(homeSubstitutionPair.textContent))
+      .toBeLessThan(homeSubstitutionPair.parentElement.textContent.indexOf(homeSubstitution.textContent));
+    expect(awaySubstitutionPair.parentElement.textContent.indexOf(awaySubstitutionPair.textContent))
+      .toBeLessThan(awaySubstitutionPair.parentElement.textContent.indexOf(awaySubstitution.textContent));
+    expect(screen.getByText('Chantal Brinks-Kamphuis-Loc Le Van')).toBeTruthy();
+    expect(screen.getByText('Wim Boluijt-Jakob Huitsing')).toBeTruthy();
+    expect(screen.getAllByText('Niels Saurel-Rick van Lier')).toHaveLength(2);
   });
 
   it('saves partial games with blank slots while keeping one-sided entries invalid', async () => {

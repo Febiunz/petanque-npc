@@ -7,6 +7,7 @@ This folder contains the React frontend for the Petanque results and standings w
 All scheduled rounds and fixtures, past/completed or unplayed, remain in Speelronde/Wedstrijd.
 Below Wedstrijd, the weighted result (or "Nog geen uitslag") sits beside the exact "Details" button.
 Details is a dedicated screen with locked fixture identity and 11 grouped games (6 tete-a-tete, 3 doublette, 2 triplette). Beside each group's navigation/save controls, it shows the left-aligned, single-line cumulative weighted subtotal (tete; tete plus doublette; final "Totaal" including all three groups), without a provisional label. Per-win explanatory labels are omitted. The top "Terug naar wedstrijdselectie" link is not shown; use the group-level Terug buttons.
+When the official match Excel sheet is available, player pairings appear on one line between the game number and score inputs. Any substitutions are shown below the original pairing as `out → in`.
 Signed-in users can save and revise game results at any time. Partial sheets are provisional and do not affect standings until all 11 games are complete. Legacy aggregate-only results explain that game scores are unavailable and can be completed.
 
 New-entry inputs are independently editable and initially blank. Each game requires exactly one 13 and an opposing integer 0-12; raw 1/3 are valid and weighted totals are server-derived (including 3-28/28-3).

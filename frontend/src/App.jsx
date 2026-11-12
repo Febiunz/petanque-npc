@@ -5,6 +5,7 @@ import { auth, googleProvider, authAvailable } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import MatchDetails from './MatchDetails';
 import { GAME_SLOTS, isFinishedGame, resultSummary } from '../../backend/domain/scoring.js';
+import playerLineups from './playerLineups.json';
 
 const POOL_OPTIONS = [
   { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
@@ -162,6 +163,7 @@ function App() {
         homeName: teams.find((team) => team.id === selectedFixture.homeTeamId)?.name || selectedFixture.homeTeamId,
         awayName: teams.find((team) => team.id === selectedFixture.awayTeamId)?.name || selectedFixture.awayTeamId,
         result: rows.find((row) => (row.matchId || row.fixtureId) === matchId),
+        playerLineup: playerLineups[matchId] || null,
       });
       setErrorOpen(false);
     } catch (error) {
