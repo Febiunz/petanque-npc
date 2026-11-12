@@ -70,7 +70,7 @@ test('HTTP authentication remains required for ordinary users', async () => {
   assert.equal((await post(valid('100117'), 'expired-test-token')).status, 401);
 });
 
-test('HTTP rejects aggregate-only input, incomplete/malformed games and wrong pools', async () => {
+test('HTTP rejects aggregate-only input, malformed games and wrong pools', async () => {
   const body = valid('100117');
   for (const invalid of [
     { matchId: body.matchId, divisieId: '1001', homeScore: 3, awayScore: 28 },
@@ -85,6 +85,37 @@ test('HTTP rejects aggregate-only input, incomplete/malformed games and wrong po
     const response = await post(invalid);
     assert.equal(response.status, 400, await response.text());
   }
+});
+
+test('HTTP persists partial results, excludes them from standings, and permits later revisions', async () => {
+  const payload = {
+    matchId: '100123',
+    divisieId: '1001',
+    scoreFormat: SCORE_FORMAT,
+    games: GAME_SLOTS.map(({ slotId }, index) => ({
+      slotId,
+      homeScore: index === 0 ? 13 : null,
+      awayScore: index === 0 ? 1 : null,
+    })),
+  };
+  const saved = await post(payload);
+  assert.equal(saved.status, 201);
+  const partial = await saved.json();
+  assert.equal(partial.homeScore, 2);
+  assert.equal(partial.awayScore, 0);
+  assert.equal(partial.games.filter(({ homeScore }) => homeScore === null).length, 10);
+  assert.deepEqual(await store.computeStandings({ divisieId: '1001' }), []);
+
+  const invalid = structuredClone(payload);
+  invalid.games[1].homeScore = 13;
+  assert.equal((await post(invalid)).status, 400);
+
+  const old = JSON.parse(await fs.readFile(join(dir, 'matches-1001.json'), 'utf8'));
+  old[0].submittedAt = '2000-01-01T00:00:00.000Z';
+  await fs.writeFile(join(dir, 'matches-1001.json'), JSON.stringify(old, null, 2), 'utf8');
+  const revised = await post(valid('100123'));
+  assert.equal(revised.status, 200);
+  assert.deepEqual((await revised.json()).games, valid('100123').games);
 });
 
 test('HTTP persists and returns server-derived 3-28/28-3 with locked fixture identity', async () => {
@@ -109,11 +140,11 @@ test('local write serialization retains different fixtures and updates the same 
   const responses = await Promise.all([post(valid('100119')), post(valid('100120')), post(valid('100121')), post(valid('100121'))]);
   assert.deepEqual(responses.map((response) => response.status).sort(), [200, 201, 201, 201]);
   const records = JSON.parse(await fs.readFile(join(dir, 'matches-1001.json'), 'utf8'));
-  assert.equal(records.length, 5);
+  assert.equal(records.length, 6);
   for (const id of ['100119', '100120', '100121']) assert.equal(records.filter((row) => row.matchId === id).length, 1);
 });
 
-test('late submissions can be revised for 14 days, then the server rejects further edits', async () => {
+test('completed results can still be revised after any deadline', async () => {
   const first = await post(valid('100101'));
   assert.equal(first.status, 201);
   const created = await first.json();
@@ -133,16 +164,17 @@ test('late submissions can be revised for 14 days, then the server rejects furth
   rows[index].submittedAt = '2026-10-10T12:00:00.000Z';
   await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf8');
   const before = JSON.parse(await fs.readFile(file, 'utf8'));
-  const locked = await post(valid('100101'));
-  assert.equal(locked.status, 409);
-  assert.match((await locked.json()).error, /niet meer worden aangepast/);
-  assert.deepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
+  const editedAfterDeadline = await post(valid('100101'));
+  assert.equal(editedAfterDeadline.status, 200);
+  assert.deepEqual((await editedAfterDeadline.json()).games, valid('100101').games);
+  assert.notDeepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
 });
 
 test('weighted standings retain 2 league points per win, not raw-score or per-game awards', async () => {
   const standings = await store.computeStandings({ divisieId: '1001' });
   const teams = await store.listTeams({ divisieId: '1001' });
-  const records = await store.listMatches({ divisieId: '1001' });
+  const records = (await store.listMatches({ divisieId: '1001' })).filter((row) =>
+    row.games === undefined || row.games.every(({ homeScore, awayScore }) => Number.isInteger(homeScore) && Number.isInteger(awayScore)));
   for (const team of teams) {
     const matches = records.filter((row) => row.homeTeamId === team.id || row.awayTeamId === team.id);
     if (!matches.length) continue;

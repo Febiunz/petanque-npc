@@ -33,6 +33,7 @@ describe('dedicated detailed score entry', () => {
     const inputs = screen.getAllByRole('textbox');
     expect(inputs).toHaveLength(22);
     inputs.forEach((input) => expect(input.value).toBe(''));
+    screen.getAllByRole('button', { name: 'Opslaan' }).forEach(enabled);
     fireEvent.change(inputs[0], { target: { value: '13' } });
     expect(inputs[1].value).toBe('');
     expect(screen.getByText('Afgeronde partijen: 0 / 11')).toBeTruthy();
@@ -49,7 +50,7 @@ describe('dedicated detailed score entry', () => {
     expect(screen.queryByRole('button', { name: 'Terug naar wedstrijdselectie' })).toBeNull();
   });
 
-  it('accepts raw 1/3 and calculated 3-28, with all 11 games mandatory', async () => {
+  it('accepts raw 1/3 and calculated 3-28, and requires complete entered pairs', async () => {
     const p = props();
     render(<MatchDetails {...p} />);
     complete();
@@ -71,6 +72,20 @@ describe('dedicated detailed score entry', () => {
       scoreFormat: SCORE_FORMAT,
       games: GAME_SLOTS.map(({ slotId }, index) => ({ slotId, homeScore: index === 6 ? 13 : 3, awayScore: index === 6 ? 1 : 13 })),
     });
+  });
+
+  it('saves played games while leaving other slots blank', async () => {
+    const p = props();
+    render(<MatchDetails {...p} />);
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: '13' } });
+    fireEvent.change(inputs[1], { target: { value: '1' } });
+    expect(screen.getAllByRole('button', { name: 'Opslaan' }).every((button) => !button.disabled)).toBe(true);
+    await userEvent.click(screen.getAllByRole('button', { name: 'Opslaan' })[0]);
+    expect(p.onSave).toHaveBeenCalledOnce();
+    expect(p.onSave.mock.calls[0][0].games).toHaveLength(11);
+    expect(p.onSave.mock.calls[0][0].games[0]).toEqual({ slotId: 'tete-1', homeScore: 13, awayScore: 1 });
+    expect(p.onSave.mock.calls[0][0].games.slice(1).every((game) => game.homeScore === null && game.awayScore === null)).toBe(true);
   });
 
   it('keeps malformed text visible and prevents invalid pairs from counting', () => {
@@ -192,13 +207,13 @@ describe('dedicated detailed score entry', () => {
 });
 
 describe('completed viewing', () => {
-  it('displays stored scores read-only, with cumulative subtotals and no save controls', () => {
+  it('displays stored scores and keeps them editable, with cumulative subtotals', () => {
     const rawPairs = [[5, 13], [11, 13], [13, 6], [9, 13], [6, 13], [5, 13], [13, 10], [13, 7], [3, 13], [5, 13], [6, 13]];
     const games = GAME_SLOTS.map(({ slotId }, index) => ({ slotId, homeScore: rawPairs[index][0], awayScore: rawPairs[index][1] }));
     render(<MatchDetails {...props()} fixture={{ ...fixture, date: '2026-09-19' }} result={{ scoreFormat: SCORE_FORMAT, games, homeScore: 8, awayScore: 23 }} />);
-    expect(screen.getByText('Wedstrijddetails')).toBeTruthy();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Opslaan' })).toBeNull();
+    expect(screen.getByText('Uitslag wijzigen')).toBeTruthy();
+    expect(screen.getAllByRole('textbox')).toHaveLength(22);
+    expect(screen.getAllByRole('button', { name: 'Opslaan' })).toHaveLength(3);
     expect(screen.getAllByRole('button', { name: 'Terug', exact: true })).toHaveLength(3);
     const header = screen.getByText(/Wedstrijd 100117/).parentElement.parentElement;
     expect(header.textContent).toContain('Afgeronde partijen: 11 / 11');
@@ -210,7 +225,7 @@ describe('completed viewing', () => {
     expect(screen.getByText('Subtotaal: 8-13')).toBeTruthy();
     expect(screen.getByText('Totaal: 8-23')).toBeTruthy();
     for (const label of ['Subtotaal: 2-10', 'Subtotaal: 8-13', 'Totaal: 8-23']) {
-      expect(screen.getByText(label).parentElement.querySelectorAll('button')).toHaveLength(1);
+      expect(screen.getByText(label).parentElement.querySelectorAll('button')).toHaveLength(2);
     }
     expect(screen.queryByRole('button', { name: 'Terug naar wedstrijdselectie' })).toBeNull();
   });
@@ -232,9 +247,9 @@ describe('completed viewing', () => {
     expect(screen.getByText('Wedstrijdpunten: 3 - 28')).toBeTruthy();
   });
 
-  it('prefills an existing result while it is within the edit window', () => {
+  it('prefills and keeps completed results editable after any deadline', () => {
     const games = GAME_SLOTS.map(({ slotId }, index) => ({ slotId, homeScore: index === 6 ? 13 : 3, awayScore: index === 6 ? 1 : 13 }));
-    render(<MatchDetails {...props()} result={{ scoreFormat: SCORE_FORMAT, games, homeScore: 3, awayScore: 28 }} />);
+    render(<MatchDetails {...props()} fixture={{ ...fixture, date: '2000-01-01' }} result={{ scoreFormat: SCORE_FORMAT, games, homeScore: 3, awayScore: 28, submittedAt: '2000-01-01T12:00:00.000Z' }} />);
     expect(screen.getByText('Uitslag wijzigen')).toBeTruthy();
     expect(screen.getAllByRole('textbox')).toHaveLength(22);
     expect(screen.getAllByRole('textbox')[12].value).toBe('13');

@@ -19,12 +19,12 @@ Source URLs, workbook hashes, raw totals and metadata/game preservation hashes a
 
 `POST /api/matches` requires Firebase authentication and `{ matchId, divisieId, scoreFormat: "individual-games-v1", games }`.
 The 11 canonical slots are `tete-1` through `tete-6` (2 points each), `doublette-1` through `doublette-3` (3 each), and `triplette-1`/`triplette-2` (5 each).
-Each raw pair is numeric integers, exactly one 13 and the other 0-12. The server derives weighted totals and fixture identity/date; aggregate-only submissions are rejected. Calculated 3-28 and 28-3 are valid.
+Each played raw pair is numeric integers, exactly one 13 and the other 0-12; both scores may be null for an unplayed slot. The server derives weighted totals and fixture identity/date; aggregate-only submissions are rejected. Calculated 3-28 and 28-3 are valid. Partial results are stored but do not count in standings until all 11 games are entered.
 Legacy aggregate-only records remain readable and retain their standings meaning: a match win earns 2 league points and saldo uses weighted totals, not raw-score sums.
 
-Complete results may be revised through the scheduled-date +14-day deadline. If no complete detailed result exists at that cutoff, the fixture remains fillable; its first complete submission starts a fresh 14-day revision window. `submittedAt` is the authoritative late-completion anchor. Edits preserve fixture identity, original date, creation metadata and that anchor; expired complete results are rejected.
+Results may be entered or revised at any time, including after the scheduled date or any previously applied deadline. Edits preserve fixture identity, original date, creation metadata and the original `submittedAt` timestamp.
 
-Duplicate checks and edit-window checks occur within serialized atomic local writes or ETag-conditional blob transactions. New results return 201, in-window revisions return 200, and expired revisions return 409 rather than overwriting a sheet. Conditional conflicts retry against fresh data; storage failures never report success.
+Duplicate checks occur within serialized atomic local writes or ETag-conditional blob transactions. New results return 201 and revisions return 200. Conditional conflicts retry against fresh data; storage failures never report success.
 Deployment seeds missing result blobs only, preserving existing live results. Repository historical enrichment does not modify production blobs.
 
 `RESULTS_DATA_DIR` and `SCHEDULE_DATA_DIR` isolate local development/test data; `AZURE_STORAGE_CONNECTION_STRING` must be unset for local file mode.

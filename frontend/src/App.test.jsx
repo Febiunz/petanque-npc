@@ -78,7 +78,7 @@ it('keeps fully completed rounds and every fixture selectable with exact Details
   expect(screen.getByText('Nog geen uitslag')).toBeTruthy();
 });
 
-it('opens fresh completion read-only if another user submits before Details is opened', async () => {
+it('keeps a completed result editable if another user submits before Details is opened', async () => {
   api.getSchedule.mockResolvedValue(fixtures.map((fixture) =>
     fixture.id === '100117' ? { ...fixture, date: '2026-09-19' } : fixture));
   render(<App />);
@@ -92,11 +92,12 @@ it('opens fresh completion read-only if another user submits before Details is o
     awayScore: 28,
   }]);
   await userEvent.click(screen.getByRole('button', { name: 'Details' }));
-  expect(await screen.findByText('Wedstrijddetails')).toBeTruthy();
-  expect(screen.queryByRole('textbox')).toBeNull();
+  expect(await screen.findByText('Uitslag wijzigen')).toBeTruthy();
+  expect(screen.getAllByRole('textbox')).toHaveLength(22);
+  expect(screen.getAllByRole('button', { name: 'Opslaan' })).toHaveLength(3);
 });
 
-it('saves in details, keeps the result editable during its window, and preserves selection', async () => {
+it('saves in details, keeps the result editable, and preserves selection', async () => {
   const saved = {
     id: 'new', matchId: '100117', fixtureId: '100117', homeTeamId: 'home', awayTeamId: 'away',
     scoreFormat: SCORE_FORMAT, homeScore: 3, awayScore: 28,

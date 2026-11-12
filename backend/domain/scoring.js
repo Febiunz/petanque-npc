@@ -47,12 +47,15 @@ export function validateDetailedScore(input) {
       || !GAME_SLOTS.some((slot) => slot.slotId === game.slotId) || ids.has(game.slotId)) {
       throw new Error('Ongeldige of dubbele partij');
     }
-    if (!isFinishedGame(game)) throw new Error(`${game.slotId}: een team 13, het andere een geheel getal van 0 t/m 12`);
+    const unplayed = game.homeScore == null && game.awayScore == null;
+    if (!unplayed && !isFinishedGame(game)) {
+      throw new Error(`${game.slotId}: een team 13, het andere een geheel getal van 0 t/m 12, of laat beide scores leeg`);
+    }
     ids.add(game.slotId);
   }
   const games = GAME_SLOTS.map(({ slotId }) => {
     const game = input.games.find((row) => row.slotId === slotId);
-    return { slotId, homeScore: game.homeScore, awayScore: game.awayScore };
+    return { slotId, homeScore: game.homeScore ?? null, awayScore: game.awayScore ?? null };
   });
   const totals = summarizeGames(games);
   for (const key of ['homeScore', 'awayScore']) {
@@ -68,7 +71,11 @@ export function resultSummary(result) {
   if (result.games !== undefined || result.scoreFormat !== undefined) {
     try {
       const score = validateDetailedScore(result);
-      return { label: `Uitslag: ${score.homeScore} - ${score.awayScore}`, score };
+      const completed = summarizeGames(score.games).completed;
+      return {
+        label: `Uitslag: ${score.homeScore} - ${score.awayScore}${completed !== GAME_SLOTS.length ? ' (voorlopig)' : ''}`,
+        score,
+      };
     } catch (error) {
       return { label: 'Inconsistente uitslag', error: error.message };
     }
