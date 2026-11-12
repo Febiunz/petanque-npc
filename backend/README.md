@@ -12,7 +12,7 @@ All nine JSON files in `data/` were checked against the official NLpetanque 2026
 [2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/).
 Each division has 8 teams and 56 fixtures, with 14, 16, and 16 published results respectively.
 Schedules preserve official match numbers and published adjusted dates; results are included only when both scores are published.
-All 46 published results now contain 506 validated individual games, preserving original IDs, dates, authorship and weighted aggregates. Match `200111` retains its stored 17 October date despite the workbook's 10 October date. Teams and schedules remain unchanged.
+All 46 published results now contain 506 validated individual games, preserving original IDs, authorship and weighted aggregates. Match `200111` uses its official workbook date, 10 October, in both schedule and result. Teams and schedules remain unchanged.
 Source URLs, workbook hashes, raw totals and metadata/game preservation hashes are in `history/provenance.json`.
 
 ## Detailed scoring and storage

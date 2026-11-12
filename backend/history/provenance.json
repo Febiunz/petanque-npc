@@ -341,12 +341,12 @@
           "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200111.xlsx",
           "workbookSha256": "b0866b5622264fb8f87cd8a250bbecb8a9c5fcdf66c605d9370211715fe236c8",
           "workbookDate": "2026-10-10",
-          "preservedResultDate": "2026-10-17T12:00:00.000Z",
+          "preservedResultDate": "2026-10-10T12:00:00.000Z",
           "rawTotals": [
             105,
             118
           ],
-          "metadataSha256": "0d96bc55437fdb8698e34c05e57592b47e1df39de95747211965125d2d37f943",
+          "metadataSha256": "281a6739e711c17c5194716bd9e2c8706aa93217a82420be1e717cdb4e82da00",
           "gamesSha256": "50ece8eae626ea52651828d3eb5e9ff09000fca49a0d39dbbc4ba8ae8a57fe84"
         },
         {

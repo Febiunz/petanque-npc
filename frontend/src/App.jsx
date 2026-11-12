@@ -328,19 +328,23 @@ function App() {
           ) : (
             <Box component="div" sx={{
               display: 'grid',
-              gridTemplateColumns: '28px minmax(0,1fr) 42px minmax(0,1fr)',
+              gridTemplateColumns: '28px 72px minmax(0,1fr) minmax(0,1fr) 42px',
               columnGap: 1,
               rowGap: 0,
               alignItems: 'center'
             }}>
               <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Ronde</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Datum</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Thuis</Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
               <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uit</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Uitslag</Typography>
               {results.map(r => {
                 const homeName = teams.find(t => t.id === r.homeTeamId)?.name || r.homeTeam?.name || r.homeTeamId;
                 const awayName = teams.find(t => t.id === r.awayTeamId)?.name || r.awayTeam?.name || r.awayTeamId;
-                const rawRound = r.round || scheduleAll.find(m => m.id === (r.matchId || r.fixtureId))?.round;
+                const fixture = scheduleAll.find(m => m.id === (r.matchId || r.fixtureId));
+                const rawRound = r.round || fixture?.round;
+                const playedDate = String(r.officialDate || r.date || fixture?.date || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+                const dateStr = playedDate ? `${playedDate[3]}-${playedDate[2]}-${playedDate[1]}` : '—';
                 const roundNumber = (() => {
                   if (rawRound === undefined || rawRound === null) return '?';
                   const n = Number(rawRound);
@@ -358,9 +362,10 @@ function App() {
                 return (
                   <React.Fragment key={r.id}>
                     {wrapWithTooltip(<Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{roundNumber}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{dateStr}</Typography>)}
                     {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{homeName}</Typography>)}
-                    {wrapWithTooltip(<Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{homeScore} - {awayScore}</Typography>)}
                     {wrapWithTooltip(<Typography variant="caption" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.65rem', minWidth: 0, cursor: hoverCursor }}>{awayName}</Typography>)}
+                    {wrapWithTooltip(<Typography variant="caption" sx={{ textAlign: 'center', fontSize: '0.65rem', whiteSpace: 'nowrap', cursor: hoverCursor }}>{homeScore} - {awayScore}</Typography>)}
                   </React.Fragment>
                 );
               })}
