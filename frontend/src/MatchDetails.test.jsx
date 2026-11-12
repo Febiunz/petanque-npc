@@ -34,6 +34,11 @@ describe('dedicated detailed score entry', () => {
     const inputs = screen.getAllByRole('textbox');
     expect(inputs).toHaveLength(22);
     inputs.forEach((input) => expect(input.value).toBe(''));
+    expect(screen.getAllByText('Nr.')).toHaveLength(3);
+    expect(screen.queryByText('Partij')).toBeNull();
+    screen.getAllByText('Punten').forEach((header) => {
+      expect(getComputedStyle(header).textAlign).toBe('right');
+    });
     screen.getAllByRole('button', { name: 'Opslaan' }).forEach(enabled);
     expect(screen.getByText('Home - Away · 0 - 0 (voorlopig)')).toBeTruthy();
     fireEvent.change(inputs[0], { target: { value: '13' } });
