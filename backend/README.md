@@ -16,6 +16,7 @@ All 46 published results now contain 506 validated individual games, preserving 
 Source URLs, workbook hashes, raw totals and metadata/game preservation hashes are in `history/provenance.json`.
 All 171 linked Excel URLs were checked: 46 match sheets and 3 shared forms downloaded, while 122 unpublished match sheets returned 404. All 506 games, raw/weighted totals and standings agree with the official data.
 Official results also store `playerLineup` (`source`, `games` keyed by slot with `home`/`away` name arrays, and `substitutions`). The result API supplies these pairings to Details; score validation remains unchanged. Four missing-name cells were resolved from matching player identifiers in other official sheets; provenance records their source cells and lineup hashes. Match `200213` retains an incomplete away doublette substitution in `playerLineup.unassignedSubstitutions` because the outgoing player and game are unknown.
+Re-running `scripts/enrich-historical-results.mjs` preserves lineup hashes, name-resolution evidence and download/page audits, retaining the original dates for those earlier audits. It refuses to apply an import when an existing lineup or its workbook hash has changed without re-verification, staging omits an already-provenanced match, or a previously verified lineup is removed.
 
 ## Detailed scoring and storage
 
