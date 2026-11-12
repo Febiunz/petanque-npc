@@ -144,5 +144,12 @@ test('rerunning enrichment preserves lineup evidence and dates earlier download 
   const withoutLineups = Object.fromEntries(Object.entries(imports).map(([pool, entry]) => [
     pool, { ...entry, merged: entry.merged.map(({ playerLineup, ...record }) => record) },
   ]));
+  assert.throws(() => buildProvenance(source, withoutLineups, previous), /Previously verified player lineup is missing/);
+  const nullLineup = structuredClone(imports);
+  nullLineup['1001'].merged[0].playerLineup = null;
+  assert.throws(() => buildProvenance(source, nullLineup, previous), /Previously verified player lineup is missing/);
+  const partial = structuredClone(imports);
+  partial['1001'].staged.matches = partial['1001'].staged.matches.slice(1);
+  assert.throws(() => buildProvenance(source, partial, previous), /Incomplete staging would discard provenance/);
   assert.ok(buildProvenance(source, withoutLineups).pools['1001'].matches.every((row) => !row.playerLineupSha256));
 });

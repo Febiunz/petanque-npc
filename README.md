@@ -116,7 +116,7 @@ Run each app separately (optional):
   - Each official result stores `playerLineup` with source URL, home/away names keyed by game slot, and substitutions. Details reads these names from the result API rather than a separate frontend list. Four `#N/A` name cells were resolved by matching the same player identifiers in other official match sheets, with source cells recorded in provenance.
   - Match `200213` has an incomplete away doublette substitution: Elout Visser is listed as incoming but the outgoing player is blank. It is retained under `playerLineup.unassignedSubstitutions`, without guessing a game or replacing an original pairing.
   - Source URLs, workbook hashes, raw totals and preservation checks are in `backend/history/provenance.json` (not an uploaded result blob).
-  - Re-running `scripts/enrich-historical-results.mjs` preserves verified lineup hashes, name-resolution evidence and earlier download/page audits with their original audit dates. Changed workbooks or lineups require re-verification before applying an import.
+  - Re-running `scripts/enrich-historical-results.mjs` preserves verified lineup hashes, name-resolution evidence and earlier download/page audits with their original audit dates. Changed workbooks or lineups require re-verification before applying an import. Incomplete staging or removal of a previously verified lineup is rejected before writes.
 - Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.
 - Each saved result stores:
   - `fixtureId`/`matchId`, `matchNumber`, `homeTeamId`, `awayTeamId`, `homeScore`, `awayScore`
