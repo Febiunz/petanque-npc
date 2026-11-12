@@ -89,11 +89,12 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
         {result ? 'Uitslag wijzigen' : 'Uitslag invoeren'}
       </Typography>
       <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography fontWeight={600}>{homeName} - {awayName}</Typography>
+        <Typography fontWeight={600}>
+          {homeName} - {awayName} · {totals.homeScore} - {totals.awayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}
+        </Typography>
         <Typography variant="body2">{poolLabel} · Speelronde {fixture.round}</Typography>
         <Typography variant="body2">Wedstrijd {fixture.matchNumber || fixture.id} · {new Date(result?.date || fixture.date).toLocaleDateString('nl-NL')}</Typography>
         <Typography variant="body2">Afgeronde partijen: {totals.completed} / 11</Typography>
-        <Typography variant="h6">Wedstrijdpunten: {totals.homeScore} - {totals.awayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}</Typography>
         <Typography variant="body2" color="text.secondary">Som partijpunten: {totals.rawHomeScore} - {totals.rawAwayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}</Typography>
       </Paper>
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}{conflict && <Button disabled={saving} onClick={refresh}>Opgeslagen uitslag bekijken</Button>}</Alert>}
