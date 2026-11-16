@@ -1,4 +1,6 @@
 export const SCORE_FORMAT = 'individual-games-v1';
+export const TOTAL_SCORE_FORMAT = 'aggregate-v1';
+export const OFFICIAL_RESULT_MESSAGE = 'Officiële uitslag opgehaald bij NLpetanque. Alleen bekijken; opslaan is uitgeschakeld.';
 
 export const GAME_GROUPS = Object.freeze([
   { type: 'tete', label: 'Tete-a-tete', count: 6, weight: 2 },
@@ -69,6 +71,23 @@ export function validateDetailedScore(input) {
   return { scoreFormat: SCORE_FORMAT, games, homeScore: totals.homeScore, awayScore: totals.awayScore };
 }
 
+export function validateAggregateScore(input) {
+  const { homeScore, awayScore } = input || {};
+  if (![homeScore, awayScore].every((score) => Number.isInteger(score) && score >= 0 && score <= 31)) {
+    throw new Error('Vul twee gehele totaalscores van 0 t/m 31 in');
+  }
+  if (homeScore + awayScore !== 31 || [homeScore, awayScore].some((score) => score === 1 || score === 30)) {
+    throw new Error('Totaalscores moeten samen 31 zijn; 1 en 30 zijn niet mogelijk');
+  }
+  return { homeScore, awayScore };
+}
+
+export function validateMatchScore(input) {
+  if (input?.scoreFormat !== TOTAL_SCORE_FORMAT) return validateDetailedScore(input);
+  if (input.games !== undefined) throw new Error('Een totaaluitslag bevat geen partijgegevens');
+  return validateAggregateScore(input);
+}
+
 export function resultSummary(result) {
   if (!result) return { label: 'Nog geen uitslag' };
   if (result.games !== undefined || result.scoreFormat !== undefined) {
@@ -80,5 +99,10 @@ export function resultSummary(result) {
       return { label: 'Inconsistente uitslag', error: error.message };
     }
   }
-  return { label: `Uitslag: ${result.homeScore} - ${result.awayScore}`, legacy: true };
+  try {
+    const score = validateAggregateScore(result);
+    return { label: `Uitslag: ${score.homeScore} - ${score.awayScore}`, score, legacy: true };
+  } catch (error) {
+    return { label: 'Inconsistente uitslag', error: error.message };
+  }
 }

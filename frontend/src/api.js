@@ -33,11 +33,11 @@ export const api = {
   getMatches: ({ divisieId } = {}) => http(withQuery('/api/matches', { divisieId })),
   // schedule of matches (previously /api/fixtures)
   getSchedule: ({ round, divisieId, divisie } = {}) => http(withQuery('/api/matches/schedule', { round, divisieId, divisie })),
-  submitResult: async ({ matchId, scoreFormat, games, divisieId }) => {
+  submitResult: async ({ matchId, scoreFormat, games, homeScore, awayScore, divisieId }) => {
     const token = await auth?.currentUser?.getIdToken();
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, scoreFormat, games, divisieId }) });
+    return http('/api/matches', { method: 'POST', headers, body: JSON.stringify({ matchId, scoreFormat, games, homeScore, awayScore, divisieId }) });
   },
   getStandings: ({ divisieId, divisie } = {}) => http(withQuery('/api/standings', { divisieId, divisie })),
 };

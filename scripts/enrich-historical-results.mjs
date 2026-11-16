@@ -3,10 +3,11 @@ import { createHash } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateDetailedScore, summarizeGames } from '../backend/domain/scoring.js';
+import { OFFICIAL_SOURCE } from '../backend/history/officialResults.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const metadataHash = (record) => {
-  const { games, scoreFormat, playerLineup, ...metadata } = record;
+  const { games, scoreFormat, playerLineup, officialSource, ...metadata } = record;
   return createHash('sha256').update(JSON.stringify(metadata)).digest('hex');
 };
 
@@ -39,7 +40,7 @@ export function enrichResults(existing, staged, fixtures, pool) {
   }
   return existing.map((record) => {
     const score = additions.get(record.matchId || record.fixtureId);
-    return score ? { ...record, scoreFormat: score.scoreFormat, games: score.games } : record;
+    return score ? { ...record, scoreFormat: score.scoreFormat, games: score.games, officialSource: OFFICIAL_SOURCE } : record;
   });
 }
 
