@@ -35,9 +35,12 @@ before(async () => {
   process.env.SCHEDULE_DATA_DIR = dir;
   process.env.FIREBASE_PROJECT_ID = 'test-scoring-project';
   for (const pool of ['1001', '2001', '2002']) {
-    for (const kind of ['teams', 'schedule']) {
-      await fs.copyFile(new URL(`../data/${kind}-${pool}.json`, import.meta.url), join(dir, `${kind}-${pool}.json`));
-    }
+    await fs.copyFile(new URL(`../data/teams-${pool}.json`, import.meta.url), join(dir, `teams-${pool}.json`));
+    const fixtures = JSON.parse(await fs.readFile(new URL(`../data/schedule-${pool}.json`, import.meta.url), 'utf8'));
+    const synthetic = fixtures.map((fixture) => fixture.id === '100101' ? fixture : {
+      ...fixture, id: `test-${fixture.id}`, matchNumber: `test-${fixture.matchNumber}`,
+    });
+    await fs.writeFile(join(dir, `schedule-${pool}.json`), JSON.stringify(synthetic));
     await fs.writeFile(join(dir, `matches-${pool}.json`), '[]');
   }
   admin = initializeApp({ projectId: process.env.FIREBASE_PROJECT_ID });
@@ -66,12 +69,12 @@ after(async () => {
 });
 
 test('HTTP authentication remains required for ordinary users', async () => {
-  assert.equal((await post(valid('100117'), null)).status, 401);
-  assert.equal((await post(valid('100117'), 'expired-test-token')).status, 401);
+  assert.equal((await post(valid('test-100117'), null)).status, 401);
+  assert.equal((await post(valid('test-100117'), 'expired-test-token')).status, 401);
 });
 
 test('HTTP rejects untagged totals, incomplete/malformed games and wrong pools', async () => {
-  const body = valid('100117');
+  const body = valid('test-100117');
   for (const invalid of [
     { matchId: body.matchId, divisieId: '1001', homeScore: 3, awayScore: 28 },
     { ...body, games: body.games.slice(0, 10) },
@@ -88,7 +91,7 @@ test('HTTP rejects untagged totals, incomplete/malformed games and wrong pools',
 });
 
 test('HTTP persists and returns server-derived 3-28/28-3 with locked fixture identity', async () => {
-  for (const [id, expected, homeWins] of [['100117', [3, 28], true], ['100118', [28, 3], false]]) {
+  for (const [id, expected, homeWins] of [['test-100117', [3, 28], true], ['test-100118', [28, 3], false]]) {
     const response = await post({ ...valid(id, homeWins), homeTeamId: 'spoofed', date: '2099-01-01' });
     assert.equal(response.status, 201);
     const saved = await response.json();
@@ -107,7 +110,7 @@ test('HTTP persists and returns server-derived 3-28/28-3 with locked fixture ide
 
 test('HTTP persists partial games without counting the fixture in standings', async () => {
   const before = await store.computeStandings({ divisieId: '1001' });
-  const body = valid('100123');
+  const body = valid('test-100123');
   body.games = body.games.map((game, index) => index === 0
     ? { ...game, homeScore: 13, awayScore: 1 }
     : { ...game, homeScore: null, awayScore: null });
@@ -121,38 +124,38 @@ test('HTTP persists partial games without counting the fixture in standings', as
 });
 
 test('local write serialization retains different fixtures and updates the same fixture once', async () => {
-  const responses = await Promise.all([post(valid('100119')), post(valid('100120')), post(valid('100121')), post(valid('100121'))]);
+  const responses = await Promise.all([post(valid('test-100119')), post(valid('test-100120')), post(valid('test-100121')), post(valid('test-100121'))]);
   assert.deepEqual(responses.map((response) => response.status).sort(), [200, 201, 201, 201]);
   const records = JSON.parse(await fs.readFile(join(dir, 'matches-1001.json'), 'utf8'));
   assert.equal(records.length, 6);
-  for (const id of ['100119', '100120', '100121']) assert.equal(records.filter((row) => row.matchId === id).length, 1);
+  for (const id of ['test-100119', 'test-100120', 'test-100121']) assert.equal(records.filter((row) => row.matchId === id).length, 1);
 });
 
 test('complete results remain editable long after their scheduled date', async () => {
-  const first = await post(valid('100106'));
+  const first = await post(valid('test-100106'));
   assert.equal(first.status, 201);
   const created = await first.json();
   assert.equal(typeof created.submittedAt, 'string');
 
-  const edited = await post(valid('100106', false));
+  const edited = await post(valid('test-100106', false));
   assert.equal(edited.status, 200);
   const updated = await edited.json();
   assert.equal(updated.id, created.id);
   assert.equal(updated.submittedAt, created.submittedAt);
-  assert.deepEqual(updated.games, valid('100106', false).games);
+  assert.deepEqual(updated.games, valid('test-100106', false).games);
   assert.equal(updated.updatedByUid, 'ordinary-test-user');
 
   const file = join(dir, 'matches-1001.json');
   const rows = JSON.parse(await fs.readFile(file, 'utf8'));
-  const index = rows.findIndex((row) => row.matchId === '100106');
+  const index = rows.findIndex((row) => row.matchId === 'test-100106');
   rows[index].submittedAt = '2026-10-10T12:00:00.000Z';
   await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf8');
   const before = JSON.parse(await fs.readFile(file, 'utf8'));
-  const revised = await post(valid('100106'));
+  const revised = await post(valid('test-100106'));
   assert.equal(revised.status, 200);
   const revisedResult = await revised.json();
   assert.equal(revisedResult.submittedAt, '2026-10-10T12:00:00.000Z');
-  assert.deepEqual(revisedResult.games, valid('100106').games);
+  assert.deepEqual(revisedResult.games, valid('test-100106').games);
   assert.notDeepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
 });
 
@@ -176,16 +179,16 @@ test('weighted standings retain 2 league points per win, not raw-score or per-ga
 test('failed local writes return errors, retain prior records and release the mutex', async () => {
   const previous = await fs.readFile(join(dir, 'matches-1001.json'), 'utf8');
   const rename = mock.method(fs, 'rename', async () => { throw new Error('Simulated disk failure'); });
-  const failed = await post(valid('100122'));
+  const failed = await post(valid('test-100122'));
   assert.equal(failed.status, 500);
   assert.equal(await fs.readFile(join(dir, 'matches-1001.json'), 'utf8'), previous);
   rename.mock.restore();
-  assert.equal((await post(valid('100122'))).status, 201);
-  assert.equal((await post(valid('100122'))).status, 200);
+  assert.equal((await post(valid('test-100122'))).status, 201);
+  assert.equal((await post(valid('test-100122'))).status, 200);
 });
 
 test('HTTP authenticates, validates, saves and revises aggregate-only results without trusting source flags', async () => {
-  const body = { matchId: '100124', divisieId: '1001', scoreFormat: TOTAL_SCORE_FORMAT, homeScore: 19, awayScore: 12 };
+  const body = { matchId: 'test-100124', divisieId: '1001', scoreFormat: TOTAL_SCORE_FORMAT, homeScore: 19, awayScore: 12 };
   assert.equal((await post(body, null)).status, 401);
   for (const pair of [['', ''], [null, 31], [19.5, 11.5], [-1, 32], [32, -1], [19, 13], [1, 30], [30, 1]]) {
     const response = await post({ ...body, homeScore: pair[0], awayScore: pair[1] });
@@ -201,7 +204,7 @@ test('HTTP authenticates, validates, saves and revises aggregate-only results wi
   }
   const list = await (await fetch(`${base}/api/matches?divisieId=1001`)).json();
   assert.equal(list.find((row) => row.matchId === body.matchId).official, false);
-  const conflicting = await post({ ...body, matchId: '100117' });
+  const conflicting = await post({ ...body, matchId: 'test-100117' });
   assert.equal(conflicting.status, 409);
   assert.match((await conflicting.json()).error, /Details/);
 });

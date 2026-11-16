@@ -3088,5 +3088,612 @@
         }
       ]
     }
+  },
+  {
+    "id": "official-200117",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200117",
+    "matchId": "200117",
+    "matchNumber": "200117",
+    "homeTeamId": "jbc-t-dupke-2",
+    "awayTeamId": "midi-1",
+    "homeScore": 23,
+    "awayScore": 8,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2001",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 4
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200117.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen"
+          ],
+          "away": [
+            "Monique Bakker"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Dirk Jan van Mourik"
+          ],
+          "away": [
+            "Jesper Eersel"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Osman Jibril"
+          ],
+          "away": [
+            "Herman Soppe"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Cas Schellekens"
+          ],
+          "away": [
+            "Tom van Maanen"
+          ]
+        },
+        "tete-5": {
+          "home": [],
+          "away": [
+            "Rob Torremans"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Sander Beukers"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Dirk Jan van Mourik"
+          ],
+          "away": [
+            "Monique Bakker",
+            "Sander Beukers"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Osman Jibril",
+            "Didier Viguurs"
+          ],
+          "away": [
+            "Jesper Eersel",
+            "Rob Torremans"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Cas Schellekens",
+            "Laurent Bonafé"
+          ],
+          "away": [
+            "Cees Wubben",
+            "Herman Soppe"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Jolanda Visser-Verbruggen",
+            "Laurent Bonafé",
+            "Dirk Jan van Mourik"
+          ],
+          "away": [
+            "Monique Bakker",
+            "Jesper Eersel",
+            "Rob Torremans"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Osman Jibril",
+            "Cas Schellekens",
+            "Patrick Lautenslager"
+          ],
+          "away": [
+            "Cees Wubben",
+            "Herman Soppe",
+            "Tom van Maanen"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "triplette-2",
+          "side": "away",
+          "out": "Tom van Maanen",
+          "in": "Sander Beukers"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200118",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200118",
+    "matchId": "200118",
+    "matchNumber": "200118",
+    "homeTeamId": "jeu-de-bommel-1",
+    "awayTeamId": "va-tout-1",
+    "homeScore": 10,
+    "awayScore": 21,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2001",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 0
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 11,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200118.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Maaike Hooijmaijers"
+          ],
+          "away": [
+            "Jolanda Steijn"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Noelle Viguurs"
+          ],
+          "away": [
+            "Erik Kluijtmans"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Nino Naso"
+          ],
+          "away": [
+            "Peter van den Ouweland"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Marcel Hazenberg"
+          ],
+          "away": [
+            "Paul Plasmeijer"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Frank Veenstra"
+          ],
+          "away": [
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Jaco Elve"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Noelle Viguurs",
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Jolanda Steijn",
+            "Jaco Elve"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Marcel Hazenberg",
+            "Nino Naso"
+          ],
+          "away": [
+            "Peter van den Ouweland",
+            "Frans de Nijs"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Jordie van Hoorn",
+            "Frank Veenstra"
+          ],
+          "away": [
+            "Erik Kluijtmans",
+            "Nelio Rodrigues Marques"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Noelle Viguurs",
+            "Dyonne van der Meijden",
+            "Daniël van Mourik"
+          ],
+          "away": [
+            "Monique Steijn",
+            "Paul Plasmeijer",
+            "Erik Kluijtmans"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Maaike Hooijmaijers",
+            "Jordie van Hoorn",
+            "Frank Veenstra"
+          ],
+          "away": [
+            "Nelio Rodrigues Marques",
+            "Peter van den Ouweland",
+            "Jaco Elve"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "away",
+          "out": "Jolanda Steijn",
+          "in": "Monique Steijn"
+        },
+        {
+          "slotId": "doublette-2",
+          "side": "home",
+          "out": "Nino Naso",
+          "in": "Dyonne van der Meijden"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Dyonne van der Meijden",
+          "in": "Marcel Hazenberg"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200119",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200119",
+    "matchId": "200119",
+    "matchNumber": "200119",
+    "homeTeamId": "t-lover-1",
+    "awayTeamId": "amicale-boule-dargent-1",
+    "homeScore": 17,
+    "awayScore": 14,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2001",
+    "divisie": "2e-divisie",
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200120",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200120",
+    "matchId": "200120",
+    "matchNumber": "200120",
+    "homeTeamId": "cjb-middelburg-1",
+    "awayTeamId": "jbv-amicale-cuyk-1",
+    "homeScore": 13,
+    "awayScore": 18,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2001",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 7,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200120.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Ada Wouters"
+          ],
+          "away": [
+            "Hannah Warringa"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Myrthe Adriaanse"
+          ],
+          "away": [
+            "Mitch Schampers"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Marco Wouters"
+          ],
+          "away": [
+            "Alex van der Meer"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Jeroen Adriaanse"
+          ],
+          "away": [
+            "Brian Schampers"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Ronald Adriaanse"
+          ],
+          "away": [
+            "Maik Broekmeijer"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Rick Bongaerts"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Ronald Adriaanse",
+            "Ada Wouters"
+          ],
+          "away": [
+            "Mascha Broekmeijer-Derks",
+            "Maik Broekmeijer"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Myrthe Adriaanse",
+            "Marco Wouters"
+          ],
+          "away": [
+            "Mitch Schampers",
+            "Ben Broekmeijer"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Jeroen Adriaanse",
+            "Patrick Bruggeman"
+          ],
+          "away": [
+            "Brian Schampers",
+            "Rick Bongaerts"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Myrthe Adriaanse",
+            "Ronald Adriaanse",
+            "Ada Wouters"
+          ],
+          "away": [
+            "Hannah Warringa",
+            "Ben Broekmeijer",
+            "Maik Broekmeijer"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Jeroen Adriaanse",
+            "Patrick Bruggeman",
+            "Marco Wouters"
+          ],
+          "away": [
+            "Brian Schampers",
+            "Rick Bongaerts",
+            "Alex van der Meer"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "away",
+          "out": "Mascha Broekmeijer-Derks",
+          "in": "Hannah Warringa"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "away",
+          "out": "Maik Broekmeijer",
+          "in": "Mitch Schampers"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
   }
 ]
