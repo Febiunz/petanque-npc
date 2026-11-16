@@ -55,6 +55,7 @@ test('safe enrichment retains extra records, metadata, dates and already-detaile
   const extra = { id: 'other-user-result', fixtureId: 'unrelated', custom: 'retained' };
   const staged = { artifactKind: 'staged-individual-games-import-v1', liveDeployable: false, divisieId: '1001', matches: [detailed] };
   const enriched = enrichResults([aggregate, extra], staged, fixtures, '1001');
+  assert.equal(enriched[0].officialSource, 'nlpetanque');
   assert.equal(metadataHash(enriched[0]), metadataHash(aggregate));
   assert.deepEqual(enriched[1], extra);
   assert.deepEqual(enrichResults(enriched, staged, fixtures, '1001'), enriched);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Stack, TextField, Typography } from '@mui/material';
-import { GAME_GROUPS, GAME_SLOTS, SCORE_FORMAT, isFinishedGame, isUnplayedGame, resultSummary, summarizeGames } from '../../backend/domain/scoring.js';
+import { GAME_GROUPS, GAME_SLOTS, SCORE_FORMAT, OFFICIAL_RESULT_MESSAGE, isFinishedGame, isUnplayedGame, resultSummary, summarizeGames } from '../../backend/domain/scoring.js';
 
 function draftFromResult(result) {
   const resultGames = Array.isArray(result?.games) ? result.games : [];
@@ -60,6 +60,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
   const [conflict, setConflict] = React.useState(false);
   const headingRef = React.useRef(null);
   const stored = resultSummary(result);
+  const official = !!result?.official;
   const dirty = draft.some((game, index) =>
     game.homeScore !== initialDraft.current[index].homeScore || game.awayScore !== initialDraft.current[index].awayScore);
   const games = draft.map((game) => ({
@@ -68,7 +69,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
     awayScore: game.awayScore === '' ? null : /^\d+$/.test(game.awayScore) ? Number(game.awayScore) : NaN,
   }));
   const totals = summarizeGames(games);
-  const canSave = games.every((game) => isUnplayedGame(game) || isFinishedGame(game));
+  const canSave = !official && games.every((game) => isUnplayedGame(game) || isFinishedGame(game));
 
   React.useEffect(() => {
     const nextDraft = draftFromResult(result);
@@ -123,7 +124,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
   return (
     <Box component="form" onSubmit={save} sx={{ pb: 3 }}>
       <Typography ref={headingRef} tabIndex={-1} variant="h5" sx={{ mb: 1 }}>
-        {result ? 'Uitslag wijzigen' : 'Uitslag invoeren'}
+        {official ? 'Uitslag bekijken' : result ? 'Uitslag wijzigen' : 'Uitslag invoeren'}
       </Typography>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Typography fontWeight={600}>
@@ -135,8 +136,9 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
         <Typography variant="body2" color="text.secondary">Som partijpunten: {totals.rawHomeScore} - {totals.rawAwayScore}{totals.completed !== 11 ? ' (voorlopig)' : ''}</Typography>
       </Paper>
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}{conflict && <Button disabled={saving} onClick={refresh}>Opgeslagen uitslag bekijken</Button>}</Alert>}
-      {stored.error && <Alert severity="warning" sx={{ mb: 2 }}>{stored.error}. De opgeslagen partijgegevens zijn inconsistent; voer de 11 partijen opnieuw in om de uitslag te herstellen.</Alert>}
-      {stored.legacy && <Alert severity="info" sx={{ mb: 2 }}>{stored.label}. Alleen totaaluitslag beschikbaar; partijpunten zijn niet bekend. Vul de 11 partijen in om de uitslag compleet te maken.</Alert>}
+      {official && <Alert severity="info" sx={{ mb: 2 }}>{OFFICIAL_RESULT_MESSAGE}</Alert>}
+      {stored.error && <Alert severity="warning" sx={{ mb: 2 }}>{stored.error}. De opgeslagen partijgegevens zijn inconsistent{official ? '.' : '; voer de 11 partijen opnieuw in om de uitslag te herstellen.'}</Alert>}
+      {stored.legacy && <Alert severity="info" sx={{ mb: 2 }}>{stored.label}. Alleen totaaluitslag beschikbaar; partijpunten zijn niet bekend.{!official && ' Vul de 11 partijen in om de uitslag compleet te maken.'}</Alert>}
       <>
         <Alert severity="info" sx={{ mb: 2 }}>Per partij: een team 13, het andere 0 t/m 12. Beide scores invoeren; wedstrijdpunten worden berekend.</Alert>
         {GAME_GROUPS.map((group) => {
@@ -169,7 +171,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
                         <GamePlayers slotId={slot.slotId} playerLineup={playerLineup} />
                       </Box>
                       {['homeScore', 'awayScore'].map((side) => (
-                        <TextField key={side} size="small" value={entered[side]} disabled={saving}
+                        <TextField key={side} size="small" value={entered[side]} disabled={saving || official}
                           sx={{ minWidth: 0, '& .MuiInputBase-input': { px: 0.25 } }}
                           onChange={(event) => changeScore(slot.slotId, side, event.target.value)}
                           inputProps={{ inputMode: 'numeric', 'aria-label': `Partij ${number} ${group.label}, ${side === 'homeScore' ? 'thuis' : 'uit'} score` }}
@@ -198,7 +200,7 @@ export default function MatchDetails({ fixture, poolLabel, homeName, awayName, r
           );
         })}
         <Stack spacing={1} aria-live="polite">
-          {!user && <Alert severity="info">{authAvailable ? 'Log in met Google om deze uitslag op te slaan.' : 'Firebase is lokaal niet geconfigureerd. Bekijken en invoeren kan; opslaan vereist een geldige Google-aanmelding.'}</Alert>}
+          {!user && !official && <Alert severity="info">{authAvailable ? 'Log in met Google om deze uitslag op te slaan.' : 'Firebase is lokaal niet geconfigureerd. Bekijken en invoeren kan; opslaan vereist een geldige Google-aanmelding.'}</Alert>}
         </Stack>
       </>
       <Dialog open={discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby="discard-title">

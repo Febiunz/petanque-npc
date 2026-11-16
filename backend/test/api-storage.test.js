@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import express from 'express';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { GAME_SLOTS, SCORE_FORMAT, isFinishedGame } from '../domain/scoring.js';
+import { GAME_SLOTS, SCORE_FORMAT, TOTAL_SCORE_FORMAT, isFinishedGame } from '../domain/scoring.js';
 
 let dir;
 let server;
@@ -70,7 +70,7 @@ test('HTTP authentication remains required for ordinary users', async () => {
   assert.equal((await post(valid('100117'), 'expired-test-token')).status, 401);
 });
 
-test('HTTP rejects aggregate-only input, incomplete/malformed games and wrong pools', async () => {
+test('HTTP rejects untagged totals, incomplete/malformed games and wrong pools', async () => {
   const body = valid('100117');
   for (const invalid of [
     { matchId: body.matchId, divisieId: '1001', homeScore: 3, awayScore: 28 },
@@ -129,30 +129,30 @@ test('local write serialization retains different fixtures and updates the same 
 });
 
 test('complete results remain editable long after their scheduled date', async () => {
-  const first = await post(valid('100101'));
+  const first = await post(valid('100106'));
   assert.equal(first.status, 201);
   const created = await first.json();
   assert.equal(typeof created.submittedAt, 'string');
 
-  const edited = await post(valid('100101', false));
+  const edited = await post(valid('100106', false));
   assert.equal(edited.status, 200);
   const updated = await edited.json();
   assert.equal(updated.id, created.id);
   assert.equal(updated.submittedAt, created.submittedAt);
-  assert.deepEqual(updated.games, valid('100101', false).games);
+  assert.deepEqual(updated.games, valid('100106', false).games);
   assert.equal(updated.updatedByUid, 'ordinary-test-user');
 
   const file = join(dir, 'matches-1001.json');
   const rows = JSON.parse(await fs.readFile(file, 'utf8'));
-  const index = rows.findIndex((row) => row.matchId === '100101');
+  const index = rows.findIndex((row) => row.matchId === '100106');
   rows[index].submittedAt = '2026-10-10T12:00:00.000Z';
   await fs.writeFile(file, JSON.stringify(rows, null, 2), 'utf8');
   const before = JSON.parse(await fs.readFile(file, 'utf8'));
-  const revised = await post(valid('100101'));
+  const revised = await post(valid('100106'));
   assert.equal(revised.status, 200);
   const revisedResult = await revised.json();
   assert.equal(revisedResult.submittedAt, '2026-10-10T12:00:00.000Z');
-  assert.deepEqual(revisedResult.games, valid('100101').games);
+  assert.deepEqual(revisedResult.games, valid('100106').games);
   assert.notDeepEqual(JSON.parse(await fs.readFile(file, 'utf8')), before);
 });
 
@@ -182,4 +182,45 @@ test('failed local writes return errors, retain prior records and release the mu
   rename.mock.restore();
   assert.equal((await post(valid('100122'))).status, 201);
   assert.equal((await post(valid('100122'))).status, 200);
+});
+
+test('HTTP authenticates, validates, saves and revises aggregate-only results without trusting source flags', async () => {
+  const body = { matchId: '100124', divisieId: '1001', scoreFormat: TOTAL_SCORE_FORMAT, homeScore: 19, awayScore: 12 };
+  assert.equal((await post(body, null)).status, 401);
+  for (const pair of [['', ''], [null, 31], [19.5, 11.5], [-1, 32], [32, -1], [19, 13], [1, 30], [30, 1]]) {
+    const response = await post({ ...body, homeScore: pair[0], awayScore: pair[1] });
+    assert.equal(response.status, 400, await response.text());
+  }
+  for (const [index, pair] of [[19, 12], [3, 28], [28, 3]].entries()) {
+    const response = await post({ ...body, homeScore: pair[0], awayScore: pair[1], official: true, officialSource: 'nlpetanque' });
+    assert.equal(response.status, index ? 200 : 201, await response.clone().text());
+    const saved = await response.json();
+    assert.deepEqual([saved.homeScore, saved.awayScore], pair);
+    assert.equal(saved.games, undefined);
+    assert.equal(saved.officialSource, undefined);
+  }
+  const list = await (await fetch(`${base}/api/matches?divisieId=1001`)).json();
+  assert.equal(list.find((row) => row.matchId === body.matchId).official, false);
+  const conflicting = await post({ ...body, matchId: '100117' });
+  assert.equal(conflicting.status, 409);
+  assert.match((await conflicting.json()).error, /Details/);
+});
+
+test('HTTP official locks apply to quick and detailed entry and remain viewable with unchanged data', async () => {
+  const file = join(dir, 'matches-1001.json');
+  const rows = JSON.parse(await fs.readFile(file, 'utf8'));
+  rows.push({ ...valid('100101'), homeScore: 3, awayScore: 28, custom: 'preserved' });
+  await fs.writeFile(file, JSON.stringify(rows));
+  const before = await fs.readFile(file, 'utf8');
+  for (const input of [
+    valid('100101'),
+    { matchId: '100101', divisieId: '1001', scoreFormat: TOTAL_SCORE_FORMAT, homeScore: 19, awayScore: 12 },
+  ]) {
+    const response = await post(input);
+    assert.equal(response.status, 409);
+    assert.match((await response.json()).error, /Officiële uitslag/);
+  }
+  assert.equal(await fs.readFile(file, 'utf8'), before);
+  const list = await (await fetch(`${base}/api/matches?divisieId=1001`)).json();
+  assert.equal(list.find((row) => row.matchId === '100101').official, true);
 });

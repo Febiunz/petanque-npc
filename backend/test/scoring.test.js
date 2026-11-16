@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { GAME_SLOTS, SCORE_FORMAT, isFinishedGame, validateDetailedScore, summarizeGames, resultSummary } from '../domain/scoring.js';
+import { GAME_SLOTS, SCORE_FORMAT, TOTAL_SCORE_FORMAT, isFinishedGame, validateDetailedScore, validateAggregateScore, validateMatchScore, summarizeGames, resultSummary } from '../domain/scoring.js';
 import { saveResult } from '../storage/resultTransaction.js';
 
 const sheet = (mask = 0) => ({
@@ -30,6 +30,21 @@ test('raw inputs require exactly one integer 13 and another integer 0 through 12
   }
   assert.equal(isFinishedGame({ homeScore: 13, awayScore: 13 }), false);
   assert.equal(isFinishedGame({ homeScore: 12, awayScore: 11 }), false);
+});
+
+test('quick totals accept exactly the reachable complete weighted scores without inventing games', () => {
+  for (const [homeScore, awayScore] of [[19, 12], [3, 28], [28, 3], [0, 31], [31, 0]]) {
+    const input = { scoreFormat: TOTAL_SCORE_FORMAT, homeScore, awayScore };
+    assert.deepEqual(validateMatchScore(input), { homeScore, awayScore });
+    assert.throws(() => validateMatchScore({ ...input, games: [] }));
+  }
+  for (const [homeScore, awayScore] of [
+    ['', ''], [null, 31], [undefined, 31], ['19', 12], [19.5, 11.5], [-1, 32], [32, -1],
+    [19, 13], [1, 30], [30, 1], [NaN, 31], [Infinity, 0],
+  ]) {
+    assert.throws(() => validateAggregateScore({ homeScore, awayScore }));
+    assert.ok(resultSummary({ homeScore, awayScore }).error);
+  }
 });
 
 test('complete canonical slots, schema and derived totals are mandatory', () => {
@@ -144,4 +159,50 @@ test('blob failures never masquerade as successful saves', async () => {
   const match = { matchId: '1', submittedAt: now, ...validateDetailedScore(sheet()) };
   await assert.rejects(saveResult(read, async () => { throw new Error('Storage unavailable'); }, match, now), /Storage unavailable/);
   await assert.rejects(saveResult(read, async () => { throw Object.assign(new Error('Changed'), { statusCode: 412 }); }, match, now), { status: 503 });
+});
+
+test('aggregate saves preserve metadata and never contradict or delete entered games', async () => {
+  const detailed = { matchId: 'new', divisieId: '1001', custom: 'retained', playerLineup: { games: {} },
+    submittedAt: '2026-09-01', ...validateDetailedScore(sheet(64)) };
+  const blob = mockBlob([detailed]);
+  const unchanged = await saveResult(blob.read, blob.write, { matchId: 'new', divisieId: '1001', homeScore: 3, awayScore: 28 });
+  assert.deepEqual(unchanged.match.games, detailed.games);
+  assert.deepEqual(unchanged.match.playerLineup, detailed.playerLineup);
+  assert.equal(unchanged.match.custom, detailed.custom);
+  assert.equal(unchanged.match.submittedAt, detailed.submittedAt);
+  const before = structuredClone(blob.get());
+  await assert.rejects(saveResult(blob.read, blob.write, { matchId: 'new', homeScore: 19, awayScore: 12 }), { status: 409 });
+  assert.deepEqual(blob.get(), before);
+  const partial = { ...detailed, ...validateDetailedScore({
+    scoreFormat: SCORE_FORMAT, games: detailed.games.map((game, index) => index ? { ...game, homeScore: null, awayScore: null } : game),
+  }) };
+  const partialBlob = mockBlob([partial]);
+  await assert.rejects(saveResult(partialBlob.read, partialBlob.write, { matchId: 'new', homeScore: 19, awayScore: 12 }), { status: 409 });
+  assert.deepEqual(partialBlob.get(), [partial]);
+  const blank = { ...detailed, ...validateDetailedScore({ scoreFormat: SCORE_FORMAT,
+    games: GAME_SLOTS.map(({ slotId }) => ({ slotId, homeScore: null, awayScore: null })),
+  }) };
+  const blankBlob = mockBlob([blank]);
+  const aggregate = await saveResult(blankBlob.read, blankBlob.write, { matchId: 'new', homeScore: 19, awayScore: 12 });
+  assert.equal(aggregate.match.games, undefined);
+  assert.equal(aggregate.match.scoreFormat, undefined);
+  assert.deepEqual(aggregate.match.playerLineup, detailed.playerLineup);
+  const revised = await saveResult(blankBlob.read, blankBlob.write, { matchId: 'new', homeScore: 28, awayScore: 3 });
+  assert.deepEqual([revised.match.homeScore, revised.match.awayScore], [28, 3]);
+});
+
+test('official provenance and imported markers lock both writes including after an ETag race', async () => {
+  for (const score of [{ homeScore: 19, awayScore: 12 }, validateDetailedScore(sheet(64))]) {
+    const match = { matchId: '100101', divisieId: '1001', ...score };
+    const blob = mockBlob([{ ...match, homeScore: 8, awayScore: 23 }]);
+    await assert.rejects(saveResult(blob.read, blob.write, match), { status: 409 });
+    let official = false;
+    let writes = 0;
+    await assert.rejects(saveResult(
+      async () => ({ data: official ? [{ matchId: 'future', officialSource: 'nlpetanque' }] : [], etag: '0' }),
+      async () => { official = true; writes++; throw Object.assign(new Error('Imported concurrently'), { statusCode: 412 }); },
+      { ...match, matchId: 'future' },
+    ), { status: 409 });
+    assert.equal(writes, 1);
+  }
 });
