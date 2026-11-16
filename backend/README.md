@@ -22,10 +22,12 @@ Re-running `scripts/enrich-historical-results.mjs` preserves lineup hashes, name
 
 `POST /api/matches` requires Firebase authentication and `{ matchId, divisieId, scoreFormat: "individual-games-v1", games }`.
 The 11 canonical slots are `tete-1` through `tete-6` (2 points each), `doublette-1` through `doublette-3` (3 each), and `triplette-1`/`triplette-2` (5 each).
-Each unplayed slot uses `null` for both scores; an entered pair must be numeric integers with exactly one 13 and the other 0-12. The server derives weighted totals and fixture identity/date; aggregate-only submissions are rejected. Partial sheets remain provisional and do not affect standings until all 11 games are complete. Calculated 3-28 and 28-3 are valid.
+Each unplayed slot uses `null` for both scores; an entered pair must be numeric integers with exactly one 13 and the other 0-12. The server derives weighted totals and fixture identity/date. Partial sheets remain provisional and do not affect standings until all 11 games are complete. Calculated 3-28 and 28-3 are valid.
+Quick entry uses `{ matchId, divisieId, scoreFormat: "aggregate-v1", homeScore, awayScore }`: numeric integers 0-31 summing to 31, excluding unreachable 1/30. Totals such as 19-12, 3-28 and 28-3 are accepted without creating games. Matching detailed scores preserve all games; conflicting/inconsistent entered games return 409 directing users to Details. Entirely blank sheets can become aggregate-only results.
 Legacy aggregate-only records remain readable and retain their standings meaning: a match win earns 2 league points and saldo uses weighted totals, not raw-score sums.
 
-Signed-in users may create or revise results at any time. Edits preserve fixture identity, original date, creation metadata and the original submission timestamp.
+Signed-in users may create or revise nonofficial results at any time. Edits preserve fixture identity, original date, creation metadata and the original submission timestamp.
+Official results are locked by audited `history/provenance.json` or persisted `officialSource: "nlpetanque"` set at historical enrichment. Request-supplied official flags are ignored. GET adds computed `official`; both write modes reject official results with 409 within the transaction, rechecking on conditional blob retries if an import wins a race. Both frontend entry screens remain viewable but disable saving with a Dutch explanation.
 
 Duplicate checks occur within serialized atomic local writes or ETag-conditional blob transactions. New results return 201 and revisions return 200. Conditional conflicts retry against fresh data; storage failures never report success.
 Deployment uploads every `data/*.json` file with `--overwrite true`, including result blobs. Repository data replaces the corresponding production blobs, so live results and edits not present in the repository are lost on deployment.

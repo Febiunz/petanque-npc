@@ -1,4 +1,4 @@
-import { validateDetailedScore } from './domain/scoring.js';
+import { validateMatchScore } from './domain/scoring.js';
 import { createMatch, POOLS } from './storage/fileStore.js';
 import { getScheduledMatch } from './storage/schedule.js';
 
@@ -8,7 +8,7 @@ export async function submitMatchResult(input, user, storage = { createMatch, ge
   if (typeof input.divisieId !== 'string' || !Object.values(POOLS).includes(input.divisieId)) fail('Invalid divisieId');
   let score;
   try {
-    score = validateDetailedScore(input);
+    score = validateMatchScore(input);
   } catch (error) {
     fail(error.message);
   }
@@ -16,6 +16,7 @@ export async function submitMatchResult(input, user, storage = { createMatch, ge
   if (!scheduled || String(scheduled.divisieId) !== input.divisieId) fail('Unknown match in selected pool');
   return storage.createMatch({
     ...score,
+    scoreFormat: input.scoreFormat,
     date: scheduled.date,
     fixtureId: input.matchId,
     matchId: input.matchId,

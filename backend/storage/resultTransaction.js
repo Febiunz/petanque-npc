@@ -1,3 +1,6 @@
+import { isOfficialResult } from '../history/officialResults.js';
+import { OFFICIAL_RESULT_MESSAGE, isUnplayedGame, resultSummary } from '../domain/scoring.js';
+
 export async function updateResultFile(read, write, update) {
   for (let attempt = 0; attempt < 5; attempt++) {
     const { data, etag } = await read();
@@ -25,6 +28,12 @@ export async function saveResult(read, write, match, now = match.submittedAt || 
     const index = data.findIndex((row) => row && (
       (row.matchId || row.fixtureId) === match.matchId || row.fixtureId === match.matchId
     ));
+    const existing = data[index];
+    if (isOfficialResult(match) || isOfficialResult({ ...existing, divisieId: match.divisieId })) {
+      const error = new Error(OFFICIAL_RESULT_MESSAGE);
+      error.status = 409;
+      throw error;
+    }
     if (index < 0) {
       created = true;
       savedMatch = { ...match, submittedAt: match.submittedAt || now };
@@ -32,10 +41,21 @@ export async function saveResult(read, write, match, now = match.submittedAt || 
     }
 
     created = false;
-    const existing = data[index];
+    let score = {};
+    if (!Array.isArray(match.games) && Array.isArray(existing.games) && existing.games.some((game) => !isUnplayedGame(game))) {
+      const { score: detailed } = resultSummary(existing);
+      const consistent = detailed && detailed.homeScore === match.homeScore && detailed.awayScore === match.awayScore;
+      if (!consistent) {
+        const error = new Error('Er zijn al partijgegevens. Wijzig de uitslag via Details om deze te behouden.');
+        error.status = 409;
+        throw error;
+      }
+      score = { games: existing.games, scoreFormat: existing.scoreFormat };
+    }
     savedMatch = {
       ...existing,
       ...match,
+      ...score,
       id: existing.id || match.id,
       date: existing.date || match.date,
       createdAt: existing.createdAt || match.createdAt,
@@ -46,6 +66,10 @@ export async function saveResult(read, write, match, now = match.submittedAt || 
       updatedBy: match.submittedBy || null,
       updatedByUid: match.submittedByUid || null,
     };
+    if (!Array.isArray(match.games) && !score.games) {
+      delete savedMatch.games;
+      delete savedMatch.scoreFormat;
+    }
     const next = [...data];
     next[index] = savedMatch;
     return next;
