@@ -3,8 +3,9 @@ import { dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { readBlobFile, readBlobFileVersion, writeBlobFile, blobExists, deleteBlobFile } from './blobStorage.js';
-import { GAME_SLOTS, summarizeGames, validateDetailedScore } from '../domain/scoring.js';
+import { GAME_SLOTS, summarizeGames, validateMatchScore } from '../domain/scoring.js';
 import { saveResult, updateResultFile } from './resultTransaction.js';
+import { isOfficialResult } from '../history/officialResults.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = process.env.RESULTS_DATA_DIR || `${__dirname}/../data`;
@@ -432,13 +433,14 @@ export async function listMatches(options = {}) {
   // Enrich with names for convenience
   return matches.map((m) => ({
     ...m,
+    official: isOfficialResult(m),
     homeTeam: byId.get(m.homeTeamId) || null,
     awayTeam: byId.get(m.awayTeamId) || null,
   }));
 }
 
 export async function createMatch(input) {
-  const score = validateDetailedScore(input);
+  const score = validateMatchScore(input);
   if (!ALL_DIVISIE_IDS.includes(String(input.divisieId))) throw new Error('Invalid divisieId');
   if (!input.matchId || (input.fixtureId && input.fixtureId !== input.matchId)) throw new Error('Invalid match identity');
   const now = new Date().toISOString();

@@ -12,7 +12,7 @@ This project provides:
 - Required division selection before entering results.
 - Supported division identifiers: `1001` (Topdivisie), `2001` and `2002` (2e divisie).
 - Speelronde and Wedstrijd selectors include every scheduled fixture, including completed/past matches.
-- The selected weighted result (or "Nog geen uitslag") appears beside the exact "Details" button below Wedstrijd.
+- Below Wedstrijd, wide total-score boxes allow quick entry through Thuis; Uit is read-only and automatically calculated as 31 minus Thuis. "Opslaan" is immediately left of "Details". Official results are read-only in both screens.
 - Details opens a dedicated screen: 6 tete-a-tete, 3 doublette and 2 triplette games, with two independent blank scores per new game.
 - When a match's official Excel sheet is available, Details shows home-away player pairs on one line; substitutions are listed below the original pairing as `out → in`.
 - Each finished game has exactly one side at 13 and the other an integer 0-12. Wins award 2/3/5 weighted match points, distributing 31 points. Calculated 3-28 and 28-3 results are allowed; only 1 and 30 are unreachable.
@@ -137,8 +137,10 @@ Base URL in dev: proxied via Vite, so call `/api/...` from the frontend.
 - `GET /api/matches` — Submitted matches (most recent first); supports `?divisieId=1001|2001|2002`
 - `POST /api/matches` — Submit a result (requires Firebase ID token)
   - Body: `{ matchId, divisieId, scoreFormat: "individual-games-v1", games: [{ slotId, homeScore, awayScore }, ...] }`
-  - Validation: requires a fixture in the selected pool and exactly 11 unique canonical slots. Each unplayed game uses `null` for both scores; each entered pair must have numeric integer scores (exactly one 13, the other 0-12). Aggregate-only submissions are no longer accepted.
-  - Server derives weighted totals and scheduled identity/date; client totals cannot override them. Conflicting supplied totals return 400, duplicate submissions return 409, and storage failures are explicit errors.
+  - Detailed validation: requires a fixture in the selected pool and exactly 11 unique canonical slots. Each unplayed game uses `null` for both scores; each entered pair must have numeric integer scores (exactly one 13, the other 0-12).
+  - Quick-entry body: `{ matchId, divisieId, scoreFormat: "aggregate-v1", homeScore, awayScore }`. Both totals must be numeric integers 0-31, sum to 31, and be reachable (1/30 excluded); 19-12, 3-28 and 28-3 are valid. No individual games are fabricated.
+  - Server derives scheduled identity/date and detailed weighted totals. An aggregate save preserves matching detailed games, but conflicting or inconsistent entered games return 409 with instructions to use Details. Empty sheets may become aggregate-only records.
+  - Official results are identified by audited `backend/history/provenance.json` or the persisted `officialSource: "nlpetanque"` marker set by the enrichment helper, never a request flag. GET returns computed `official`; both save modes reject official writes with 409 inside the write transaction, including ETag retries after concurrent imports. New results return 201, revisions 200, invalid scores 400; storage failures are explicit errors.
 - `GET /api/standings` — Current standings; supports `?divisieId=1001|2001|2002` and optional `?divisie=...`
 
 Rate limiting (subject to tuning; current values from code):
@@ -151,8 +153,9 @@ Rate limiting (subject to tuning; current values from code):
 
 - User must select divisie and pool before rounds/matches become selectable.
 - Every scheduled round and match stays selectable, with a date hint. Upcoming-only filtering remains separate in "Komende wedstrijden".
-- Below Wedstrijd, "Details" shares a row with the selected weighted result or explicit unavailable/loading/unplayed status.
-- Details locks the fixture identity and displays all 11 games. Signed-in users can save partial games and revise results without a timing restriction.
+- Below Wedstrijd, two wide score boxes show valid saved totals or stay empty for absent/invalid results, without a "Nog geen uitslag" label. Only Thuis is editable; Uit is calculated as 31 minus Thuis (and clears for blank/invalid home input). "Opslaan" is immediately left of "Details"; saves require Google sign-in and valid complete totals. The buttons stay together when the row wraps on narrow screens.
+- Official results remain selectable and viewable, with a Dutch read-only explanation and disabled score inputs/save controls on both screens.
+- Details locks the fixture identity and displays all 11 games. Signed-in users can save partial games and revise nonofficial results without a timing restriction.
 - New raw inputs start empty and are independently editable: no auto-complement, clamping or truncation. Each valid game contributes its weighted points; incomplete totals are labeled provisional.
 - Each game section shows a left-aligned, single-line cumulative weighted subtotal beside its navigation/save controls: tete-a-tete after six games, doublette including tete-a-tete, then "Totaal" including all three sections. Per-win explanatory labels are omitted. The header's separately labeled raw sum remains.
 - Below each of the three game blocks, "Terug" opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing choices. "Opslaan" saves all 11 slots, including blank unplayed slots, while keeping the details open.

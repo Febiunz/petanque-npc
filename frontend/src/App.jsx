@@ -4,7 +4,7 @@ import { api } from './api';
 import { auth, googleProvider, authAvailable } from './firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import MatchDetails from './MatchDetails';
-import { GAME_SLOTS, isFinishedGame, resultSummary } from '../../backend/domain/scoring.js';
+import { GAME_SLOTS, TOTAL_SCORE_FORMAT, OFFICIAL_RESULT_MESSAGE, isFinishedGame, resultSummary, validateAggregateScore } from '../../backend/domain/scoring.js';
 
 const POOL_OPTIONS = [
   { divisie: 'topdivisie', divisieId: '1001', label: 'Topdivisie - 1001' },
@@ -58,6 +58,9 @@ function App() {
   const [errorOpen, setErrorOpen] = React.useState(false);
   const loadRequestRef = React.useRef(0);
   const [results, setResults] = React.useState([]);
+  const [quickScores, setQuickScores] = React.useState({ homeScore: '', awayScore: '' });
+  const [quickSaving, setQuickSaving] = React.useState(false);
+  const [quickSaved, setQuickSaved] = React.useState(false);
 
   // Selection includes completed fixtures; only the upcoming list filters them out.
   React.useEffect(() => {
@@ -144,12 +147,72 @@ function App() {
   const selectedFixture = scheduleAll.find((fixture) => fixture.id === matchId);
   const selectedResult = results.find((result) => (result.matchId || result.fixtureId) === matchId);
   const summary = resultSummary(selectedResult);
+  React.useEffect(() => {
+    const stored = resultSummary(selectedResult);
+    const score = stored.score && (!Array.isArray(stored.score.games) || stored.score.games.some(isFinishedGame))
+      ? stored.score : null;
+    setQuickScores({
+      homeScore: score ? String(score.homeScore) : '',
+      awayScore: score ? String(score.awayScore) : '',
+    });
+    setQuickSaved(false);
+  }, [matchId, selectedDivisieId, selectedResult]);
+  const aggregate = Object.fromEntries(Object.entries(quickScores).map(([key, value]) =>
+    [key, /^\d+$/.test(value) ? Number(value) : NaN]));
+  let quickError = '';
+  try {
+    validateAggregateScore(aggregate);
+  } catch (error) {
+    quickError = error.message;
+  }
+  const quickStatus = loading || opening ? 'Uitslag laden…'
+    : !loaded ? 'Uitslag niet beschikbaar'
+    : !matchId ? 'Selecteer een wedstrijd'
+    : selectedResult?.official ? OFFICIAL_RESULT_MESSAGE
+    : quickSaved ? 'Uitslag opgeslagen.'
+    : !selectedResult ? ''
+    : summary.error ? 'Inconsistente uitslag'
+    : summary.legacy ? 'Alleen totaaluitslag beschikbaar.'
+    : summary.label.includes('(voorlopig)') ? 'Voorlopige partijuitslag; wijzigen via Details.'
+    : 'Partijgegevens beschikbaar; wijzigen via Details.';
+  const saveQuick = async () => {
+    if (!selectedFixture || loading || opening || quickSaving || !loaded || !user || selectedResult?.official || quickError) return;
+    setQuickSaving(true);
+    setQuickSaved(false);
+    setErrorOpen(false);
+    try {
+      const saved = await api.submitResult({ matchId, divisieId: selectedDivisieId, scoreFormat: TOTAL_SCORE_FORMAT, ...aggregate });
+      setResults((rows) => [saved, ...rows.filter((row) => (row.matchId || row.fixtureId) !== matchId)]);
+      setCompletedSet((ids) => new Set([...ids, matchId]));
+      const pool = POOL_OPTIONS.find((row) => row.divisieId === selectedDivisieId);
+      try {
+        await loadPoolData(selectedDivisieId, pool.divisie);
+      } catch (error) {
+        setErrorMsg(`Uitslag opgeslagen. Vernieuwen van stand en uitslagen mislukt: ${error.message}`);
+        setErrorOpen(true);
+      }
+      setQuickSaved(true);
+    } catch (error) {
+      setErrorMsg(`Kon uitslag niet opslaan: ${error.message}`);
+      setErrorOpen(true);
+      if (error.status === 409) {
+        try {
+          const rows = await api.getMatches({ divisieId: selectedDivisieId });
+          if (rows.find((row) => (row.matchId || row.fixtureId) === matchId)?.official) setResults(rows);
+        } catch (refreshError) {
+          setErrorMsg(`Kon uitslag niet opslaan: ${error.message}. Vernieuwen mislukt: ${refreshError.message}`);
+        }
+      }
+    } finally {
+      setQuickSaving(false);
+    }
+  };
   const back = () => {
     setDetails(null);
     requestAnimationFrame(() => detailsButtonRef.current?.focus());
   };
   const openDetails = async () => {
-    if (!selectedFixture || !loaded || loading || opening) return;
+    if (!selectedFixture || !loaded || loading || opening || quickSaving) return;
     setOpening(true);
     try {
       const rows = await api.getMatches({ divisieId: selectedDivisieId });
@@ -172,7 +235,24 @@ function App() {
     }
   };
   const saveDetails = async (score) => {
-    const saved = await api.submitResult({ ...score, matchId: details.fixture.id, divisieId: details.divisieId });
+    let saved;
+    try {
+      saved = await api.submitResult({ ...score, matchId: details.fixture.id, divisieId: details.divisieId });
+    } catch (error) {
+      if (error.status === 409) {
+        try {
+          const rows = await api.getMatches({ divisieId: details.divisieId });
+          const official = rows.find((row) => (row.matchId || row.fixtureId) === details.fixture.id && row.official);
+          if (official) {
+            setResults(rows);
+            setDetails((current) => ({ ...current, result: official }));
+          }
+        } catch (refreshError) {
+          error.message += `. Vernieuwen mislukt: ${refreshError.message}`;
+        }
+      }
+      throw error;
+    }
     setResults((rows) => [saved, ...rows.filter((row) => (row.matchId || row.fixtureId) !== saved.matchId)]);
     setCompletedSet((ids) => new Set([...ids, saved.matchId]));
     setDetails((current) => ({ ...current, result: saved }));
@@ -222,7 +302,7 @@ function App() {
           <TextField
             label="Divisie"
             size="small"
-            disabled={opening || loading}
+            disabled={opening || loading || quickSaving}
             value={selectedDivisieId}
             onChange={(e) => {
               setStandings([]);
@@ -293,9 +373,9 @@ function App() {
           {errorOpen && (
             <Typography variant="body2" color="error" sx={{ mb: 1 }}>{errorMsg}</Typography>
           )}
-          {errorOpen && <Button onClick={() => loadPoolData(selectedDivisieId, POOL_OPTIONS.find((pool) => pool.divisieId === selectedDivisieId).divisie).catch((error) => { setErrorMsg(`Kon gegevens niet vernieuwen: ${error.message}`); setErrorOpen(true); })}>Opnieuw laden</Button>}
+          {errorOpen && <Button disabled={quickSaving || opening || loading} onClick={() => loadPoolData(selectedDivisieId, POOL_OPTIONS.find((pool) => pool.divisieId === selectedDivisieId).divisie).catch((error) => { setErrorMsg(`Kon gegevens niet vernieuwen: ${error.message}`); setErrorOpen(true); })}>Opnieuw laden</Button>}
           <Stack spacing={1}>
-            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={opening || loading || !selectedDivisieId || !availableRounds.length}>
+            <TextField label="Speelronde" size="small" value={round} onChange={(e) => { const v = e.target.value; setRound(v); setMatchId(''); }} select fullWidth disabled={opening || loading || quickSaving || !selectedDivisieId || !availableRounds.length}>
               {availableRounds.map((r) => {
                 const dateForRound = (() => {
                   const rows = scheduleAll.filter(m => String(m.round) === String(r));
@@ -305,7 +385,7 @@ function App() {
                 return <MenuItem key={r} value={String(r)}>{`Speelronde ${r} • ${dateForRound}`}</MenuItem>;
               })}
             </TextField>
-            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={opening || loading || !selectedDivisieId || !schedule.length}>
+            <TextField label="Wedstrijd" size="small" value={matchId} onChange={(e) => setMatchId(e.target.value)} select fullWidth disabled={opening || loading || quickSaving || !selectedDivisieId || !schedule.length}>
               {schedule.map(m => {
                 const home = teams.find(t => t.id === m.homeTeamId)?.name || m.homeTeamId;
                 const away = teams.find(t => t.id === m.awayTeamId)?.name || m.awayTeamId;
@@ -313,10 +393,27 @@ function App() {
                 return <MenuItem key={m.id} value={m.id}>{label}</MenuItem>;
               })}
             </TextField>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <Typography variant="body2" aria-live="polite">{loading || opening ? 'Uitslag laden…' : !loaded ? 'Uitslag niet beschikbaar' : !matchId ? 'Selecteer een wedstrijd' : summary.label}</Typography>
-              <Button ref={detailsButtonRef} variant="contained" size="small" disabled={!selectedFixture || !loaded || loading || opening} onClick={openDetails} sx={{ ml: 'auto', textTransform: 'none' }}>Details</Button>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
+              {['homeScore', 'awayScore'].map((side) => <TextField key={side}
+                label={side === 'homeScore' ? 'Thuis' : 'Uit'} size="small" value={quickScores[side]}
+                onChange={side === 'homeScore' ? (event) => {
+                  const homeScore = event.target.value;
+                  const total = /^\d+$/.test(homeScore) ? Number(homeScore) : NaN;
+                  setQuickScores({ homeScore, awayScore: total >= 0 && total <= 31 ? String(31 - total) : '' });
+                  setQuickSaved(false);
+                } : undefined}
+                disabled={!selectedFixture || !loaded || loading || opening || quickSaving || !!selectedResult?.official}
+                error={!!quickError && Object.values(quickScores).some((value) => value !== '')}
+                inputProps={{ inputMode: 'numeric', readOnly: side === 'awayScore', 'aria-label': side === 'homeScore' ? 'Totaalscore thuis' : 'Totaalscore uit' }}
+                sx={{ minWidth: 88, flex: '1 0 88px' }} />)}
+              <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
+                <Button variant="contained" size="small" disabled={!selectedFixture || !loaded || loading || opening || quickSaving || !user || !!selectedResult?.official || !!quickError} onClick={saveQuick} sx={{ textTransform: 'none' }}>{quickSaving ? 'Opslaan…' : 'Opslaan'}</Button>
+                <Button ref={detailsButtonRef} variant="contained" size="small" disabled={!selectedFixture || !loaded || loading || opening || quickSaving} onClick={openDetails} sx={{ textTransform: 'none' }}>Details</Button>
+              </Box>
             </Box>
+            {quickStatus && <Typography variant="body2" aria-live="polite">{quickStatus}</Typography>}
+            {selectedFixture && !selectedResult?.official && quickError && Object.values(quickScores).some((value) => value !== '') && <Typography color="error" variant="body2">{quickError}</Typography>}
+            {selectedFixture && !user && !selectedResult?.official && <Typography variant="body2" color="text.secondary">Log in met Google om deze uitslag op te slaan.</Typography>}
             {selectedFixture && summary.error && <Typography color="error" variant="body2">{summary.error}</Typography>}
           </Stack>
         </Paper>
