@@ -79,30 +79,39 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 
 ### Protected Endpoints (Require Firebase Auth)
 - `POST /api/matches` - Submit result
-  - Body: `{ matchId, divisieId, homeScore, awayScore }`
-  - Scores: integers [0, 31], must sum to 31
-  - **FORBIDDEN**: scores of 1, 3, 28 or 30 for either team
+  - Body: `{ matchId, divisieId, scoreFormat: "individual-games-v1", games: [{ slotId, homeScore, awayScore }, ...] }`
+  - Quick totals: `{ matchId, divisieId, scoreFormat: "aggregate-v1", homeScore, awayScore }`; numeric integers 0-31, sum 31, excluding unreachable 1/30. Never fabricate games.
+  - Exactly 11 canonical slots: tete-1..6 (2 points), doublette-1..3 (3 points), triplette-1..2 (5 points)
+  - Unplayed pairs have null scores; entered raw pairs have exactly one numeric integer 13 and the other integer 0-12; both are independently entered
+  - Server derives weighted totals and scheduled fixture identity/date; partial results remain provisional and do not affect standings
   - `divisieId` is required and must match the selected pool in the UI
 
 ## Key Business Rules
 
 ### Score Validation
-- Valid scores: 0, 2, 4-27, 29, 31 (integers only)
-- Total must equal 31 (homeScore + awayScore = 31)
-- Values 1, 3, 28 and 30 are FORBIDDEN for either team
-- Example valid scores: (13, 18), (0, 31), (15, 16)
-- Example invalid scores: (1, 30), (14, 3), (30, 1), (10, 20)
+- Six tete-a-tete, three doublette and two triplette games award 2/3/5 weighted points per win
+- Each played raw pair: exactly one 13 and one integer 0-12; blank slots use null scores; raw 1 and 3 are allowed
+- Derive weighted totals from entered valid games; partial totals are provisional, and complete totals sum to 31 (3-28 and 28-3 are valid)
+- Preserve distinct raw sums and weighted totals; standings award 2 league points per match win and use weighted saldo
 
 ### Data Integrity
 - Match completion derived from per-division `matches-<divisieId>.json` storage - NEVER use `schedule.status`
 - Schedule is generated locally (round-robin) from pool teams; do not add external official schedule fetch/parsing.
 - All file writes are serialized with in-process mutex
 - No duplicate submissions for same match allowed
+- Duplicate detection is inside the write transaction; blob writes use ETag conditions with bounded retry
+- Historical enrichment preserves every original record field in repository data; provenance is in backend/history/provenance.json. Deployment replaces live blobs with repository data.
+- Official results are read-only: audited provenance or an ingestion-set `officialSource: "nlpetanque"` marker is authoritative, never request flags. GET computes `official`; both write modes enforce a 409 lock within transactions and ETag retries. Enrichment adds the marker without changing historical metadata hashes.
+- Quick totals preserve matching detailed games; conflicting/inconsistent entered games require Details (409). Entirely blank sheets may become aggregate-only results; retain unrelated metadata.
+- Official results store player names per slot in `playerLineup.games` and mapped substitutions in `playerLineup.substitutions`; Details reads them from the result API. Incomplete substitutions remain in `unassignedSubstitutions`, without guessing a game. Cross-sheet name resolutions and lineup hashes are recorded in provenance separately from preserved result metadata.
+- The 16 November 2026 audit covers 58 official results (18/20/20) and 627 games from 57 sheets. Match `200119` remains official aggregate-only (17-14; workbook 404), with `aggregateOnlyMatches` evidence. Match `200117` has an empty home name array for `tete-5`, audited in `missingPlayerNames`; never guess missing games or names. Teams and schedules were unchanged.
+- Re-running historical enrichment must preserve lineup evidence (including missing-name evidence) and earlier download/page audits with their original audit dates; `latestExcelDownloadAudit` records the current audit separately. Changed lineup or workbook hashes require re-verification before applying. Reject staging that omits an already-provenanced match or removes a previously verified lineup before any writes.
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
 - Header: `Authorization: Bearer <ID_TOKEN>`
 - Optional revocation checking: `CHECK_REVOKED=true`
+- Missing local Firebase client configuration allows public viewing/unsaved entry only; never bypass auth for saves
 
 ## Rate Limiting
 - Pre-auth guard: 100 requests/min per IP
@@ -124,6 +133,7 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - `PORT` (optional, default: 5000)
 - `AZURE_STORAGE_CONNECTION_STRING` (production, for blob storage)
 - `STORAGE_CONTAINER_NAME` (optional, default: "data")
+- `RESULTS_DATA_DIR` / `SCHEDULE_DATA_DIR` (optional local data overrides; ignored in blob mode)
 
 ### Frontend Build-time
 - `VITE_FIREBASE_API_KEY`
@@ -133,6 +143,7 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - `VITE_FIREBASE_MESSAGING_SENDER_ID`
 - `VITE_FIREBASE_APP_ID`
 - `VITE_API_BASE` (production only)
+- `DEV_API_TARGET` (Vite server environment, optional proxy target, default http://localhost:5000)
 
 ## UI/UX Requirements
 
@@ -141,12 +152,21 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - Users must select divisie and pool first
 - Pool identifiers: `1001` (Topdivisie), `2001` (2e divisie), `2002` (2e divisie)
 - Score inputs start empty
-- Auto-complement second score to reach 31
-- Block scores of 1 and 3
-- Disable submit until valid scores entered
+- All scheduled past/completed/unplayed rounds and fixtures remain selectable
+- Show two wide total-score boxes below Wedstrijd, empty for absent/invalid results, without "Nog geen uitslag". Only Thuis is editable; calculate read-only Uit as 31 minus valid home input and clear it for blank/invalid input. Keep Opslaan immediately left of exact "Details" (wrap buttons together on narrow screens); retain loading/error status. Raw game inputs in Details remain independent.
+- Official results remain selectable/viewable with a Dutch read-only explanation and disabled score/save controls in quick entry and Details.
+- Dedicated Details screen locks fixture identity; signed-in users can save partial games and revise nonofficial results without a timing restriction. Legacy totals never invent games.
+- Two independent raw inputs per game; no auto-complement, clamping or truncation
+- Show left-aligned, single-line cumulative weighted subtotals beside each group's navigation/save controls: tete; tete+doublette; final "Totaal" for all three groups. Do not append a provisional label; omit per-win explanatory labels.
+- When an official match Excel sheet is available, show each game's home-away player pairs on one line between the game number and score inputs; list substitutions below the original pairing as `out → in`.
+- Below each game block, Terug opens an unsaved-results dialog with save-and-close, discard-and-close, and continue-editing actions. Opslaan saves all 11 slots, including blank unplayed slots, and stays on the details screen.
+- Require sign-in to save; a score pair must be either blank or valid. Guard dirty back/close and in-flight navigation.
+- Preserve selection after save, refresh results/standings, and retain input on save failure
+- Keep upcoming-only filtering separate in Komende wedstrijden
 
 ### Results Display
 - Single-line rows only
+- Uitslagen columns: Ronde, played Datum (official result date, otherwise fixture date), Thuis, Uit, Uitslag (last)
 
 ### Development Proxy
 - Vite proxies `/api` requests to `http://localhost:5000`
@@ -161,7 +181,9 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 5. Frontend loads at: http://localhost:5173
 6. Test Firebase authentication flow
 7. Submit valid score (e.g., 13-18)
-8. Attempt invalid score (e.g., 1-30) - should be rejected
+8. Reject invalid raw pairs (13-13, 12-11, decimals); accept 13-1 and 3-13
+
+Run `npm --prefix backend test` and `npm --prefix frontend test` for scoring/API/persistence/history and UI checks; use isolated local files and mocked auth/blob operations, never live mutation tests.
 
 ### Build Validation
 ```bash
@@ -195,7 +217,7 @@ cd frontend && npm run preview
 - Frontend deploys to Azure Static Web Apps
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
-- Workflow also uploads `backend/data/*.json` to the blob container `data` (`AZURE_STORAGE_CONNECTION_STRING` secret) and always overwrites existing blobs
+- Workflow uploads every `backend/data/*.json` file to container `data` with `--overwrite true`, including results, teams and schedules. Live results and edits not present in the repository are replaced on deployment.
 
 ## Common Tasks and Commands
 
@@ -232,7 +254,7 @@ export PORT="5000"
 ### Before Committing
 1. Start both applications: `npm run dev` (NEVER CANCEL)
 2. Verify API endpoints respond correctly
-3. Test score validation (reject 1 and 3)
+3. Test raw game validation and derived 3-28/28-3 totals
 4. Test authentication flow if modified
 5. Update README.md if behavior changed
 
@@ -270,8 +292,8 @@ npm run install:all
 - **NEVER CANCEL** these commands before completion
 
 ### Critical Validations
-- Scores 1 and 3 are FORBIDDEN
-- Total scores must equal 31
+- Raw 1 and 3 are valid; finished games require exactly one 13 and another integer 0-12
+- All 11 games derive weighted totals summing to 31, including valid 3-28/28-3
 - All user input must be validated on both client and server
 - File writes are atomic and serialized
 
