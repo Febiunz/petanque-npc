@@ -93,6 +93,7 @@ export function buildProvenance(sourceProvenance, imports, previous = {}) {
           }
           evidence.playerLineupSha256 = lineupHash;
           if (priorMatch.playerNameResolutions) evidence.playerNameResolutions = priorMatch.playerNameResolutions;
+          if (priorMatch.missingPlayerNames) evidence.missingPlayerNames = priorMatch.missingPlayerNames;
           if (priorMatch.notes) evidence.notes = priorMatch.notes;
         }
         return evidence;

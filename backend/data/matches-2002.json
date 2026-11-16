@@ -3077,5 +3077,767 @@
       },
       "substitutions": []
     }
+  },
+  {
+    "id": "official-200217",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200217",
+    "matchId": "200217",
+    "matchNumber": "200217",
+    "homeTeamId": "amicale-de-petanque-1",
+    "awayTeamId": "de-meteoor-1",
+    "homeScore": 21,
+    "awayScore": 10,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2002",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 8
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 0,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 2,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 1
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 10
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200217.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Alie Klasens"
+          ],
+          "away": [
+            "Amanda Huisman"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Bauke Bokhorst"
+          ],
+          "away": [
+            "Wouter de Ruiter"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Henk Boer"
+          ],
+          "away": [
+            "Mitch Horn"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Pascal Wijnstekers"
+          ],
+          "away": [
+            "Piet Moret"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Nieck de Groot"
+          ],
+          "away": [
+            "Yvo Jansen"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Gilles Jacquot"
+          ],
+          "away": [
+            "Mike Haarmann"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Alie Klasens",
+            "Pascal Wijnstekers"
+          ],
+          "away": [
+            "Amanda Huisman",
+            "Mike Haarmann"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Bauke Bokhorst",
+            "Gilles Jacquot"
+          ],
+          "away": [
+            "Wouter de Ruiter",
+            "Mitch Horn"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Henk Boer",
+            "Nieck de Groot"
+          ],
+          "away": [
+            "Yvo Jansen",
+            "Piet Moret"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Marjo Croes",
+            "Nieck de Groot",
+            "Gilles Jacquot"
+          ],
+          "away": [
+            "Amanda Huisman",
+            "Mike Haarmann",
+            "Piet Moret"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Bauke Bokhorst",
+            "Henk Boer",
+            "Pascal Wijnstekers"
+          ],
+          "away": [
+            "Wouter de Ruiter",
+            "Yvo Jansen",
+            "Mitch Horn"
+          ]
+        }
+      },
+      "substitutions": []
+    },
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200218",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200218",
+    "matchId": "200218",
+    "matchNumber": "200218",
+    "homeTeamId": "de-gooiers-1",
+    "awayTeamId": "jbc-randenbroek-1",
+    "homeScore": 12,
+    "awayScore": 19,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2002",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 12,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 13,
+        "awayScore": 7
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200218.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Pascale Lhoste"
+          ],
+          "away": [
+            "Greet Boersma"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Milan Gunther Mohr"
+          ],
+          "away": [
+            "Timo van Korlaar"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Geert Eshuis"
+          ],
+          "away": [
+            "Bas Velthuijsen"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Peter Bonarius"
+          ],
+          "away": [
+            "Richmond van der Huure"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Stephan Kooistra"
+          ],
+          "away": [
+            "Edwin van den Ende"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Dennis Gunther-Mohr"
+          ],
+          "away": [
+            "Henk Hoefakker"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Stephan Kooistra",
+            "Kimberley Dunki Jacobs"
+          ],
+          "away": [
+            "Eef Meyer-van Nijkerk",
+            "Richmond van der Huure"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Peter Bonarius",
+            "Stefan Vogel"
+          ],
+          "away": [
+            "Vincent van der Veer",
+            "Edwin van den Ende"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Geert Eshuis",
+            "Dennis Gunther-Mohr"
+          ],
+          "away": [
+            "Timo van Korlaar",
+            "Bas Velthuijsen"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Pascale Lhoste",
+            "Peter Bonarius",
+            "Stefan Vogel"
+          ],
+          "away": [
+            "Henna Hoefakker-van de Vis",
+            "Timo van Korlaar",
+            "Richmond van der Huure"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Milan Gunther Mohr",
+            "Stephan Kooistra",
+            "Dennis Gunther-Mohr"
+          ],
+          "away": [
+            "Greet Boersma",
+            "Henk Hoefakker",
+            "Edwin van den Ende"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-3",
+          "side": "home",
+          "out": "Geert Eshuis",
+          "in": "Milan Gunther Mohr"
+        },
+        {
+          "slotId": "doublette-1",
+          "side": "away",
+          "out": "Eef Meyer-van Nijkerk",
+          "in": "Henna Hoefakker-van de Vis"
+        },
+        {
+          "slotId": "triplette-2",
+          "side": "away",
+          "out": "Greet Boersma",
+          "in": "Vincent van der Veer"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200219",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200219",
+    "matchId": "200219",
+    "matchNumber": "200219",
+    "homeTeamId": "elza-boules-1",
+    "awayTeamId": "puk-haarlem-2",
+    "homeScore": 16,
+    "awayScore": 15,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2002",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 13,
+        "awayScore": 10
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 4
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 9
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 11,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 6,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 4,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200219.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Nel Rood"
+          ],
+          "away": [
+            "Els Hummel"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Peter Six"
+          ],
+          "away": [
+            "Mike van Veen"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Ronnie Bakker"
+          ],
+          "away": [
+            "Remy Mosselman"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Kees Kaandorp"
+          ],
+          "away": [
+            "Szymon Teufel"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Rick Kaandorp"
+          ],
+          "away": [
+            "Anton Wijker"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Marco Eveleens"
+          ],
+          "away": [
+            "Elout Visser"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Ronnie Bakker",
+            "Jeannet Schuring"
+          ],
+          "away": [
+            "Janna Bos",
+            "Patrick Liabeuf"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Kees Kaandorp",
+            "Rick Kaandorp"
+          ],
+          "away": [
+            "Elout Visser",
+            "Remy Mosselman"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Peter Six",
+            "Marco Eveleens"
+          ],
+          "away": [
+            "Szymon Teufel",
+            "Mike van Veen"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Nel Rood",
+            "Ronnie Bakker",
+            "Peter Six"
+          ],
+          "away": [
+            "Els Hummel",
+            "Patrick Liabeuf",
+            "Anton Wijker"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Kees Kaandorp",
+            "Jeannet Schuring",
+            "Rick Kaandorp"
+          ],
+          "away": [
+            "Szymon Teufel",
+            "Elout Visser",
+            "Remy Mosselman"
+          ]
+        }
+      },
+      "substitutions": []
+    },
+    "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-200220",
+    "date": "2026-11-14T12:00:00.000Z",
+    "fixtureId": "200220",
+    "matchId": "200220",
+    "matchNumber": "200220",
+    "homeTeamId": "les-boules-fleuries-1",
+    "awayTeamId": "de-bouledozers-1",
+    "homeScore": 11,
+    "awayScore": 20,
+    "createdAt": "2026-11-16T10:17:14.493176+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-14",
+    "divisieId": "2002",
+    "divisie": "2e-divisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 5
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 6,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200220.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Nicole Henneke - Schmitz"
+          ],
+          "away": [
+            "Patricia Ris"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Didier Hallard"
+          ],
+          "away": [
+            "Hans Wortel"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Dirk Varkevisser"
+          ],
+          "away": [
+            "Martijn Bos"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Leroy Dijkman"
+          ],
+          "away": [
+            "Michael Kooistra"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "André Alders"
+          ],
+          "away": [
+            "Natascha Dorenbos-Boon"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Mike Kaal"
+          ],
+          "away": [
+            "Tygo Wortel"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Nicole Henneke - Schmitz",
+            "Leroy Dijkman"
+          ],
+          "away": [
+            "Natascha Dorenbos-Boon",
+            "Hans Wortel"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Yvonne Heus",
+            "Didier Hallard"
+          ],
+          "away": [
+            "Christian Bos",
+            "Vincent Kenter"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "André Alders",
+            "Mike Kaal"
+          ],
+          "away": [
+            "Michael Kooistra",
+            "Tygo Wortel"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Yvonne Heus",
+            "Didier Hallard",
+            "Dirk Varkevisser"
+          ],
+          "away": [
+            "Martijn Bos",
+            "Michael Kooistra",
+            "Patricia Ris"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Leroy Dijkman",
+            "André Alders",
+            "Mike Kaal"
+          ],
+          "away": [
+            "Christian Bos",
+            "Vincent Kenter",
+            "Tygo Wortel"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-3",
+          "side": "home",
+          "out": "Mike Kaal",
+          "in": "Dirk Varkevisser"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
   }
 ]
