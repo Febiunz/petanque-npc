@@ -80,6 +80,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 ### Protected Endpoints (Require Firebase Auth)
 - `POST /api/matches` - Submit result
   - Body: `{ matchId, divisieId, scoreFormat: "individual-games-v1", games: [{ slotId, homeScore, awayScore }, ...] }`
+  - Quick totals: `{ matchId, divisieId, scoreFormat: "aggregate-v1", homeScore, awayScore }`; numeric integers 0-31, sum 31, excluding unreachable 1/30. Never fabricate games.
   - Exactly 11 canonical slots: tete-1..6 (2 points), doublette-1..3 (3 points), triplette-1..2 (5 points)
   - Unplayed pairs have null scores; entered raw pairs have exactly one numeric integer 13 and the other integer 0-12; both are independently entered
   - Server derives weighted totals and scheduled fixture identity/date; partial results remain provisional and do not affect standings
@@ -100,6 +101,8 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - No duplicate submissions for same match allowed
 - Duplicate detection is inside the write transaction; blob writes use ETag conditions with bounded retry
 - Historical enrichment preserves every original record field in repository data; provenance is in backend/history/provenance.json. Deployment replaces live blobs with repository data.
+- Official results are read-only: audited provenance or an ingestion-set `officialSource: "nlpetanque"` marker is authoritative, never request flags. GET computes `official`; both write modes enforce a 409 lock within transactions and ETag retries. Enrichment adds the marker without changing historical metadata hashes.
+- Quick totals preserve matching detailed games; conflicting/inconsistent entered games require Details (409). Entirely blank sheets may become aggregate-only results; retain unrelated metadata.
 - Official results store player names per slot in `playerLineup.games` and mapped substitutions in `playerLineup.substitutions`; Details reads them from the result API. Incomplete substitutions remain in `unassignedSubstitutions`, without guessing a game. Cross-sheet name resolutions and lineup hashes are recorded in provenance separately from preserved result metadata.
 - Re-running historical enrichment must preserve lineup evidence and earlier download/page audits with their original audit dates; changed lineup or workbook hashes require re-verification before applying. Reject staging that omits an already-provenanced match or removes a previously verified lineup before any writes.
 
@@ -149,8 +152,9 @@ When a rate limit is exceeded, the server responds with HTTP 429 Too Many Reques
 - Pool identifiers: `1001` (Topdivisie), `2001` (2e divisie), `2002` (2e divisie)
 - Score inputs start empty
 - All scheduled past/completed/unplayed rounds and fixtures remain selectable
-- Show selected weighted result or explicit unplayed/loading/error status below Wedstrijd beside exact "Details"
-- Dedicated Details screen locks fixture identity; signed-in users can save partial games and revise results without a timing restriction. Legacy totals never invent games.
+- Show two wide total-score boxes below Wedstrijd, empty for absent/invalid results, without "Nog geen uitslag". Only Thuis is editable; calculate read-only Uit as 31 minus valid home input and clear it for blank/invalid input. Keep Opslaan immediately left of exact "Details" (wrap buttons together on narrow screens); retain loading/error status. Raw game inputs in Details remain independent.
+- Official results remain selectable/viewable with a Dutch read-only explanation and disabled score/save controls in quick entry and Details.
+- Dedicated Details screen locks fixture identity; signed-in users can save partial games and revise nonofficial results without a timing restriction. Legacy totals never invent games.
 - Two independent raw inputs per game; no auto-complement, clamping or truncation
 - Show left-aligned, single-line cumulative weighted subtotals beside each group's navigation/save controls: tete; tete+doublette; final "Totaal" for all three groups. Do not append a provisional label; omit per-win explanatory labels.
 - When an official match Excel sheet is available, show each game's home-away player pairs on one line between the game number and score inputs; list substitutions below the original pairing as `out → in`.
