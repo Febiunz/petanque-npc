@@ -103,7 +103,7 @@ Run each app separately (optional):
 - Committed teams, schedules, and results are synchronized with the official NLpetanque pages listed below. A generated round-robin schedule is only a fallback when stored schedule data is unavailable.
 - Schedule is stored per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/schedule-1001.json`, `schedule-2001.json`, `schedule-2002.json`) in production. Falls back to local `backend/data/schedule-<divisieId>.json` files in development.
 - Results are persisted per division in **Azure Blob Storage** (`npcstandenstorageaccount/data/matches-1001.json`, `matches-2001.json`, `matches-2002.json`) in production, or local `backend/data/matches-<divisieId>.json` in development. Local writes are atomic and serialized; duplicate detection occurs inside the transaction. Blob result writes use ETag conditions and bounded retries so concurrent writers cannot replace one another's submissions.
-- Current official season data is prepared for **2026–2027**, last checked on **16 November 2026**:
+- Current official season data is prepared for **2026–2027**, last checked on **18 November 2026**:
   - 3 divisions (`1001`, `2001`, `2002`) with 8 official teams and 56 fixtures each
   - Sources: [Topdivisie 1001](https://nlpetanque.nl/topdivisie-2026-2027-1001/), [2e divisie 2001](https://nlpetanque.nl/2e-divisie-2026-2027-2001/), [2e divisie 2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/)
   - Round dates mapped to:
@@ -111,12 +111,11 @@ Run each app separately (optional):
     - 2027: `9-jan`, `23-jan`, `6-feb`, `20-feb`, `6-mrt`, `20-mrt`, `3-apr`
   - Individual fixtures use adjusted dates when published by NLpetanque; match `100107` is scheduled for `2026-12-13`.
   - Published results: 18 in `1001`, 20 in `2001`, and 20 in `2002`, including all round-five results (14 November 2026). Fixtures without published scores remain without a result entry.
-  - These 58 results include 627 validated individual games from 57 official score sheets. All 46 earlier records, including IDs, authorship, aggregates, games and lineups, are unchanged; match `200111` retains its official workbook date, 10 October, in both schedule and result.
-  - All 171 linked Excel URLs were checked: 57 match sheets and 3 shared forms downloaded; 111 match sheets returned 404. All available individual scores, weighted/raw totals, teams and standings agree with the official data. Teams and schedules remain unchanged.
-  - Match `200119` has published totals of 17-14 (raw 113-99), but its workbook returns 404. It is an official aggregate-only result without fabricated games or lineups; `aggregateOnlyMatches` in provenance records this evidence and the incomplete detailed coverage.
+  - All 58 published results include their official score sheets: 638 individual games with player names. The newly available `200119` workbook adds all 11 games and lineups without changing the 17-14 result (raw 113-99).
+  - All 171 linked Excel URLs were checked: 58 match sheets and 3 shared forms downloaded; 110 match sheets for fixtures without published scores returned 404. Individual scores, weighted/raw totals, teams, schedules and standings agree with the official data. Match `200111` retains its official workbook date, 10 October.
   - Each official result stores `playerLineup` with source URL, home/away names keyed by game slot, and substitutions. Details reads these names from the result API rather than a separate frontend list. Four `#N/A` name cells were resolved by matching the same player identifiers in other official match sheets, with source cells recorded in provenance.
   - Match `200213` has an incomplete away doublette substitution: Elout Visser is listed as incoming but the outgoing player is blank. It is retained under `playerLineup.unassignedSubstitutions`, without guessing a game or replacing an original pairing.
-  - Match `200117` has no home player recorded for `tete-5` in either official lineup sheet. Its verified 13-10 score is retained with an empty home name array; provenance records `missingPlayerNames` instead of inferring a player.
+  - The revised `200117` workbook names Patrick Lautenslager as the home player for `tete-5`; its 13-10 game score is unchanged.
   - Source URLs, workbook hashes, raw totals and preservation checks are in `backend/history/provenance.json` (not an uploaded result blob).
   - Re-running `scripts/enrich-historical-results.mjs` preserves verified lineup hashes, name-resolution and missing-name evidence, and earlier download/page audits with their original audit dates. `latestExcelDownloadAudit` records the current download audit separately. Changed workbooks or lineups require re-verification before applying an import. Incomplete staging or removal of a previously verified lineup is rejected before writes.
 - Legacy single-file data (`schedule.json` and `matches.json`) is migrated one-time to the per-division files on startup.

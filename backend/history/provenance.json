@@ -1,10 +1,10 @@
 {
   "season": "2026-2027",
-  "retrievedAt": "2026-11-16T10:17:14.493176+00:00",
+  "retrievedAt": "2026-11-18T09:15:21.792532+00:00",
   "pools": {
     "1001": {
       "pageUrl": "https://nlpetanque.nl/topdivisie-2026-2027-1001/",
-      "pageSha256": "fc39f643bcea0f83ae55d20d17372ff2941a5242bf97132fa4389de9d389ecda",
+      "pageSha256": "bad24efef8d603377a65d7999b47fb82793e996c7556cc46ed8ac3c3c769bd90",
       "coverage": {
         "publishedCompletedCount": 18,
         "validatedCount": 18,
@@ -316,17 +316,17 @@
         "100155",
         "100156"
       ],
-      "standingsVerifiedAt": "2026-11-16T10:17:14.493176+00:00",
-      "workbookAvailabilityCheckedAt": "2026-11-16T10:17:14.493176+00:00"
+      "standingsVerifiedAt": "2026-11-18T09:15:21.792532+00:00",
+      "workbookAvailabilityCheckedAt": "2026-11-18T09:15:21.792532+00:00"
     },
     "2001": {
       "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2001/",
-      "pageSha256": "bdef9f276dd5dac634941bf46d99941a75a36875c8ce3a14d6fcd794629ca690",
+      "pageSha256": "14aa9afbaa97d2d4b82dac859597897378019a181161e15216cfd838625d0463",
       "coverage": {
         "publishedCompletedCount": 20,
-        "validatedCount": 19,
-        "excludedCount": 1,
-        "coverageComplete": false
+        "validatedCount": 20,
+        "excludedCount": 0,
+        "coverageComplete": true
       },
       "matches": [
         {
@@ -582,7 +582,7 @@
         {
           "matchId": "200117",
           "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200117.xlsx",
-          "workbookSha256": "e3edf3e0bef96cb3e3aec54dec6c57fb60a0c9cb02b802be0645ea6eb81ec81b",
+          "workbookSha256": "2a851d4e97e0b720981bebade7ae52bd9b3779f21ef37174cee995f5504c9a18",
           "workbookDate": "2026-11-14",
           "preservedResultDate": "2026-11-14T12:00:00.000Z",
           "rawTotals": [
@@ -591,15 +591,7 @@
           ],
           "metadataSha256": "04c63c2f95aac8b5d45dd5a16f2db159bd7902466e9f74789e2a84db36bb6f56",
           "gamesSha256": "7149ca4e61be87d311e7e7bba3a0987b1e2f0f4b31dfba85c4778035d904103b",
-          "playerLineupSha256": "8bf4e15773b825b3f274869a5619225c99c8b4909faa7991c79e55ec6c18591e",
-          "missingPlayerNames": [
-            {
-              "slotId": "tete-5",
-              "side": "home",
-              "cell": "C30",
-              "notes": "Digital match sheet A30:C30 and starting lineup sheet B18:D18 are blank. The roster has no player selected for P5. Home player is unknown; retain an empty name array without guessing."
-            }
-          ]
+          "playerLineupSha256": "c836c5bcc779f4299feb20abf477171208aa087bd10a585fa946de2623a9ee48"
         },
         {
           "matchId": "200118",
@@ -614,6 +606,20 @@
           "metadataSha256": "1bc1b6655a5ae3b67f37bff21515172ad4fc735cac34198767a229178db29232",
           "gamesSha256": "be755990e3890c86545d2f9cd7a3be5a02271f51ec868d9f74ba2832c955dcdc",
           "playerLineupSha256": "464f5777adf93a8e71137198971a9602ec71f0c6645846f29106b247662aaeb0"
+        },
+        {
+          "matchId": "200119",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200119.xlsx",
+          "workbookSha256": "65e9b71c39580f92a6a71ff9c7f457cc75444be4d0c9b555d59b7e9380bedfae",
+          "workbookDate": "2026-11-14",
+          "preservedResultDate": "2026-11-14T12:00:00.000Z",
+          "rawTotals": [
+            113,
+            99
+          ],
+          "metadataSha256": "4fa26e594567599a3607a156ae6cae50b1849d8add80a6645852a833dc74fe15",
+          "gamesSha256": "935f3b64ad075428cd95c60e9ae7686fd076fec7af6dfc95fbf16190b95570ec",
+          "playerLineupSha256": "9d575cdf2e932b04cca3b145492e3a23da969308dfe6786f3fbff10aa72fe7b7"
         },
         {
           "matchId": "200120",
@@ -632,7 +638,6 @@
       ],
       "standingsVerified": true,
       "unavailableWorkbookMatchIds": [
-        "200119",
         "200121",
         "200122",
         "200123",
@@ -670,34 +675,12 @@
         "200155",
         "200156"
       ],
-      "standingsVerifiedAt": "2026-11-16T10:17:14.493176+00:00",
-      "workbookAvailabilityCheckedAt": "2026-11-16T10:17:14.493176+00:00",
-      "aggregateOnlyMatches": [
-        {
-          "matchId": "200119",
-          "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2001/",
-          "pageSha256": "bdef9f276dd5dac634941bf46d99941a75a36875c8ce3a14d6fcd794629ca690",
-          "weightedTotals": [
-            17,
-            14
-          ],
-          "rawTotals": [
-            113,
-            99
-          ],
-          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200119.xlsx",
-          "workbookHttpStatus": 404,
-          "checkedAt": "2026-11-16T10:17:14.493176+00:00",
-          "metadataSha256": "4fa26e594567599a3607a156ae6cae50b1849d8add80a6645852a833dc74fe15",
-          "notes": [
-            "Published match totals only; workbook returns HTTP 404. Individual games and player names are unavailable and have not been fabricated."
-          ]
-        }
-      ]
+      "standingsVerifiedAt": "2026-11-18T09:15:21.792532+00:00",
+      "workbookAvailabilityCheckedAt": "2026-11-18T09:15:21.792532+00:00"
     },
     "2002": {
       "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2002/",
-      "pageSha256": "2b1544da715603f6acd8b9ce754fee5ae6aaf77f7ea805d5de89987f73a13952",
+      "pageSha256": "a0c3f79f5092d01bb38bec14a4040ac9261b1e2da06d9f0a42de5f0ebfad6b23",
       "coverage": {
         "publishedCompletedCount": 20,
         "validatedCount": 20,
@@ -1028,8 +1011,8 @@
         "200255",
         "200256"
       ],
-      "standingsVerifiedAt": "2026-11-16T10:17:14.493176+00:00",
-      "workbookAvailabilityCheckedAt": "2026-11-16T10:17:14.493176+00:00"
+      "standingsVerifiedAt": "2026-11-18T09:15:21.792532+00:00",
+      "workbookAvailabilityCheckedAt": "2026-11-18T09:15:21.792532+00:00"
     }
   },
   "excelDownloadAudit": {
@@ -1053,10 +1036,10 @@
     "retrievedAt": "2026-11-12T11:34:09.242056+00:00"
   },
   "latestExcelDownloadAudit": {
-    "retrievedAt": "2026-11-16T10:17:14.493176+00:00",
+    "retrievedAt": "2026-11-18T09:15:21.792532+00:00",
     "linkedCount": 171,
-    "downloadedCount": 60,
-    "notFoundCount": 111,
+    "downloadedCount": 61,
+    "notFoundCount": 110,
     "additionalWorkbooks": [
       {
         "url": "https://www.nlpetanque.nl/NPC/2025-2026/Rapportage/Rapportageformulier%20NPC.xlsx",
