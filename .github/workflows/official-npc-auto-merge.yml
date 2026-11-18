@@ -1,0 +1,48 @@
+name: Auto-merge official NPC data
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  enable-auto-merge:
+    if: >-
+      github.repository == 'Febiunz/petanque-npc' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'npc-official-refresh-') &&
+      startsWith(github.event.pull_request.title, '[NPC data] ') &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Use only GitHub API data; never check out or execute PR content.
+      - name: Enable squash auto-merge for the published data patch
+        env:
+          GH_TOKEN: ${{ secrets.NPC_REFRESH_PR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          : "${GH_TOKEN:?Set the NPC_REFRESH_PR_TOKEN repository secret}"
+          pr_api="repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}"
+          actor_id=$(gh api user --jq '.id')
+          pr=$(gh api "$pr_api")
+          jq -e --arg repo "$GITHUB_REPOSITORY" --arg sha "$HEAD_SHA" --argjson actor "$actor_id" '
+            .state == "open" and (.draft | not) and .user.id == $actor
+            and .base.ref == "main" and .head.repo.full_name == $repo
+            and .head.sha == $sha and (.head.ref | startswith("npc-official-refresh-"))
+            and (.title | startswith("[NPC data] "))
+          ' <<< "$pr" >/dev/null
+          files=$(gh api "$pr_api/files")
+          jq -e --argjson count "$(jq '.changed_files' <<< "$pr")" '
+            length == $count and length >= 2 and length <= 4
+            and any(.[]; .filename == "backend/history/provenance.json")
+            and all(.[]; .status == "modified" and (
+              .filename == "backend/history/provenance.json"
+              or (.filename | test("^backend/data/matches-(1001|2001|2002)\\.json$"))
+            ))
+          ' <<< "$files" >/dev/null
+          gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --match-head-commit "$HEAD_SHA"

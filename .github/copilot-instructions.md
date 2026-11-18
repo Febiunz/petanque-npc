@@ -218,6 +218,7 @@ cd frontend && npm run preview
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
 - Workflow uploads every `backend/data/*.json` file to container `data` with `--overwrite true`, including results, teams and schedules. Live results and edits not present in the repository are replaced on deployment.
+- The weekly official NPC refresh proposes match/provenance patches. The separate auto-merge workflow leaves branch protections in force; a successful merge uses the same Azure deployment, not a direct blob write.
 
 ## Common Tasks and Commands
 

@@ -8,23 +8,27 @@ import { enrichResults, metadataHash, buildProvenance } from '../../scripts/enri
 
 const json = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
 
-test('all 58 official results and 638 games retain metadata and independently verified totals', async () => {
+test('official results retain metadata and independently verified totals as the season grows', async () => {
   const provenance = await json('../history/provenance.json');
-  let count = 0;
-  let games = 0;
-  for (const [pool, expected] of [['1001', 18], ['2001', 20], ['2002', 20]]) {
+  for (const [pool, historicalMinimum] of [['1001', 18], ['2001', 20], ['2002', 20]]) {
     const records = await json(`../data/matches-${pool}.json`);
     const fixtures = await json(`../data/schedule-${pool}.json`);
-    const sources = provenance.pools[pool].matches;
-    assert.equal(records.length, expected);
-    assert.equal(sources.length, expected);
-    assert.equal(new Set(records.map((record) => record.matchId || record.fixtureId)).size, expected);
-    for (const record of records) {
+    const { matches: sources, coverage } = provenance.pools[pool];
+    const official = records.filter(isOfficialResult);
+    assert.ok(official.length >= historicalMinimum);
+    assert.equal(official.length, sources.length);
+    assert.deepEqual(coverage, {
+      publishedCompletedCount: official.length,
+      validatedCount: official.length,
+      excludedCount: 0,
+      coverageComplete: true,
+    });
+    assert.equal(new Set(records.map((record) => record.matchId || record.fixtureId)).size, records.length);
+    assert.deepEqual(sources.map((source) => source.matchId).sort(), official.map((record) => record.matchId).sort());
+    for (const record of official) {
       const fixture = fixtures.find((row) => row.id === record.matchId);
       assert.equal(fixture.homeTeamId, record.homeTeamId);
       assert.equal(fixture.awayTeamId, record.awayTeamId);
-      assert.equal(isOfficialResult(record), true);
-      count++;
       validateAggregateScore(record);
       const score = validateDetailedScore(record);
       const source = sources.find((row) => row.matchId === record.matchId);
@@ -33,11 +37,8 @@ test('all 58 official results and 638 games retain metadata and independently ve
       const totals = summarizeGames(score.games);
       assert.deepEqual([totals.rawHomeScore, totals.rawAwayScore], source.rawTotals);
       assert.equal(record.date, source.preservedResultDate);
-      games += score.games.length;
     }
   }
-  assert.equal(count, 58);
-  assert.equal(games, 638);
   const second = await json('../data/matches-2001.json');
   assert.equal(second.find((row) => row.matchId === '200111').date, '2026-10-10T12:00:00.000Z');
   const top = await json('../data/matches-1001.json');
@@ -71,11 +72,9 @@ test('safe enrichment retains extra records, metadata, dates and already-detaile
 
 test('official game lineups preserve all available names, audited gaps, substitutions and source hashes', async () => {
   const provenance = await json('../history/provenance.json');
-  let count = 0;
   for (const pool of ['1001', '2001', '2002']) {
     const records = await json(`../data/matches-${pool}.json`);
-    for (const record of records) {
-      if (record.games === undefined) continue;
+    for (const record of records.filter(isOfficialResult)) {
       const lineup = record.playerLineup;
       const source = provenance.pools[pool].matches.find((row) => row.matchId === record.matchId);
       assert.equal(lineup.source, source.workbookUrl);
@@ -89,7 +88,6 @@ test('official game lineups preserve all available names, audited gaps, substitu
           assert.equal(names.length, size - missing.length, `${record.matchId} ${slotId} ${side}`);
           assert.ok(names.every((name) => typeof name === 'string' && name.trim() && !name.startsWith('#')));
         }
-        count++;
       }
       for (const substitution of lineup.substitutions) {
         assert.ok(lineup.games[substitution.slotId][substitution.side].includes(substitution.out));
@@ -97,7 +95,6 @@ test('official game lineups preserve all available names, audited gaps, substitu
       }
     }
   }
-  assert.equal(count, 638);
   const top = await json('../data/matches-1001.json');
   assert.deepEqual(top.find((row) => row.matchId === '100101').playerLineup.games['doublette-3'].away, ['Ad Wagenaars', 'Dennis Bakker']);
   const second = await json('../data/matches-2001.json');
@@ -143,7 +140,7 @@ test('new round-five workbooks fill missing game and player details without chan
 
 test('rerunning enrichment preserves lineup evidence and dates earlier download and page audits', async () => {
   const previous = await json('../history/provenance.json');
-  const source = { season: previous.season, generatedAt: '2026-11-17T12:00:00Z', pools: {} };
+  const source = { season: previous.season, generatedAt: '2027-04-04T12:00:00Z', pools: {} };
   const imports = {};
   for (const pool of ['1001', '2001', '2002']) {
     const records = await json(`../data/matches-${pool}.json`);
@@ -151,7 +148,7 @@ test('rerunning enrichment preserves lineup evidence and dates earlier download 
     const prior = previous.pools[pool];
     const staged = {
       artifactKind: 'staged-individual-games-import-v1', liveDeployable: false, divisieId: pool,
-      coverage: prior.coverage, matches: records.filter((row) => row.games !== undefined),
+      coverage: prior.coverage, matches: records.filter(isOfficialResult),
     };
     source.pools[pool] = {
       pageUrl: prior.pageUrl, pageSha256: prior.pageSha256,
