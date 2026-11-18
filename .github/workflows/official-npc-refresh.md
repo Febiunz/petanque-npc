@@ -1,9 +1,10 @@
 ---
-name: Weekly official NPC results
+name: Weekday official NPC results
 description: Reconcile the three 2026–2027 NLpetanque pools and propose verified result changes.
 on:
   schedule:
-    - cron: "17 9 * * 1"
+    - cron: "0 7 * * 1-5"
+      timezone: Europe/Amsterdam
   workflow_dispatch:
 if: github.repository == 'Febiunz/petanque-npc' && github.ref == 'refs/heads/main'
 concurrency:
