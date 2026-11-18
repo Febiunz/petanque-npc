@@ -6,17 +6,17 @@ Team seed objects contain `id`, `name`, `divisie`, `divisieId`, `locale`, and `c
 
 ## Official season data
 
-All nine JSON files in `data/` were checked against the official NLpetanque 2026-2027 tables on 16 November 2026:
+All nine JSON files in `data/` were checked against the official NLpetanque 2026-2027 tables on 18 November 2026:
 [1001](https://nlpetanque.nl/topdivisie-2026-2027-1001/),
 [2001](https://nlpetanque.nl/2e-divisie-2026-2027-2001/), and
 [2002](https://nlpetanque.nl/2e-divisie-2026-2027-2002/).
 Each division has 8 teams and 56 fixtures, with 18, 20, and 20 published results respectively, including round five (14 November).
 Schedules preserve official match numbers and published adjusted dates; results are included only when both scores are published.
-The 58 published results contain 627 validated individual games from 57 match sheets. All 46 earlier records, including IDs, authorship, aggregates, games and lineups, are unchanged. Match `200111` retains its official workbook date, 10 October, in both schedule and result. Teams and schedules remain unchanged.
+The 58 published results contain 638 individual games with official player lineups. Match `200111` retains its official workbook date, 10 October, in both schedule and result. Teams and schedules remain unchanged.
 Source URLs, workbook hashes, raw totals and metadata/game preservation hashes are in `history/provenance.json`.
-All 171 linked Excel URLs were checked: 57 match sheets and 3 shared forms downloaded, while 111 match sheets returned 404. All 627 available games, raw/weighted totals and standings agree with the official data. Match `200119` has published totals of 17-14 (raw 113-99), but its workbook returns 404; it is an official aggregate-only result without fabricated games or lineups. Provenance `aggregateOnlyMatches` records its evidence and detailed coverage remains explicitly incomplete.
+All 171 linked Excel URLs were checked: 58 match sheets and 3 shared forms downloaded, while 110 match sheets for fixtures without published scores returned 404. All individual scores, raw/weighted totals and standings agree with the official data. The newly available `200119` workbook adds all 11 games and lineups without changing the 17-14 result (raw 113-99).
 Official results also store `playerLineup` (`source`, `games` keyed by slot with `home`/`away` name arrays, and `substitutions`). The result API supplies these pairings to Details; score validation remains unchanged. Four missing-name cells were resolved from matching player identifiers in other official sheets; provenance records their source cells and lineup hashes. Match `200213` retains an incomplete away doublette substitution in `playerLineup.unassignedSubstitutions` because the outgoing player and game are unknown.
-Match `200117` has no home player recorded for `tete-5` in either official lineup sheet. The verified 13-10 score is retained with an empty home name array and `missingPlayerNames` provenance evidence, without guessing a player.
+The revised `200117` workbook names Patrick Lautenslager as the home player for `tete-5`; its 13-10 game score is unchanged.
 Re-running `scripts/enrich-historical-results.mjs` preserves lineup hashes, name-resolution and missing-name evidence, and download/page audits, retaining the original dates for those earlier audits. `latestExcelDownloadAudit` separately records the current download audit. The helper refuses to apply an import when an existing lineup or its workbook hash has changed without re-verification, staging omits an already-provenanced match, or a previously verified lineup is removed.
 
 ## Detailed scoring and storage

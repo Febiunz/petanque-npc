@@ -3199,7 +3199,9 @@
           ]
         },
         "tete-5": {
-          "home": [],
+          "home": [
+            "Patrick Lautenslager"
+          ],
           "away": [
             "Rob Torremans"
           ]
@@ -3497,7 +3499,180 @@
     "officialDate": "2026-11-14",
     "divisieId": "2001",
     "divisie": "2e-divisie",
-    "officialSource": "nlpetanque"
+    "officialSource": "nlpetanque",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 6
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 7,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 4,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 11
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 13,
+        "awayScore": 1
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 8,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 13,
+        "awayScore": 2
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 8,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/200119.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen"
+          ],
+          "away": [
+            "Roby van Rooijen"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Patrick Bakens"
+          ],
+          "away": [
+            "Wolter Verhoeven"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Richard Peeters"
+          ],
+          "away": [
+            "Ruud Vork"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Bart van Lieshout"
+          ],
+          "away": [
+            "Simon Vogelaar"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Joey Ras"
+          ],
+          "away": [
+            "Edwin Segers"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Joey Dijkstra"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen",
+            "Joey Ras"
+          ],
+          "away": [
+            "Edwin Segers",
+            "Roby van Rooijen"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Frits Bijsterveld",
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Joey Dijkstra",
+            "Simon Vogelaar"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Bart van Lieshout",
+            "Patrick Bakens"
+          ],
+          "away": [
+            "Ruud Vork",
+            "Johan Mol"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Natascha Bijsterveld - Ceelen",
+            "Patrick Bakens",
+            "Joey Ras"
+          ],
+          "away": [
+            "Celine Stritzko",
+            "Simon Vogelaar",
+            "Wolter Verhoeven"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Richard Peeters",
+            "Frits Bijsterveld",
+            "Willie Lieshout"
+          ],
+          "away": [
+            "Ruud Vork",
+            "Joey Dijkstra",
+            "Johan Mol"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "triplette-1",
+          "side": "away",
+          "out": "Celine Stritzko",
+          "in": "Roby van Rooijen"
+        }
+      ]
+    }
   },
   {
     "id": "official-200120",
