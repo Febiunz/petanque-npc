@@ -1,5 +1,5 @@
 ---
-name: Weekday official NPC results
+name: Official NPC Data Refresh
 description: Reconcile the three 2026–2027 NLpetanque pools and propose verified result changes.
 on:
   schedule:
