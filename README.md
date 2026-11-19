@@ -172,13 +172,13 @@ GitHub Actions workflow at `.github/workflows/ci.yml` runs on every pull request
 
 This validates Dependabot dependency updates before anything is deployed to Azure. Dependabot is configured (`.github/dependabot.yml`) to update npm packages in `/`, `/backend`, and `/frontend`, plus GitHub Actions and Docker, weekly.
 
-## Weekday official results refresh
+## Official NPC data refresh
 
-[Weekday official NPC results](.github/workflows/official-npc-refresh.md) runs on GitHub-hosted runners Monday through Friday at 07:00 Europe/Amsterdam time (UTC+1 in winter, UTC+2 in summer). It validates the official 2026–2027 NLpetanque workbooks for pools `1001`, `2001` and `2002`. Only verified changes to the match files and provenance produce a PR; a no-change run does not deploy. The companion workflow checks the PR's author, branch, head commit and file list before enabling squash auto-merge. Existing required checks and review rules still apply. The merge to `main` triggers the existing Azure deployment, which **replaces all nine production data files with the repository copies**, including any live-only submissions or edits.
+[Official NPC Data Refresh](.github/workflows/official-npc-refresh.md) runs on GitHub-hosted runners Monday through Friday at 07:00 Europe/Amsterdam time (UTC+1 in winter, UTC+2 in summer). It validates the official 2026–2027 NLpetanque workbooks for pools `1001`, `2001` and `2002`. Only verified changes to the match files and provenance produce a PR; a no-change run does not deploy. The companion **Official NPC Data Refresh Auto Merge** workflow checks the PR's author, branch, head commit and file list before enabling squash auto-merge. Existing required checks and review rules still apply. The merge to `main` triggers the existing Azure deployment, which **replaces all nine production data files with the repository copies**, including any live-only submissions or edits.
 
 Before enabling it, add two repository Actions secrets: `COPILOT_GITHUB_TOKEN` (a fine-grained PAT with account-level **Copilot Requests: Read**) and `NPC_REFRESH_PR_TOKEN` (a fine-grained PAT scoped to this repository with **Contents: Read and write** and **Pull requests: Read and write**). The latter must belong to a user who can merge into `main` under its existing rules. It enables the PR checks and the post-merge deployment to trigger; the built-in Actions token is not a substitute. Neither refresh job needs Azure credentials.
 
-Merge the workflow files into `main` to enable the schedule. To run it on demand, use **Actions → Weekday official NPC results → Run workflow** on `main`; this can open a PR and deploy if there are verified changes. After editing the workflow Markdown, regenerate its lock with `gh aw compile official-npc-refresh` (compiler `v1.2.2`).
+Merge the workflow files into `main` to enable the schedule. To run it on demand, use **Actions → Official NPC Data Refresh → Run workflow** on `main`; this can open a PR and deploy if there are verified changes. After editing the workflow Markdown, regenerate its lock with `gh aw compile official-npc-refresh` (compiler `v1.2.2`).
 
 ## Production notes (Azure)
 

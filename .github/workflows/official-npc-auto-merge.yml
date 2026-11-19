@@ -1,4 +1,4 @@
-name: Auto-merge official NPC data
+name: Official NPC Data Refresh Auto Merge
 
 on:
   pull_request_target:
