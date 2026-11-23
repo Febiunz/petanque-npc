@@ -16,6 +16,10 @@ permissions:
 engine: copilot
 timeout-minutes: 30
 strict: true
+sandbox:
+  agent:
+    mounts:
+      - /tmp/npc-official-trusted:/tmp/npc-official-trusted:ro
 jobs:
   safe_outputs:
     if: needs.agent.result == 'success'
@@ -40,12 +44,13 @@ pre-agent-steps:
       /tmp/npc-refresh-venv/bin/python scripts/audit-official-npc.py --output /tmp/npc-official-trusted/official-snapshot.json
       cp scripts/reconcile-official-npc.mjs /tmp/npc-official-trusted/validator/reconcile-official-npc.mjs
       cp scripts/enrich-historical-results.mjs /tmp/npc-official-trusted/validator/enrich-historical-results.mjs
-      mkdir -p /tmp/npc-official-trusted/validator/backend/domain
-      mkdir -p /tmp/npc-official-trusted/validator/backend/history
-      cp backend/domain/scoring.js /tmp/npc-official-trusted/validator/backend/domain/scoring.js
-      cp backend/history/officialResults.js /tmp/npc-official-trusted/validator/backend/history/officialResults.js
-      chmod 0555 /tmp/npc-official-trusted /tmp/npc-official-trusted/validator /tmp/npc-official-trusted/validator/backend /tmp/npc-official-trusted/validator/backend/domain /tmp/npc-official-trusted/validator/backend/history
-      chmod 0444 /tmp/npc-official-trusted/official-snapshot.json /tmp/npc-official-trusted/validator/reconcile-official-npc.mjs /tmp/npc-official-trusted/validator/enrich-historical-results.mjs /tmp/npc-official-trusted/validator/backend/domain/scoring.js /tmp/npc-official-trusted/validator/backend/history/officialResults.js
+      mkdir -p /tmp/npc-official-trusted/backend/domain
+      mkdir -p /tmp/npc-official-trusted/backend/history
+      cp backend/domain/scoring.js /tmp/npc-official-trusted/backend/domain/scoring.js
+      cp backend/history/officialResults.js /tmp/npc-official-trusted/backend/history/officialResults.js
+      cp backend/history/provenance.json /tmp/npc-official-trusted/backend/history/provenance.json
+      chmod 0555 /tmp/npc-official-trusted /tmp/npc-official-trusted/validator /tmp/npc-official-trusted/backend /tmp/npc-official-trusted/backend/domain /tmp/npc-official-trusted/backend/history
+      chmod 0444 /tmp/npc-official-trusted/official-snapshot.json /tmp/npc-official-trusted/validator/reconcile-official-npc.mjs /tmp/npc-official-trusted/validator/enrich-historical-results.mjs /tmp/npc-official-trusted/backend/domain/scoring.js /tmp/npc-official-trusted/backend/history/officialResults.js /tmp/npc-official-trusted/backend/history/provenance.json
       NPC_RECONCILE_ROOT="$GITHUB_WORKSPACE" node /tmp/npc-official-trusted/validator/reconcile-official-npc.mjs /tmp/npc-official-trusted/official-snapshot.json
 post-steps:
   - name: Reject incomplete reconciliation or false no-change results
