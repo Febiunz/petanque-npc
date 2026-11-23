@@ -5,8 +5,79 @@ import { createHash } from 'node:crypto';
 import { validateAggregateScore, validateDetailedScore, summarizeGames } from '../domain/scoring.js';
 import { isOfficialResult } from '../history/officialResults.js';
 import { enrichResults, metadataHash, buildProvenance } from '../../scripts/enrich-historical-results.mjs';
+import { reconcilePool } from '../../scripts/reconcile-official-npc.mjs';
 
 const json = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'));
+
+async function officialSnapshotCase() {
+  const [records, fixtures, teams, provenance] = await Promise.all([
+    json('../data/matches-1001.json'), json('../data/schedule-1001.json'),
+    json('../data/teams-1001.json'), json('../history/provenance.json'),
+  ]);
+  const record = records[0];
+  const fixture = fixtures.find((row) => row.id === record.matchId);
+  const evidence = provenance.pools['1001'].matches.find((row) => row.matchId === record.matchId);
+  const row = {
+    matchId: record.matchId, round: fixture.round,
+    home: teams.find((team) => team.id === fixture.homeTeamId).name,
+    away: teams.find((team) => team.id === fixture.awayTeamId).name,
+    roundDate: fixture.date, adjustedDate: null, published: true,
+    totals: [record.homeScore, record.awayScore, ...evidence.rawTotals],
+    workbookStatus: 200, workbookUrl: evidence.workbookUrl,
+    workbook: { date: evidence.workbookDate, games: record.games, playerLineup: record.playerLineup, sha256: evidence.workbookSha256 },
+  };
+  const prior = { ...provenance.pools['1001'], matches: [evidence] };
+  const source = { pageUrl: prior.pageUrl, pageSha256: prior.pageSha256, fixtures: [row] };
+  const run = (overrides = {}) => reconcilePool('1001', overrides.fixtures || [fixture],
+    overrides.records || [record], teams, overrides.prior || prior,
+    overrides.source || source, '2026-11-23T12:00:00Z');
+  return { run, record, fixture, source, prior };
+}
+
+test('refresh cannot call missing published results, incomplete inventories or workbook gaps unchanged', async () => {
+  const { run, record, source, prior } = await officialSnapshotCase();
+  assert.equal(run().changed, false);
+  const added = run({ records: [], prior: { ...prior, matches: [] } });
+  assert.equal(added.changed, true);
+  assert.equal(added.matches[0].matchId, record.matchId);
+  assert.deepEqual(added.matches[0].games, record.games);
+  assert.throws(() => run({ source: { ...source, fixtures: [] } }), /Incomplete/);
+  assert.throws(() => run({ source: { ...source, fixtures: [source.fixtures[0], source.fixtures[0]] } }), /Incomplete/);
+  const unavailable = structuredClone(source);
+  unavailable.fixtures[0].workbookStatus = 404;
+  delete unavailable.fixtures[0].workbook;
+  assert.throws(() => run({ source: unavailable }), /lacks verified workbook/);
+  const disappeared = structuredClone(source);
+  disappeared.fixtures[0].published = false;
+  disappeared.fixtures[0].workbookStatus = 404;
+  delete disappeared.fixtures[0].workbook;
+  assert.throws(() => run({ source: disappeared }), /Previously official/);
+});
+
+test('refresh updates dates only on existing fixtures and preserves played-date workbook exceptions', async () => {
+  const { run, fixture, record, source } = await officialSnapshotCase();
+  const rescheduled = structuredClone(source);
+  rescheduled.fixtures[0].workbook.date = '2026-11-21';
+  const updated = run({ source: rescheduled });
+  assert.deepEqual(updated.schedules, [{ ...fixture, date: '2026-11-21' }]);
+  assert.equal(updated.matches[0].date, '2026-11-21T12:00:00.000Z');
+  assert.equal(updated.matches[0].createdAt, record.createdAt);
+  assert.equal(updated.matches[0].officialDate, '2026-11-21');
+  assert.equal(updated.evidence.dateCorrections[0].changes[0].previousDate, record.date);
+  assert.equal(updated.evidence.matches[0].metadataSha256, metadataHash(updated.matches[0]));
+  const adjusted = structuredClone(source);
+  adjusted.fixtures[0] = { ...adjusted.fixtures[0], published: false, workbookStatus: 404, adjustedDate: '2026-12-13' };
+  delete adjusted.fixtures[0].workbook;
+  const upcoming = run({ source: adjusted, records: [], prior: { matches: [] } });
+  assert.equal(upcoming.schedules[0].date, '2026-12-13');
+  assert.deepEqual(upcoming.matches, []);
+  const identityDrift = structuredClone(source);
+  identityDrift.fixtures[0].home = 'Different team';
+  assert.throws(() => run({ source: identityDrift }), /identity drift/);
+  const changedWorkbook = structuredClone(source);
+  changedWorkbook.fixtures[0].workbook.sha256 = 'f'.repeat(64);
+  assert.throws(() => run({ source: changedWorkbook }), /requires re-verification/);
+});
 
 test('official results retain metadata and independently verified totals as the season grows', async () => {
   const provenance = await json('../history/provenance.json');
@@ -166,7 +237,8 @@ test('rerunning enrichment preserves lineup evidence and dates earlier download 
   });
   assert.deepEqual(rebuilt.latestExcelDownloadAudit, previous.latestExcelDownloadAudit);
   for (const pool of ['1001', '2001', '2002']) {
-    assert.deepEqual(rebuilt.pools[pool].matches, previous.pools[pool].matches);
+    const byId = (a, b) => a.matchId.localeCompare(b.matchId);
+    assert.deepEqual(rebuilt.pools[pool].matches.toSorted(byId), previous.pools[pool].matches.toSorted(byId));
     assert.deepEqual(rebuilt.pools[pool].aggregateOnlyMatches, previous.pools[pool].aggregateOnlyMatches);
     assert.deepEqual(rebuilt.pools[pool].unavailableWorkbookMatchIds, previous.pools[pool].unavailableWorkbookMatchIds);
     assert.equal(rebuilt.pools[pool].standingsVerifiedAt, previous.pools[pool].standingsVerifiedAt || previous.retrievedAt);

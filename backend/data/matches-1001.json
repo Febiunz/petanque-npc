@@ -3444,5 +3444,202 @@
       ]
     },
     "officialSource": "nlpetanque"
+  },
+  {
+    "id": "official-100106",
+    "date": "2026-11-21T12:00:00.000Z",
+    "fixtureId": "100106",
+    "matchId": "100106",
+    "matchNumber": "100106",
+    "homeTeamId": "le-biberon-1",
+    "awayTeamId": "cdp-les-cailloux-1",
+    "homeScore": 9,
+    "awayScore": 22,
+    "createdAt": "2026-11-23T12:29:28.884638+00:00",
+    "submittedBy": "NLpetanque official results",
+    "submittedByUid": null,
+    "officialDate": "2026-11-21",
+    "divisieId": "1001",
+    "divisie": "topdivisie",
+    "scoreFormat": "individual-games-v1",
+    "games": [
+      {
+        "slotId": "tete-1",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-2",
+        "homeScore": 13,
+        "awayScore": 7
+      },
+      {
+        "slotId": "tete-3",
+        "homeScore": 10,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-4",
+        "homeScore": 9,
+        "awayScore": 13
+      },
+      {
+        "slotId": "tete-5",
+        "homeScore": 13,
+        "awayScore": 3
+      },
+      {
+        "slotId": "tete-6",
+        "homeScore": 5,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-1",
+        "homeScore": 2,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-2",
+        "homeScore": 3,
+        "awayScore": 13
+      },
+      {
+        "slotId": "doublette-3",
+        "homeScore": 13,
+        "awayScore": 12
+      },
+      {
+        "slotId": "triplette-1",
+        "homeScore": 3,
+        "awayScore": 13
+      },
+      {
+        "slotId": "triplette-2",
+        "homeScore": 9,
+        "awayScore": 13
+      }
+    ],
+    "playerLineup": {
+      "source": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100106.xlsx",
+      "games": {
+        "tete-1": {
+          "home": [
+            "Zoë Bult"
+          ],
+          "away": [
+            "Anette Boluijt"
+          ]
+        },
+        "tete-2": {
+          "home": [
+            "Daniël Adriaan van Dam"
+          ],
+          "away": [
+            "Elke van der Linden"
+          ]
+        },
+        "tete-3": {
+          "home": [
+            "Romulo van Stockum"
+          ],
+          "away": [
+            "Sebastiaan Diemel"
+          ]
+        },
+        "tete-4": {
+          "home": [
+            "Rens de Roos"
+          ],
+          "away": [
+            "Dennis Peterse"
+          ]
+        },
+        "tete-5": {
+          "home": [
+            "Loc Le Van"
+          ],
+          "away": [
+            "Tristan de Leeuw"
+          ]
+        },
+        "tete-6": {
+          "home": [
+            "Jakob Huitsing"
+          ],
+          "away": [
+            "Justin Wuring"
+          ]
+        },
+        "doublette-1": {
+          "home": [
+            "Zoë Bult",
+            "Loc Le Van"
+          ],
+          "away": [
+            "Elke van der Linden",
+            "Tristan de Leeuw"
+          ]
+        },
+        "doublette-2": {
+          "home": [
+            "Daniël Adriaan van Dam",
+            "Rens de Roos"
+          ],
+          "away": [
+            "Anette Boluijt",
+            "Dennis Peterse"
+          ]
+        },
+        "doublette-3": {
+          "home": [
+            "Romulo van Stockum",
+            "Jakob Huitsing"
+          ],
+          "away": [
+            "Sebastiaan Diemel",
+            "Justin Wuring"
+          ]
+        },
+        "triplette-1": {
+          "home": [
+            "Zoë Bult",
+            "Daniël Adriaan van Dam",
+            "Loc Le Van"
+          ],
+          "away": [
+            "Elke van der Linden",
+            "Sebastiaan Diemel",
+            "Tristan de Leeuw"
+          ]
+        },
+        "triplette-2": {
+          "home": [
+            "Romulo van Stockum",
+            "Rens de Roos",
+            "Jakob Huitsing"
+          ],
+          "away": [
+            "Anette Boluijt",
+            "Dennis Peterse",
+            "Justin Wuring"
+          ]
+        }
+      },
+      "substitutions": [
+        {
+          "slotId": "doublette-1",
+          "side": "home",
+          "out": "Zoë Bult",
+          "in": "Maaike Rosier"
+        },
+        {
+          "slotId": "triplette-1",
+          "side": "home",
+          "out": "Zoë Bult",
+          "in": "Maaike Rosier"
+        }
+      ]
+    },
+    "officialSource": "nlpetanque"
   }
 ]

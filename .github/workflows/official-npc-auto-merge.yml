@@ -38,11 +38,19 @@ jobs:
           ' <<< "$pr" >/dev/null
           files=$(gh api "$pr_api/files")
           jq -e --argjson count "$(jq '.changed_files' <<< "$pr")" '
-            length == $count and length >= 2 and length <= 4
+            length == $count and length >= 2 and length <= 7
             and any(.[]; .filename == "backend/history/provenance.json")
             and all(.[]; .status == "modified" and (
               .filename == "backend/history/provenance.json"
-              or (.filename | test("^backend/data/matches-(1001|2001|2002)\\.json$"))
+              or (.filename | test("^backend/data/(matches|schedule)-(1001|2001|2002)\\.json$"))
             ))
           ' <<< "$files" >/dev/null
+          while IFS= read -r path; do
+            before=$(gh api "repos/${GITHUB_REPOSITORY}/contents/${path}?ref=$(jq -r '.base.sha' <<< "$pr")" --jq '.content' | base64 --decode)
+            after=$(gh api "repos/${GITHUB_REPOSITORY}/contents/${path}?ref=${HEAD_SHA}" --jq '.content' | base64 --decode)
+            jq -en --argjson before "$before" --argjson after "$after" '
+              ($before | map(del(.date))) == ($after | map(del(.date)))
+              and all($after[]; .date | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}$"))
+            ' >/dev/null
+          done < <(jq -r '.[] | select(.filename | startswith("backend/data/schedule-")) | .filename' <<< "$files")
           gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --auto --squash --match-head-commit "$HEAD_SHA"
