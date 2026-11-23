@@ -31,3 +31,6 @@ Thumbs.db
 
 # Build
 build/
+
+# Official source audit tests
+__pycache__/

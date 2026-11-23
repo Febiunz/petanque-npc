@@ -41,6 +41,9 @@ jobs:
       - name: Scoring, API, persistence and historical tests
         run: npm test
 
+      - name: Official source parser regression tests
+        run: python3 -m unittest discover -s ../scripts -p 'test_*.py'
+
       - name: Smoke test API
         env:
           PORT: '5000'

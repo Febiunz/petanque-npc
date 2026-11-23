@@ -96,7 +96,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 
 ### Data Integrity
 - Match completion derived from per-division `matches-<divisieId>.json` storage - NEVER use `schedule.status`
-- Schedule is generated locally (round-robin) from pool teams; do not add external official schedule fetch/parsing.
+- Schedule identities and pairings are generated locally (round-robin). The official refresh may reconcile only dates on existing fixtures: explicit adjusted/round dates for unplayed fixtures and workbook played dates for completed fixtures. Never generate fixtures or change teams, rounds, IDs or pairings from the website.
 - All file writes are serialized with in-process mutex
 - No duplicate submissions for same match allowed
 - Duplicate detection is inside the write transaction; blob writes use ETag conditions with bounded retry
@@ -106,6 +106,7 @@ cd frontend && npm run preview  # Preview built app (port 4173)
 - Official results store player names per slot in `playerLineup.games` and mapped substitutions in `playerLineup.substitutions`; Details reads them from the result API. Incomplete substitutions remain in `unassignedSubstitutions`, without guessing a game. Cross-sheet name resolutions and lineup hashes are recorded in provenance separately from preserved result metadata.
 - The 18 November 2026 audit covers 58 official results (18/20/20) and 638 games with player names from 58 sheets. The newly available workbook for `200119` supplies all games and lineups, and the revised `200117` workbook supplies the home `tete-5` name. Totals, teams and schedules were unchanged. Never guess missing games or names.
 - Re-running historical enrichment must preserve lineup evidence (including missing-name evidence) and earlier download/page audits with their original audit dates; `latestExcelDownloadAudit` records the current audit separately. Changed lineup or workbook hashes require re-verification before applying. Reject staging that omits an already-provenanced match or removes a previously verified lineup before any writes.
+- Official refresh uses `scripts/audit-official-npc.py` and `scripts/reconcile-official-npc.mjs`, with mandatory pre/post checks. Keep HTML cells (including empty/adjusted dates), check all linked fixture workbooks and page score cells, and fail incomplete/racing audits instead of reporting unchanged. Preserve date corrections and sources in provenance; no-change requires a passing reconciliation check and empty diff.
 
 ### Authentication
 - Firebase ID tokens required for protected endpoints
@@ -218,7 +219,7 @@ cd frontend && npm run preview
 - GitHub Actions workflow: `.github/workflows/azure-deploy.yml`
 - Deployment triggered on push to `main` branch
 - Workflow uploads every `backend/data/*.json` file to container `data` with `--overwrite true`, including results, teams and schedules. Live results and edits not present in the repository are replaced on deployment.
-- The weekday official NPC refresh runs Monday-Friday at 07:12 Europe/Amsterdam time, including daylight-saving adjustments, and proposes match/provenance patches. The separate auto-merge workflow leaves branch protections in force; a successful merge uses the same Azure deployment, not a direct blob write.
+- The weekday official NPC refresh runs Monday-Friday at 07:12 Europe/Amsterdam time, including daylight-saving adjustments, and proposes match/provenance and date-only schedule patches. The separate auto-merge workflow checks the author and file scope, rejects schedule identity changes, and leaves branch protections in force; a successful merge uses the same Azure deployment, not a direct blob write.
 
 ## Common Tasks and Commands
 

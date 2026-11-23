@@ -1,13 +1,13 @@
 {
   "season": "2026-2027",
-  "retrievedAt": "2026-11-18T09:15:21.792532+00:00",
+  "retrievedAt": "2026-11-23T12:29:28.884638+00:00",
   "pools": {
     "1001": {
       "pageUrl": "https://nlpetanque.nl/topdivisie-2026-2027-1001/",
-      "pageSha256": "bad24efef8d603377a65d7999b47fb82793e996c7556cc46ed8ac3c3c769bd90",
+      "pageSha256": "e06d383b582afd1630b89b8aeca12ee77f7bbb7cfcfeab16f10b68057fdd69c4",
       "coverage": {
-        "publishedCompletedCount": 18,
-        "validatedCount": 18,
+        "publishedCompletedCount": 19,
+        "validatedCount": 19,
         "excludedCount": 0,
         "coverageComplete": true
       },
@@ -91,6 +91,20 @@
           "metadataSha256": "c6fc9541013aa0580ecb50659e8410ec7a3bb6e31b3f073d89d9c277bc789dd2",
           "gamesSha256": "c5b684835632cc210e60c9fdf6512c7a6437856979abdcf65bc676f436c5706b",
           "playerLineupSha256": "0b4202f5581b22c1b1896520e1a9c69a228f5eb579b3a5f8341f49c1ede28f56"
+        },
+        {
+          "matchId": "100106",
+          "workbookUrl": "https://www.nlpetanque.nl/NPC/2026-2027/Uitslagen/100106.xlsx",
+          "workbookSha256": "a50bc23335b738ec31f705e498148e3d9f569e4dc9d9c1e8fc4c81549266fa2d",
+          "workbookDate": "2026-11-21",
+          "preservedResultDate": "2026-11-21T12:00:00.000Z",
+          "rawTotals": [
+            93,
+            116
+          ],
+          "metadataSha256": "68a18aca1505aa5661847ad8d9fdc3125141a176053a9ee8e0f8afc668b627bd",
+          "gamesSha256": "8e9b3a7e4caf5de8ec843698718965b8b3f1386e00d673309c044df70ce292eb",
+          "playerLineupSha256": "f025871c7fec5f9af24516d5e3734563fd085fa95ff2d652db3e2c8d3aa57d35"
         },
         {
           "matchId": "100108",
@@ -277,7 +291,6 @@
       ],
       "standingsVerified": true,
       "unavailableWorkbookMatchIds": [
-        "100106",
         "100107",
         "100121",
         "100122",
@@ -317,7 +330,7 @@
         "100156"
       ],
       "standingsVerifiedAt": "2026-11-18T09:15:21.792532+00:00",
-      "workbookAvailabilityCheckedAt": "2026-11-18T09:15:21.792532+00:00"
+      "workbookAvailabilityCheckedAt": "2026-11-23T12:29:28.884638+00:00"
     },
     "2001": {
       "pageUrl": "https://nlpetanque.nl/2e-divisie-2026-2027-2001/",
@@ -1035,24 +1048,33 @@
     ],
     "retrievedAt": "2026-11-12T11:34:09.242056+00:00"
   },
+  "excelDownloadAudits": [
+    {
+      "retrievedAt": "2026-11-18T09:15:21.792532+00:00",
+      "linkedCount": 171,
+      "downloadedCount": 61,
+      "notFoundCount": 110,
+      "additionalWorkbooks": [
+        {
+          "url": "https://www.nlpetanque.nl/NPC/2025-2026/Rapportage/Rapportageformulier%20NPC.xlsx",
+          "sha256": "5c5deb619fd28993fef48aa1760305d21e49b7bc3f70107cc98e2fd206e900dc"
+        },
+        {
+          "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Divisie%203%20tm%206.xlsx",
+          "sha256": "5131ba3182bde4641212573af069720b849db9e086cd226b670487c8fc3b943d"
+        },
+        {
+          "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Topdivisie%20en%202e%20divisie.xlsx",
+          "sha256": "126a5a505c474edfcf7ae42cd35b8988ed071445ddb4e9a5055837bf61175363"
+        }
+      ]
+    }
+  ],
   "latestExcelDownloadAudit": {
-    "retrievedAt": "2026-11-18T09:15:21.792532+00:00",
-    "linkedCount": 171,
-    "downloadedCount": 61,
-    "notFoundCount": 110,
-    "additionalWorkbooks": [
-      {
-        "url": "https://www.nlpetanque.nl/NPC/2025-2026/Rapportage/Rapportageformulier%20NPC.xlsx",
-        "sha256": "5c5deb619fd28993fef48aa1760305d21e49b7bc3f70107cc98e2fd206e900dc"
-      },
-      {
-        "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Divisie%203%20tm%206.xlsx",
-        "sha256": "5131ba3182bde4641212573af069720b849db9e086cd226b670487c8fc3b943d"
-      },
-      {
-        "url": "https://www.nlpetanque.nl/NPC/2026-2027/Wedstrijdformulieren/Team-opstelling-wedstrijdformulier%202026-2027%20-%20competitieronde%205%20-%20Topdivisie%20en%202e%20divisie.xlsx",
-        "sha256": "126a5a505c474edfcf7ae42cd35b8988ed071445ddb4e9a5055837bf61175363"
-      }
-    ]
+    "retrievedAt": "2026-11-23T12:29:28.884638+00:00",
+    "scope": "all linked fixture workbooks",
+    "linkedCount": 168,
+    "downloadedCount": 59,
+    "notFoundCount": 109
   }
 }
