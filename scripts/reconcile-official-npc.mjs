@@ -183,7 +183,10 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const path = process.argv[2];
     if (!path) throw new Error('Usage: node scripts/reconcile-official-npc.mjs <snapshot.json> [--apply|--check]');
     const snapshot = JSON.parse(await readFile(path, 'utf8'));
-    const result = await reconcile(root, snapshot, process.argv.includes('--apply'));
+    const repositoryRoot = process.env.NPC_RECONCILE_ROOT
+      ? resolve(process.env.NPC_RECONCILE_ROOT)
+      : root;
+    const result = await reconcile(repositoryRoot, snapshot, process.argv.includes('--apply'));
     console.log(JSON.stringify(result, null, 2));
     if (process.argv.includes('--check') && result.changedFiles.length) {
       throw new Error('Official results/dates remain unreconciled; no-change output is forbidden');
